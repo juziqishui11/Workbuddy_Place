@@ -1,0 +1,8 @@
+node_modules/
+data.json
+config.json
+*.log
+*.tgz
+*.zip
+package/
+dist/
