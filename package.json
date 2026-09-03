@@ -1,0 +1,10 @@
+{
+  "name": "game2048-edgeone",
+  "version": "1.0.0",
+  "private": true,
+  "description": "2048 小游戏 · 腾讯云 EdgeOne Pages 部署（边缘函数 + KV）",
+  "scripts": {
+    "dev": "npx edgeone pages dev",
+    "start": "node server.js"
+  }
+}
