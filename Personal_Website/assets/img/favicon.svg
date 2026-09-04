@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="枫城">
+  <rect width="64" height="64" rx="14" fill="#0B0B0F"/>
+  <circle cx="25" cy="29" r="17" fill="#7B5CFF" opacity="0.92"/>
+  <circle cx="41" cy="37" r="16" fill="#2DE2E6" opacity="0.82"/>
+  <circle cx="33" cy="33" r="5.5" fill="#FFFFFF"/>
+</svg>

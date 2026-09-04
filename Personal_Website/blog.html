@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#0B0B0F" />
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml" />
+<meta property="og:title" content="Blog — 枫城" />
+<meta property="og:description" content="枫城 的写作：关于设计、代码、动效与创造性工作的想法。" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary_large_image" />
+<title>Blog — 枫城</title>
+<meta name="description" content="枫城 的写作：关于设计、代码、动效与创造性工作的想法。" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+
+<div class="aurora-blob" aria-hidden="true"></div>
+
+<nav class="nav">
+  <a href="index.html" class="brand"><span class="dot"></span>枫城</a>
+  <button class="nav-toggle" aria-label="菜单">MENU</button>
+  <div class="nav-links">
+    <a href="about.html">About</a>
+    <a href="projects.html">Projects</a>
+    <a href="blog.html">Blog</a>
+    <a href="contact.html">Contact</a>
+    <a href="contact.html" class="nav-cta">合作 →</a>
+  </div>
+</nav>
+
+<header class="hero" style="min-height:auto; padding-top:140px;">
+  <div class="wrap">
+    <p class="eyebrow reveal" style="margin-bottom:20px">/ 03 — BLOG</p>
+    <h1 class="display reveal" style="font-size:clamp(2.4rem,8vw,6rem); max-width:15ch">
+      想法，<span class="grad">未删节</span>。
+    </h1>
+  </div>
+</header>
+
+<section class="section" style="padding-top:clamp(30px,5vw,60px)">
+  <div class="wrap">
+    <div class="posts">
+
+      <a class="post reveal" href="#">
+        <span class="date">2026.08</span>
+        <div>
+          <h3>为什么我把渐变当作第一公民</h3>
+          <p>在设计系统里，颜色常被视为「最后的装饰」。但当一个渐变会随光标呼吸，它就变成了交互本身。</p>
+        </div>
+        <span class="meta">DESIGN</span>
+      </a>
+
+      <a class="post reveal" href="#">
+        <span class="date">2026.06</span>
+        <div>
+          <h3>动效不是特效，是叙事</h3>
+          <p>less is more 在大多数界面里都成立。但当一个 moment 编排得当，它比十个零散的 hover 更让人记住。</p>
+        </div>
+        <span class="meta">MOTION</span>
+      </a>
+
+      <a class="post reveal" href="#">
+        <span class="date">2026.04</span>
+        <div>
+          <h3>从 demo 到生产：我踩过的坑</h3>
+          <p>能跑的 WebGL 不等于能上线的 WebGL。关于性能预算、可访问性，以及「克制」这件事。</p>
+        </div>
+        <span class="meta">ENG</span>
+      </a>
+
+      <a class="post reveal" href="#">
+        <span class="date">2026.02</span>
+        <div>
+          <h3>在交界处工作的人</h3>
+          <p>设计师还是工程师？也许问题的本身就是错的。聊聊「T 型」之外的第三种活法。</p>
+        </div>
+        <span class="meta">ESSAY</span>
+      </a>
+
+      <a class="post reveal" href="#">
+        <span class="date">2025.12</span>
+        <div>
+          <h3>紫色和青色真的很配</h3>
+          <p>一篇为我的配色偏好辩护的短文，附带一组可复用的暗色 aurora token。</p>
+        </div>
+        <span class="meta">COLOR</span>
+      </a>
+
+    </div>
+    <p class="muted reveal" style="margin-top:30px; font-family:var(--font-mono); font-size:.82rem;">
+      * 文章链接为占位，替换为真实文章地址即可。
+    </p>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="wrap row">
+    <a href="index.html" class="brand"><span class="dot"></span>枫城</a>
+    <p class="copy">© <span id="yr"></span> 枫城 · 设计与代码的交界处</p>
+    <p class="copy"><a href="about.html">关于</a> · <a href="projects.html">作品</a> · <a href="contact.html">联系</a></p>
+  </div>
+</footer>
+
+<script>document.getElementById("yr").textContent = new Date().getFullYear();</script>
+<script src="assets/js/main.js"></script>
+</body>
+</html>
