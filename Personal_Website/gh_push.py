@@ -45,38 +45,24 @@ def main():
     token = read_pat()
     files = collect_files()
     print(f"collected {len(files)} files")
-    # HEAD sha
     ref = api("GET", f"/git/refs/heads/{BRANCH}", token)
     head_sha = ref["object"]["sha"]
     print("HEAD:", head_sha)
-    # blobs
     blobs = {}
     for rel, full in files:
         with open(full, "rb") as f:
             content = base64.b64encode(f.read()).decode("ascii")
-        # detect text vs binary by extension
-        ext = os.path.splitext(rel)[1].lower()
-        is_text = ext in {".html", ".css", ".js", ".svg", ".md", ".txt", ".json", ".xml"}
-        resp = api("POST", "/git/blobs", token, {
-            "content": content,
-            "encoding": "base64"
-        })
+        resp = api("POST", "/git/blobs", token, {"content": content, "encoding": "base64"})
         blobs[rel] = resp["sha"]
         print(f"  blob {rel} -> {resp['sha'][:10]}")
-    # tree
     tree = [{"path": f"{PREFIX}/{rel}", "mode": "100644", "type": "blob", "sha": sha}
             for rel, sha in blobs.items()]
     tree_resp = api("POST", "/git/trees", token, {"base_tree": head_sha, "tree": tree})
     print("tree:", tree_resp["sha"])
-    # commit
-    msg = "feat: add personal website (枫城) — index/about/projects/blog/contact + assets"
+    msg = "chore: drop X/Twitter placeholder on contact page"
     commit = api("POST", "/git/commits", token, {
-        "message": msg,
-        "tree": tree_resp["sha"],
-        "parents": [head_sha]
-    })
+        "message": msg, "tree": tree_resp["sha"], "parents": [head_sha]})
     print("commit:", commit["sha"])
-    # update ref
     api("PATCH", f"/git/refs/heads/{BRANCH}", token, {"sha": commit["sha"]})
     print("PUSHED OK ->", commit["sha"])
     print("browse: https://github.com/" + REPO + "/tree/" + BRANCH + "/" + PREFIX)
