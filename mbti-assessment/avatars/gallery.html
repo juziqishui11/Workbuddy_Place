@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MBTI 16 型卡通风头像总览</title>
+<style>
+:root{
+  --bg:#F5F6FB;--card:#FFF;--ink:#1E2338;--ink-2:#5A6280;--ink-3:#8E96B2;--line:#E7EAF5;
+  --grad:linear-gradient(135deg,#6C5CE7 0%,#4A8CE8 55%,#20C4A8 100%);
+  --c-ei:#FF7A8A;--c-sn:#2FC3A3;--c-tf:#7C6BF0;--c-jp:#FFAE4F;
+  --shadow:0 8px 26px rgba(45,52,96,.08);
+}
+@media (prefers-color-scheme:dark){
+  :root{--bg:#12141F;--card:#1B1E2B;--ink:#EBEEF8;--ink-2:#A6AECA;--ink-3:#78809C;--line:#2A2F42;
+    --grad:linear-gradient(135deg,#9B8CFF 0%,#6FA8F5 55%,#4FE0C4 100%);
+    --c-ei:#FF8F9E;--c-sn:#4FE0C4;--c-tf:#9B8CFF;--c-jp:#FFC178;
+    --shadow:0 8px 26px rgba(0,0,0,.35);}
+}
+*{box-sizing:border-box}
+body{margin:0;padding:36px 16px 60px;background:var(--bg);color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  line-height:1.75;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0;z-index:-1;
+  background:radial-gradient(560px 420px at 12% -6%,rgba(108,92,231,.13),transparent 62%),
+             radial-gradient(520px 400px at 92% 4%,rgba(32,196,168,.12),transparent 60%)}
+.head{max-width:1080px;margin:0 auto 26px;text-align:center}
+.head h1{font-size:28px;font-weight:800;margin:0 0 6px;background:var(--grad);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.head p{margin:0;color:var(--ink-2);font-size:13px}
+.grid{max-width:1080px;margin:0 auto;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+@media (max-width:900px){.grid{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:640px){.grid{grid-template-columns:repeat(2,1fr)}}
+.it{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px 14px 16px;
+  box-shadow:var(--shadow);text-align:center;transition:transform .2s,box-shadow .2s}
+.it:hover{transform:translateY(-3px);box-shadow:0 14px 30px rgba(45,52,96,.14)}
+.it img{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:14px;display:block;background:var(--bg)}
+.it .code{font-size:17px;font-weight:800;letter-spacing:1.5px;margin:11px 0 2px;
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.it .nm{font-size:12.5px;font-weight:700;color:var(--ink-2);margin-bottom:7px}
+.it .mt{font-size:11.5px;color:var(--ink-3);line-height:1.6}
+.pill{display:inline-block;font-size:10.5px;font-weight:800;border-radius:999px;padding:2px 9px;margin-bottom:8px;color:#fff}
+.g-analysts{background:var(--c-tf)}.g-diplomats{background:var(--c-sn)}
+.g-sentinels{background:var(--c-ei)}.g-explorers{background:var(--c-jp)}
+</style>
+</head>
+<body>
+<div class="head">
+  <h1>MBTI 16 型 · 卡通寓意头像</h1>
+  <p>kawaii 贴纸风 · 512×512 · 每型对应一种测评结果</p>
+</div>
+<div class="grid" id="grid"></div>
+<script>
+var ITEMS=[
+ ["INTJ","建筑师","单片眼镜黑猫 · 几何晶体","g-analysts"],
+ ["INTP","逻辑学家","灯泡脑袋小章鱼","g-analysts"],
+ ["ENTJ","指挥官","金冠小狮子 · 旗帜","g-analysts"],
+ ["ENTP","辩论家","火苗头小恶魔","g-analysts"],
+ ["INFJ","提倡者","鹿角发光幼鹿","g-diplomats"],
+ ["INFP","调停者","抱月小兔","g-diplomats"],
+ ["ENFJ","主人公","微笑小太阳","g-diplomats"],
+ ["ENFP","竞选者","彩虹尾小鸟","g-diplomats"],
+ ["ISTJ","物流师","方头机器人 · 清单板","g-sentinels"],
+ ["ISFJ","守卫者","抱暖灯小绵羊","g-sentinels"],
+ ["ESTJ","总经理","领结小企鹅 · 剪贴板","g-sentinels"],
+ ["ESFJ","执政官","捧心形蛋糕小兔","g-sentinels"],
+ ["ISTP","鉴赏家","拿扳手机械狐","g-explorers"],
+ ["ISFP","探险家","调色盘翅膀蝴蝶","g-explorers"],
+ ["ESTP","企业家","墨镜滑板小猎豹","g-explorers"],
+ ["ESFP","表演者","聚光灯下玩球海豹","g-explorers"]
+];
+var h="";
+ITEMS.forEach(function(x){
+  h+='<div class="it"><img src="'+x[0]+'.png" alt="'+x[0]+' '+x[1]+'" loading="lazy">'
+   + '<div class="pill '+x[3]+'">'+x[0][0]+x[0][1]+x[0][3]+'</div>'
+   + '<div class="code">'+x[0]+'</div><div class="nm">'+x[1]+'</div><div class="mt">'+x[2]+'</div></div>';
+});
+document.getElementById("grid").innerHTML=h;
+</script>
+</body>
+</html>

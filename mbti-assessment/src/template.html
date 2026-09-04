@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MBTI 职业性格测评 · 44 题完整版</title>
+<style>
+:root{
+  --font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  --bg:#F5F6FB;
+  --card:#FFFFFF;
+  --soft:#F7F8FD;
+  --sunk:#EDF0F8;
+  --ink:#1E2338;
+  --ink-2:#5A6280;
+  --ink-3:#8E96B2;
+  --line:#E7EAF5;
+  --line-2:#D3D8EC;
+  /* 主色：紫罗兰 → 薄荷（仅用于强调，避免满屏多色） */
+  --a1:#6C5CE7;
+  --a2:#20C4A8;
+  --accent:#6C5CE7;
+  --accent-bg:#EFEDFE;
+  --grad:linear-gradient(135deg,#6C5CE7 0%,#4A8CE8 55%,#20C4A8 100%);
+  --grad-soft:linear-gradient(135deg,#EFEDFE 0%,#E8F1FE 55%,#E4F7F3 100%);
+  /* 四维度强调色（仅作色条 / 进度 / chip，面积小） */
+  --ei:#FF7A8A; --ei-bg:#FFF0F2;
+  --sn:#2FC3A3; --sn-bg:#E8F9F5;
+  --tf:#7C6BF0; --tf-bg:#EFEDFE;
+  --jp:#FFAE4F; --jp-bg:#FFF5E8;
+  --radius:20px;
+  --r-sm:12px;
+  --shadow:0 8px 26px rgba(45,52,96,.07);
+  --shadow-l:0 2px 8px rgba(45,52,96,.05);
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#12141F;
+    --card:#1B1E2B;
+    --soft:#202435;
+    --sunk:#252A3C;
+    --ink:#EBEEF8;
+    --ink-2:#A6AECA;
+    --ink-3:#78809C;
+    --line:#2A2F42;
+    --line-2:#3A4159;
+    --a1:#9B8CFF;
+    --a2:#4FE0C4;
+    --accent:#9B8CFF;
+    --accent-bg:#242A44;
+    --grad:linear-gradient(135deg,#9B8CFF 0%,#6FA8F5 55%,#4FE0C4 100%);
+    --grad-soft:linear-gradient(135deg,#242A44 0%,#1E2A3A 55%,#1B2F2C 100%);
+    --ei:#FF8F9E; --ei-bg:#33222A;
+    --sn:#4FE0C4; --sn-bg:#17302C;
+    --tf:#9B8CFF; --tf-bg:#242A44;
+    --jp:#FFC178; --jp-bg:#332A1A;
+    --shadow:0 8px 26px rgba(0,0,0,.35);
+    --shadow-l:0 2px 8px rgba(0,0,0,.25);
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:var(--font-sans);
+  font-size:14px;line-height:1.75;
+  background:var(--bg);color:var(--ink);
+  -webkit-font-smoothing:antialiased;
+  padding:34px 16px 64px;
+  font-variant-numeric:tabular-nums;
+  position:relative;
+}
+body::before{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(560px 420px at 12% -6%, rgba(108,92,231,.13), transparent 62%),
+    radial-gradient(520px 400px at 92% 4%, rgba(32,196,168,.12), transparent 60%),
+    radial-gradient(600px 460px at 50% 108%, rgba(74,140,232,.10), transparent 62%);
+}
+.page-head{max-width:720px;margin:0 auto 22px;text-align:center}
+.page-head .badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;letter-spacing:.4px;color:var(--accent);background:var(--accent-bg);border-radius:999px;padding:5px 14px;margin-bottom:12px}
+.page-head h1{font-size:30px;font-weight:800;letter-spacing:.5px;margin:0 0 8px;
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.page-head p{font-size:13px;line-height:1.8;color:var(--ink-2);margin:0 auto;max-width:560px}
+.view[hidden]{display:none}
+
+/* ===== 答题卡片 ===== */
+#mbti-card{max-width:720px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+#mbti-card .q-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:18px 24px;border-bottom:1px solid var(--line);background:var(--soft)}
+#mbti-card .q-title{font-size:16px;font-weight:700;margin:0;letter-spacing:.3px}
+#mbti-card .q-count{font-size:13px;font-weight:700;color:var(--accent);border-radius:999px;padding:4px 13px;background:var(--accent-bg)}
+#mbti-card .q-sub{padding:14px 24px 0;font-size:13px;color:var(--ink-2);margin:0}
+#mbti-card .q-track{height:8px;background:var(--sunk);margin:14px 24px 0;border-radius:999px;overflow:hidden}
+#mbti-card .q-track i{display:block;height:100%;width:0;background:var(--grad);border-radius:999px;transition:width .35s cubic-bezier(.4,0,.2,1)}
+#mbti-card .q-list{padding:0 24px}
+#mbti-card .q-sec{margin:22px 0 8px;padding:14px 18px;background:var(--soft);border:1px solid var(--line);border-radius:var(--r-sm);border-left:4px solid var(--accent)}
+#mbti-card .q-sec.s-ei{border-left-color:var(--ei)}
+#mbti-card .q-sec.s-sn{border-left-color:var(--sn)}
+#mbti-card .q-sec.s-tf{border-left-color:var(--tf)}
+#mbti-card .q-sec.s-jp{border-left-color:var(--jp)}
+#mbti-card .q-sec-t{font-size:14px;font-weight:700;margin:0 0 4px;letter-spacing:.3px}
+#mbti-card .q-sec-d{font-size:12px;color:var(--ink-2);line-height:1.75;margin:0}
+#mbti-card .q-item{background:var(--card);border:1px solid var(--line);border-radius:var(--r-sm);padding:14px 16px;margin-top:10px;scroll-margin-top:14px;transition:border-color .18s,box-shadow .18s,transform .18s}
+#mbti-card .q-item:hover{box-shadow:var(--shadow-l)}
+#mbti-card .q-item.miss{border-color:var(--ei);box-shadow:0 0 0 3px var(--ei-bg)}
+#mbti-card .q-top{display:flex;gap:11px;align-items:flex-start}
+#mbti-card .q-num{flex:none;min-width:26px;height:26px;border-radius:9px;background:var(--sunk);color:var(--ink-2);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:1px;padding:0 6px}
+#mbti-card .q-body{flex:1;min-width:0}
+#mbti-card .q-text{font-size:14px;font-weight:600;line-height:1.65;margin:0}
+#mbti-card .q-prompt{font-size:12px;color:var(--ink-3);line-height:1.7;margin:5px 0 11px}
+#mbti-card .q-opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#mbti-card .q-opt{font-family:inherit;font-size:13px;line-height:1.6;text-align:left;padding:11px 14px;border-radius:var(--r-sm);cursor:pointer;background:var(--card);color:var(--ink);border:1.5px solid var(--line);transition:border-color .16s,background .16s,color .16s,box-shadow .16s}
+#mbti-card .q-opt:hover{border-color:var(--line-2);background:var(--soft)}
+#mbti-card .q-opt.on{border-color:var(--accent);background:var(--accent-bg);color:var(--ink);font-weight:600;box-shadow:0 3px 10px rgba(108,92,231,.16)}
+#mbti-card .q-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:18px;padding:15px 24px;border-top:1px solid var(--line);background:var(--soft);flex-wrap:wrap}
+#mbti-card .q-tip{font-size:13px;color:var(--ei);font-weight:600;display:none}
+#mbti-card .q-submit{font-family:inherit;font-size:14px;font-weight:700;padding:11px 30px;border-radius:999px;cursor:pointer;color:#fff;background:var(--grad);border:0;box-shadow:0 6px 18px rgba(108,92,231,.28);transition:transform .16s,box-shadow .16s}
+#mbti-card .q-submit:hover{transform:translateY(-1px);box-shadow:0 9px 22px rgba(108,92,231,.34)}
+@media (max-width:560px){#mbti-card .q-opts{grid-template-columns:1fr}}
+
+/* ===== 测评报告 ===== */
+#mbti-rpt{max-width:720px;margin:0 auto;font-size:13px;line-height:1.75}
+#mbti-rpt .r-hdr{display:flex;align-items:center;gap:20px;padding:22px 24px;background:var(--grad-soft);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+#mbti-rpt .r-avatar{width:96px;height:96px;flex:none;border-radius:26px;overflow:hidden;background:var(--card);box-shadow:0 6px 18px rgba(45,52,96,.14);border:3px solid var(--card)}
+#mbti-rpt .r-avatar img{width:100%;height:100%;object-fit:cover;display:block}
+#mbti-rpt .r-hdr-t{min-width:0}
+#mbti-rpt .r-type{font-size:34px;font-weight:800;letter-spacing:2.5px;line-height:1.2;display:block;
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+#mbti-rpt .r-nm{font-size:14px;font-weight:600;color:var(--ink-2)}
+#mbti-rpt .r-meta{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:14px 0 4px}
+#mbti-rpt .r-mc{padding:15px 16px;text-align:center;background:var(--card);border:1px solid var(--line);border-radius:var(--r-sm);box-shadow:var(--shadow-l)}
+#mbti-rpt .r-mc b{display:block;font-size:23px;font-weight:800;line-height:1.35;
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+#mbti-rpt .r-mc span{font-size:12px;color:var(--ink-3)}
+#mbti-rpt .r-bar8{display:grid;grid-template-columns:repeat(8,1fr);gap:8px;margin:14px 0 4px}
+#mbti-rpt .r-bar8 div{padding:10px 0 8px;text-align:center;font-size:15px;font-weight:800;line-height:1.35;border-radius:var(--r-sm);border:1px solid var(--line);color:var(--ink-3);background:var(--card)}
+#mbti-rpt .r-bar8 .v{display:block;font-size:11px;font-weight:600;color:var(--ink-3)}
+#mbti-rpt .r-bar8 div.win{color:#fff;border-color:transparent;box-shadow:0 4px 12px rgba(45,52,96,.14)}
+#mbti-rpt .r-bar8 div.win .v{color:rgba(255,255,255,.85)}
+#mbti-rpt .r-bar8 div.win.t-ei{background:linear-gradient(135deg,#FF9AA6,#FF7A8A)}
+#mbti-rpt .r-bar8 div.win.t-sn{background:linear-gradient(135deg,#5AD8BE,#2FC3A3)}
+#mbti-rpt .r-bar8 div.win.t-tf{background:linear-gradient(135deg,#9B8CFF,#7C6BF0)}
+#mbti-rpt .r-bar8 div.win.t-jp{background:linear-gradient(135deg,#FFC178,#FFAE4F)}
+#mbti-rpt .r-cap{font-size:11px;color:var(--ink-3);text-align:center;margin-bottom:2px}
+#mbti-rpt .r-dim{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:var(--r-sm);padding:16px 18px;margin-top:12px;box-shadow:var(--shadow-l)}
+#mbti-rpt .r-dim.t-ei{border-left-color:var(--ei)}
+#mbti-rpt .r-dim.t-sn{border-left-color:var(--sn)}
+#mbti-rpt .r-dim.t-tf{border-left-color:var(--tf)}
+#mbti-rpt .r-dim.t-jp{border-left-color:var(--jp)}
+#mbti-rpt .r-dimh{display:flex;justify-content:space-between;align-items:center;margin-bottom:13px;gap:8px;flex-wrap:wrap}
+#mbti-rpt .r-dn{font-size:14px;font-weight:700;letter-spacing:.3px}
+#mbti-rpt .r-win{font-size:12px;font-weight:700;border-radius:999px;padding:4px 13px;color:var(--accent);background:var(--accent-bg)}
+#mbti-rpt .r-dim.t-ei .r-win{color:var(--ei);background:var(--ei-bg)}
+#mbti-rpt .r-dim.t-sn .r-win{color:var(--sn);background:var(--sn-bg)}
+#mbti-rpt .r-dim.t-tf .r-win{color:var(--tf);background:var(--tf-bg)}
+#mbti-rpt .r-dim.t-jp .r-win{color:var(--jp);background:var(--jp-bg)}
+#mbti-rpt .r-pair{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+#mbti-rpt .r-side .r-nm{font-size:13px;font-weight:700;display:flex;justify-content:space-between;margin-bottom:6px;gap:8px}
+#mbti-rpt .r-side .r-pct{color:var(--ink-3);font-weight:600}
+#mbti-rpt .r-track{height:8px;border-radius:999px;background:var(--sunk);overflow:hidden}
+#mbti-rpt .r-track i{display:block;height:100%;border-radius:999px;background:var(--line-2);transition:width .5s cubic-bezier(.4,0,.2,1)}
+#mbti-rpt .r-side.win .r-track i{background:var(--grad)}
+#mbti-rpt .r-dim.t-ei .r-side.win .r-track i{background:linear-gradient(135deg,#FF9AA6,#FF7A8A)}
+#mbti-rpt .r-dim.t-sn .r-side.win .r-track i{background:linear-gradient(135deg,#5AD8BE,#2FC3A3)}
+#mbti-rpt .r-dim.t-tf .r-side.win .r-track i{background:linear-gradient(135deg,#9B8CFF,#7C6BF0)}
+#mbti-rpt .r-dim.t-jp .r-side.win .r-track i{background:linear-gradient(135deg,#FFC178,#FFAE4F)}
+#mbti-rpt .r-side.win .r-nm{color:var(--accent)}
+#mbti-rpt .r-dim.t-ei .r-side.win .r-nm{color:var(--ei)}
+#mbti-rpt .r-dim.t-sn .r-side.win .r-nm{color:var(--sn)}
+#mbti-rpt .r-dim.t-tf .r-side.win .r-nm{color:var(--tf)}
+#mbti-rpt .r-dim.t-jp .r-side.win .r-nm{color:var(--jp)}
+#mbti-rpt .r-side.win .r-pct{font-weight:700}
+#mbti-rpt .r-feat{font-size:12px;color:var(--ink-2);margin-top:7px;line-height:1.7}
+#mbti-rpt .r-side.win .r-feat{color:var(--ink)}
+#mbti-rpt details{margin-top:14px;border-top:1px dashed var(--line-2);padding-top:11px}
+#mbti-rpt summary{cursor:pointer;font-size:13px;font-weight:700;color:var(--accent);list-style:none;display:flex;align-items:center;gap:6px}
+#mbti-rpt summary::-webkit-details-marker{display:none}
+#mbti-rpt summary::before{content:"＋";font-weight:800}
+#mbti-rpt details[open] summary::before{content:"－"}
+#mbti-rpt .r-txt{font-size:13px;line-height:1.85;margin:0;color:var(--ink-2)}
+#mbti-rpt .r-sec{font-size:12px;font-weight:800;margin:15px 0 7px;color:var(--accent);letter-spacing:.6px}
+#mbti-rpt .r-dim.t-ei .r-sec{color:var(--ei)}
+#mbti-rpt .r-dim.t-sn .r-sec{color:var(--sn)}
+#mbti-rpt .r-dim.t-tf .r-sec{color:var(--tf)}
+#mbti-rpt .r-dim.t-jp .r-sec{color:var(--jp)}
+#mbti-rpt .r-duo{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+#mbti-rpt .r-sc{border:1px solid var(--line);border-radius:var(--r-sm);padding:12px 14px;background:var(--soft)}
+#mbti-rpt .r-sc .h{font-size:13px;font-weight:700;margin-bottom:3px}
+#mbti-rpt .r-sc .f{font-size:12px;color:var(--ink-3);margin-bottom:6px;font-weight:600}
+#mbti-rpt .r-sc p{font-size:12px;line-height:1.85;margin:0 0 6px;color:var(--ink-2)}
+#mbti-rpt .r-feats{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+#mbti-rpt .r-feat2{border:1px solid var(--line);border-radius:var(--r-sm);padding:14px 16px;background:var(--soft)}
+#mbti-rpt .r-feat2 .h{font-size:13px;font-weight:800;margin-bottom:7px}
+#mbti-rpt .r-feat2 p{font-size:12.5px;line-height:1.85;margin:0;color:var(--ink-2)}
+#mbti-rpt .r-feat2.adv{border-left:4px solid var(--sn);background:var(--sn-bg)}
+#mbti-rpt .r-feat2.adv .h{color:var(--sn)}
+#mbti-rpt .r-feat2.dis{border-left:4px solid var(--jp);background:var(--jp-bg)}
+#mbti-rpt .r-feat2.dis .h{color:var(--jp)}
+#mbti-rpt .r-tags{display:flex;flex-wrap:wrap;gap:9px;margin-top:9px}
+#mbti-rpt .r-tag{font-size:12.5px;border-radius:999px;padding:5px 14px;font-weight:600;color:var(--accent);background:var(--accent-bg)}
+#mbti-rpt .r-note{font-size:12px;color:var(--ink-3);margin-top:15px;line-height:1.85;background:var(--soft);border:1px dashed var(--line-2);border-radius:var(--r-sm);padding:12px 16px}
+@media (max-width:560px){#mbti-rpt .r-pair,#mbti-rpt .r-duo,#mbti-rpt .r-feats,#mbti-rpt .r-meta{grid-template-columns:1fr}
+  #mbti-rpt .r-hdr{flex-direction:column;text-align:center}#mbti-rpt .r-bar8{gap:5px}}
+
+/* ===== 报告页操作区 ===== */
+.r-actions{max-width:720px;margin:16px auto 0;display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.r-actions button{font-family:inherit;font-size:13px;font-weight:700;padding:10px 24px;border-radius:999px;cursor:pointer;border:1.5px solid var(--line);background:var(--card);color:var(--ink);transition:border-color .16s,background .16s,transform .16s}
+.r-actions button:hover{border-color:var(--line-2);background:var(--soft);transform:translateY(-1px)}
+.r-actions button.primary{color:#fff;background:var(--grad);border-color:transparent;box-shadow:0 6px 18px rgba(108,92,231,.26)}
+.page-foot{max-width:720px;margin:26px auto 0;font-size:12px;line-height:1.85;color:var(--ink-3);text-align:center}
+</style>
+</head>
+<body>
+
+<div class="page-head">
+  <span class="badge">✦ 44 题 · 16 型人格 · 完整报告</span>
+  <h1>MBTI 职业性格测评</h1>
+  <p>每题二选一（A / B）。8 个维度字母各出现 11 次，四段对称设计。全部作答后提交，生成完整人格报告。</p>
+</div>
+
+<div class="view" id="quizView">
+  <div id="mbti-card">
+    <div class="q-head"><h2 class="q-title">职业性格测评问卷</h2><span class="q-count" id="mbtiCount">0 / 44</span></div>
+    <p class="q-sub">请根据真实感受选择「A」或「B」，本测评无对错之分</p>
+    <div class="q-track"><i id="mbtiBar"></i></div>
+    <div class="q-list" id="mbtiList"></div>
+    <div class="q-foot">
+      <span class="q-tip" id="mbtiTip"></span>
+      <button type="button" class="q-submit" id="mbtiSubmit">提交并生成报告</button>
+    </div>
+  </div>
+</div>
+
+<div class="view" id="reportView" hidden>
+  <div id="mbti-rpt"></div>
+  <div class="r-actions">
+    <button type="button" class="primary" id="btnRetest">重新测评</button>
+    <button type="button" id="btnToggle">查看题目</button>
+  </div>
+</div>
+
+<div class="page-foot">
+  数据与算法源自 career-personality skill v2.1.0（题库 44 题 / 16 型人格档案 / 维度对详情），评分逻辑为其 scripts/calculate_mbti.py 的 JS 等价移植，结果与该脚本一致。
+</div>
+
+<script>
+/*__ENGINE__*/
+</script>
+<script>
+var MBTI_DATA = /*__DATA__*/;
+</script>
+<script>
+(function(){
+  "use strict";
+  var QUESTIONS = MBTI_DATA.questions;
+  var SECTIONS = [
+    {name:"第一部分 外倾-内倾（E/I）",cls:"s-ei",desc:"下面列举了若干情境，请根据你通常的思考和行为方式选择最接近的答案。选 A 即倾向外倾（E），选 B 即倾向内倾（I）。请按顺序回答本部分全部 11 题。",ids:[1,2,3,4,5,6,7,8,9,10,41]},
+    {name:"第二部分 实感-直觉（S/N）",cls:"s-sn",desc:"下面列举了若干情境，请根据你通常接收信息的方式选择最接近的答案。选 A 即倾向实感（S），选 B 即倾向直觉（N）。请按顺序回答本部分全部 11 题。",ids:[11,12,13,14,15,16,17,18,19,20,42]},
+    {name:"第三部分 思维-情感（T/F）",cls:"s-tf",desc:"下面列举了若干情境，请根据你通常做决策的方式选择最接近的答案。选 A 即倾向思维（T），选 B 即倾向情感（F）。请按顺序回答本部分全部 11 题。",ids:[21,22,23,24,25,26,27,28,29,30,43]},
+    {name:"第四部分 判断-知觉（J/P）",cls:"s-jp",desc:"下面列举了若干情境，请根据你通常的生活方式选择最接近的答案。选 A 即倾向判断（J），选 B 即倾向知觉（P）。请按顺序回答本部分全部 11 题。",ids:[31,32,33,34,35,36,37,38,39,40,44]}
+  ];
+
+  var esc = function(s){
+    return String(s === null || s === undefined ? "" : s)
+      .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  };
+  var escP = function(s){ return esc(s).replace(/\n/g,"<br>"); };
+
+  var QMAP = {}, i;
+  for (i = 0; i < QUESTIONS.length; i++) QMAP[QUESTIONS[i].id] = QUESTIONS[i];
+
+  var ANSWERS = {};
+  var list = document.getElementById("mbtiList");
+  var count = document.getElementById("mbtiCount");
+  var bar = document.getElementById("mbtiBar");
+  var tip = document.getElementById("mbtiTip");
+  var submit = document.getElementById("mbtiSubmit");
+  var quizView = document.getElementById("quizView");
+  var reportView = document.getElementById("reportView");
+
+  var html = "", pos = 0;
+  SECTIONS.forEach(function (sec) {
+    html += '<div class="q-sec ' + esc(sec.cls) + '"><p class="q-sec-t">' + esc(sec.name) + '</p><p class="q-sec-d">' + esc(sec.desc) + '</p></div>';
+    sec.ids.forEach(function (id) {
+      pos++;
+      var q = QMAP[id], opts = "", k;
+      for (k = 0; k < q.options.length; k++) {
+        var o = q.options[k];
+        opts += '<button type="button" class="q-opt" data-pos="' + pos + '" data-v="' + esc(o.option) + '">' + esc(o.option) + '. ' + esc(o.content) + '</button>';
+      }
+      html += '<div class="q-item" id="q-' + pos + '"><div class="q-top"><span class="q-num">' + pos + '</span>'
+        + '<div class="q-body"><p class="q-text">' + esc(q.question) + '</p>'
+        + '<p class="q-prompt">' + esc(q.prompt) + '</p>'
+        + '<div class="q-opts">' + opts + '</div></div></div></div>';
+    });
+  });
+  list.innerHTML = html;
+
+  var optBtns = list.querySelectorAll(".q-opt");
+  for (i = 0; i < optBtns.length; i++) {
+    optBtns[i].onclick = function () {
+      var p = this.getAttribute("data-pos");
+      var sib = this.parentNode.querySelectorAll(".q-opt"), j;
+      for (j = 0; j < sib.length; j++) sib[j].classList.remove("on");
+      this.classList.add("on");
+      ANSWERS[p] = this.getAttribute("data-v");
+      var done = 0, n;
+      for (n = 1; n <= 44; n++) if (ANSWERS[n]) done++;
+      count.textContent = done + " / 44";
+      bar.style.width = Math.round(done / 44 * 100) + "%";
+      tip.style.display = "none";
+    };
+  }
+
+  submit.onclick = function () {
+    var n, miss = null, missCount = 0, sorted = {};
+    for (n = 1; n <= 44; n++) {
+      if (!ANSWERS[n]) { if (miss === null) miss = n; missCount++; }
+    }
+    if (missCount > 0) {
+      tip.textContent = "还有 " + missCount + " 题未作答，请先完成第 " + miss + " 题";
+      tip.style.display = "block";
+      var el = document.getElementById("q-" + miss);
+      if (el) {
+        el.classList.add("miss");
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+        setTimeout(function () { el.classList.remove("miss"); }, 1600);
+      }
+      return;
+    }
+    for (n = 1; n <= 44; n++) sorted[n] = ANSWERS[n];
+
+    var real, report;
+    try {
+      real = MBTIEngine.remapDisplayAnswers(sorted);
+    } catch (e) {
+      tip.textContent = "答案校验失败：" + e.message;
+      tip.style.display = "block";
+      return;
+    }
+    report = MBTIEngine.calculateScores(real, MBTI_DATA.questions, MBTI_DATA.profiles, MBTI_DATA.dimensions);
+    renderReport(report);
+    quizView.hidden = true;
+    reportView.hidden = false;
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  function renderReport(R) {
+    if (!R || !R.dominant_type || !R.role_detail) return;
+    var PAIR_CLS = { EI: "t-ei", SN: "t-sn", TF: "t-tf", JP: "t-jp" };
+    var PAIR_OF = { E: "EI", I: "EI", S: "SN", "N": "SN", T: "TF", F: "TF", J: "JP", P: "JP" };
+    var h = "";
+
+    h += '<div class="r-hdr">'
+      + '<div class="r-avatar"><img src="avatars/' + esc(R.dominant_type) + '.png" alt="' + esc(R.dominant_type) + ' ' + esc(R.role_detail.name) + '" onerror="this.parentNode.style.display=\'none\'"></div>'
+      + '<div class="r-hdr-t"><span class="r-type">' + esc(R.dominant_type) + '</span>'
+      + '<span class="r-nm">' + esc(R.role_detail.name) + ' · ' + esc(R.role_detail.proportion) + '% 的人群属于此类型</span>'
+      + '</div></div>';
+
+    var wins = R.dimension_pairs.map(function (p) { return p.result; }).join(" · ");
+    h += '<div class="r-meta">';
+    h += '<div class="r-mc"><b>' + R.display_score + '</b><span>倾向强度</span></div>';
+    h += '<div class="r-mc"><b>' + esc(R.role_detail.proportion) + '%</b><span>人群占比</span></div>';
+    h += '<div class="r-mc"><b>' + esc(wins) + '</b><span>胜出维度</span></div>';
+    h += '</div>';
+
+    var letters = ["E", "I", "S", "N", "T", "F", "J", "P"], k;
+    h += '<div class="r-bar8">';
+    for (k = 0; k < 8; k++) {
+      var L = letters[k], pair = PAIR_OF[L], cls = "", dp = null;
+      for (i = 0; i < R.dimension_pairs.length; i++) if (R.dimension_pairs[i].pair === pair) dp = R.dimension_pairs[i];
+      if (dp && dp.result === L) cls = "win " + PAIR_CLS[pair];
+      h += '<div class="' + cls + '">' + L + '<span class="v">' + R.dimension_counts[L] + '</span></div>';
+    }
+    h += '</div><div class="r-cap">胜出维度标色 · 数值=该端答题数</div>';
+
+    R.dimension_pairs.forEach(function (p) {
+      var cls = PAIR_CLS[p.pair];
+      h += '<div class="r-dim ' + cls + '">';
+      h += '<div class="r-dimh"><span class="r-dn">' + esc(p.dimension_name) + '</span>'
+        + '<span class="r-win">胜出：' + esc(p.result) + ' ' + esc(p.result_name) + '</span></div>';
+      h += '<div class="r-pair">';
+      h += side(p, p.option1, p.name1, p.score1, p.percent1, p.option1_detail);
+      h += side(p, p.option2, p.name2, p.score2, p.percent2, p.option2_detail);
+      h += '</div>';
+      h += '<details><summary>维度解读</summary>';
+      h += '<p class="r-sec">胜出端特质</p><p class="r-txt">' + escP(p.result_traits) + '</p>';
+      h += '<p class="r-sec">维度解读</p><p class="r-txt">' + escP(p.dimension_description) + '</p>'
+        + '<p class="r-txt">' + escP(p.dimension_prompt) + '</p>';
+      h += '<p class="r-sec">两端详情对比</p><div class="r-duo">';
+      h += duo(p.option1_detail);
+      h += duo(p.option2_detail);
+      h += '</div></details></div>';
+    });
+
+    h += '<p class="r-sec">人格特点</p><div class="r-dim"><div class="r-feats">';
+    h += '<div class="r-feat2 adv"><div class="h">优势</div><p>' + escP(R.role_detail.advantages) + '</p></div>';
+    h += '<div class="r-feat2 dis"><div class="h">潜在短板</div><p>' + escP(R.role_detail.disadvantages) + '</p></div>';
+    h += '</div></div>';
+
+    h += '<p class="r-sec">适配职业方向</p><div class="r-dim"><p class="r-txt">' + escP(R.analysis.summary) + '</p><div class="r-tags">';
+    R.analysis.recommendations.forEach(function (t) { h += '<span class="r-tag">' + esc(t) + '</span>'; });
+    h += '</div></div>';
+
+    h += '<div class="r-note">本报告基于 MBTI 职业性格测评（44 题）计算结果生成，供职业规划参考，不构成绝对结论。</div>';
+    document.getElementById("mbti-rpt").innerHTML = h;
+
+    function side(p, opt, name, score, percent, detail) {
+      var s = '<div class="r-side ' + (p.result === opt ? "win" : "") + '">';
+      s += '<div class="r-nm">' + esc(opt) + ' ' + esc(name)
+        + '<span class="r-pct">' + score + ' 题 · ' + percent + '%</span></div>';
+      s += '<div class="r-track"><i style="width:' + percent + '%"></i></div>';
+      s += '<div class="r-feat">' + esc(detail.feature) + '</div>';
+      return s + '</div>';
+    }
+    function duo(d) {
+      return '<div class="r-sc"><div class="h">' + esc(d.name) + '</div><div class="f">' + esc(d.feature) + '</div>'
+        + '<p>' + escP(d.traits) + '</p><p>' + escP(d.characteristics) + '</p></div>';
+    }
+  }
+
+  document.getElementById("btnRetest").onclick = function () {
+    ANSWERS = {};
+    var all = list.querySelectorAll(".q-opt"), j;
+    for (j = 0; j < all.length; j++) all[j].classList.remove("on");
+    count.textContent = "0 / 44";
+    bar.style.width = "0%";
+    tip.style.display = "none";
+    document.getElementById("mbti-rpt").innerHTML = "";
+    reportView.hidden = true;
+    quizView.hidden = false;
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+  document.getElementById("btnToggle").onclick = function () {
+    reportView.hidden = true;
+    quizView.hidden = false;
+  };
+})();
+</script>
+</body>
+</html>

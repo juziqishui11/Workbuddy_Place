@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MBTI 职业性格测评 · 44 题完整版</title>
+<style>
+:root{
+  --font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  --bg:#F5F6FB;
+  --card:#FFFFFF;
+  --soft:#F7F8FD;
+  --sunk:#EDF0F8;
+  --ink:#1E2338;
+  --ink-2:#5A6280;
+  --ink-3:#8E96B2;
+  --line:#E7EAF5;
+  --line-2:#D3D8EC;
+  /* 主色：紫罗兰 → 薄荷（仅用于强调，避免满屏多色） */
+  --a1:#6C5CE7;
+  --a2:#20C4A8;
+  --accent:#6C5CE7;
+  --accent-bg:#EFEDFE;
+  --grad:linear-gradient(135deg,#6C5CE7 0%,#4A8CE8 55%,#20C4A8 100%);
+  --grad-soft:linear-gradient(135deg,#EFEDFE 0%,#E8F1FE 55%,#E4F7F3 100%);
+  /* 四维度强调色（仅作色条 / 进度 / chip，面积小） */
+  --ei:#FF7A8A; --ei-bg:#FFF0F2;
+  --sn:#2FC3A3; --sn-bg:#E8F9F5;
+  --tf:#7C6BF0; --tf-bg:#EFEDFE;
+  --jp:#FFAE4F; --jp-bg:#FFF5E8;
+  --radius:20px;
+  --r-sm:12px;
+  --shadow:0 8px 26px rgba(45,52,96,.07);
+  --shadow-l:0 2px 8px rgba(45,52,96,.05);
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#12141F;
+    --card:#1B1E2B;
+    --soft:#202435;
+    --sunk:#252A3C;
+    --ink:#EBEEF8;
+    --ink-2:#A6AECA;
+    --ink-3:#78809C;
+    --line:#2A2F42;
+    --line-2:#3A4159;
+    --a1:#9B8CFF;
+    --a2:#4FE0C4;
+    --accent:#9B8CFF;
+    --accent-bg:#242A44;
+    --grad:linear-gradient(135deg,#9B8CFF 0%,#6FA8F5 55%,#4FE0C4 100%);
+    --grad-soft:linear-gradient(135deg,#242A44 0%,#1E2A3A 55%,#1B2F2C 100%);
+    --ei:#FF8F9E; --ei-bg:#33222A;
+    --sn:#4FE0C4; --sn-bg:#17302C;
+    --tf:#9B8CFF; --tf-bg:#242A44;
+    --jp:#FFC178; --jp-bg:#332A1A;
+    --shadow:0 8px 26px rgba(0,0,0,.35);
+    --shadow-l:0 2px 8px rgba(0,0,0,.25);
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:var(--font-sans);
+  font-size:14px;line-height:1.75;
+  background:var(--bg);color:var(--ink);
+  -webkit-font-smoothing:antialiased;
+  padding:34px 16px 64px;
+  font-variant-numeric:tabular-nums;
+  position:relative;
+}
+body::before{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(560px 420px at 12% -6%, rgba(108,92,231,.13), transparent 62%),
+    radial-gradient(520px 400px at 92% 4%, rgba(32,196,168,.12), transparent 60%),
+    radial-gradient(600px 460px at 50% 108%, rgba(74,140,232,.10), transparent 62%);
+}
+.page-head{max-width:720px;margin:0 auto 22px;text-align:center}
+.page-head .badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;letter-spacing:.4px;color:var(--accent);background:var(--accent-bg);border-radius:999px;padding:5px 14px;margin-bottom:12px}
+.page-head h1{font-size:30px;font-weight:800;letter-spacing:.5px;margin:0 0 8px;
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.page-head p{font-size:13px;line-height:1.8;color:var(--ink-2);margin:0 auto;max-width:560px}
+.view[hidden]{display:none}
+
+/* ===== 答题卡片 ===== */
+#mbti-card{max-width:720px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+#mbti-card .q-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:18px 24px;border-bottom:1px solid var(--line);background:var(--soft)}
+#mbti-card .q-title{font-size:16px;font-weight:700;margin:0;letter-spacing:.3px}
+#mbti-card .q-count{font-size:13px;font-weight:700;color:var(--accent);border-radius:999px;padding:4px 13px;background:var(--accent-bg)}
+#mbti-card .q-sub{padding:14px 24px 0;font-size:13px;color:var(--ink-2);margin:0}
+#mbti-card .q-track{height:8px;background:var(--sunk);margin:14px 24px 0;border-radius:999px;overflow:hidden}
+#mbti-card .q-track i{display:block;height:100%;width:0;background:var(--grad);border-radius:999px;transition:width .35s cubic-bezier(.4,0,.2,1)}
+#mbti-card .q-list{padding:0 24px}
+#mbti-card .q-sec{margin:22px 0 8px;padding:14px 18px;background:var(--soft);border:1px solid var(--line);border-radius:var(--r-sm);border-left:4px solid var(--accent)}
+#mbti-card .q-sec.s-ei{border-left-color:var(--ei)}
+#mbti-card .q-sec.s-sn{border-left-color:var(--sn)}
+#mbti-card .q-sec.s-tf{border-left-color:var(--tf)}
+#mbti-card .q-sec.s-jp{border-left-color:var(--jp)}
+#mbti-card .q-sec-t{font-size:14px;font-weight:700;margin:0 0 4px;letter-spacing:.3px}
+#mbti-card .q-sec-d{font-size:12px;color:var(--ink-2);line-height:1.75;margin:0}
+#mbti-card .q-item{background:var(--card);border:1px solid var(--line);border-radius:var(--r-sm);padding:14px 16px;margin-top:10px;scroll-margin-top:14px;transition:border-color .18s,box-shadow .18s,transform .18s}
+#mbti-card .q-item:hover{box-shadow:var(--shadow-l)}
+#mbti-card .q-item.miss{border-color:var(--ei);box-shadow:0 0 0 3px var(--ei-bg)}
+#mbti-card .q-top{display:flex;gap:11px;align-items:flex-start}
+#mbti-card .q-num{flex:none;min-width:26px;height:26px;border-radius:9px;background:var(--sunk);color:var(--ink-2);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:1px;padding:0 6px}
+#mbti-card .q-body{flex:1;min-width:0}
+#mbti-card .q-text{font-size:14px;font-weight:600;line-height:1.65;margin:0}
+#mbti-card .q-prompt{font-size:12px;color:var(--ink-3);line-height:1.7;margin:5px 0 11px}
+#mbti-card .q-opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#mbti-card .q-opt{font-family:inherit;font-size:13px;line-height:1.6;text-align:left;padding:11px 14px;border-radius:var(--r-sm);cursor:pointer;background:var(--card);color:var(--ink);border:1.5px solid var(--line);transition:border-color .16s,background .16s,color .16s,box-shadow .16s}
+#mbti-card .q-opt:hover{border-color:var(--line-2);background:var(--soft)}
+#mbti-card .q-opt.on{border-color:var(--accent);background:var(--accent-bg);color:var(--ink);font-weight:600;box-shadow:0 3px 10px rgba(108,92,231,.16)}
+#mbti-card .q-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:18px;padding:15px 24px;border-top:1px solid var(--line);background:var(--soft);flex-wrap:wrap}
+#mbti-card .q-tip{font-size:13px;color:var(--ei);font-weight:600;display:none}
+#mbti-card .q-submit{font-family:inherit;font-size:14px;font-weight:700;padding:11px 30px;border-radius:999px;cursor:pointer;color:#fff;background:var(--grad);border:0;box-shadow:0 6px 18px rgba(108,92,231,.28);transition:transform .16s,box-shadow .16s}
+#mbti-card .q-submit:hover{transform:translateY(-1px);box-shadow:0 9px 22px rgba(108,92,231,.34)}
+@media (max-width:560px){#mbti-card .q-opts{grid-template-columns:1fr}}
+
+/* ===== 测评报告 ===== */
+#mbti-rpt{max-width:720px;margin:0 auto;font-size:13px;line-height:1.75}
+#mbti-rpt .r-hdr{display:flex;align-items:center;gap:20px;padding:22px 24px;background:var(--grad-soft);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+#mbti-rpt .r-avatar{width:96px;height:96px;flex:none;border-radius:26px;overflow:hidden;background:var(--card);box-shadow:0 6px 18px rgba(45,52,96,.14);border:3px solid var(--card)}
+#mbti-rpt .r-avatar img{width:100%;height:100%;object-fit:cover;display:block}
+#mbti-rpt .r-hdr-t{min-width:0}
+#mbti-rpt .r-type{font-size:34px;font-weight:800;letter-spacing:2.5px;line-height:1.2;display:block;
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+#mbti-rpt .r-nm{font-size:14px;font-weight:600;color:var(--ink-2)}
+#mbti-rpt .r-meta{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:14px 0 4px}
+#mbti-rpt .r-mc{padding:15px 16px;text-align:center;background:var(--card);border:1px solid var(--line);border-radius:var(--r-sm);box-shadow:var(--shadow-l)}
+#mbti-rpt .r-mc b{display:block;font-size:23px;font-weight:800;line-height:1.35;
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+#mbti-rpt .r-mc span{font-size:12px;color:var(--ink-3)}
+#mbti-rpt .r-bar8{display:grid;grid-template-columns:repeat(8,1fr);gap:8px;margin:14px 0 4px}
+#mbti-rpt .r-bar8 div{padding:10px 0 8px;text-align:center;font-size:15px;font-weight:800;line-height:1.35;border-radius:var(--r-sm);border:1px solid var(--line);color:var(--ink-3);background:var(--card)}
+#mbti-rpt .r-bar8 .v{display:block;font-size:11px;font-weight:600;color:var(--ink-3)}
+#mbti-rpt .r-bar8 div.win{color:#fff;border-color:transparent;box-shadow:0 4px 12px rgba(45,52,96,.14)}
+#mbti-rpt .r-bar8 div.win .v{color:rgba(255,255,255,.85)}
+#mbti-rpt .r-bar8 div.win.t-ei{background:linear-gradient(135deg,#FF9AA6,#FF7A8A)}
+#mbti-rpt .r-bar8 div.win.t-sn{background:linear-gradient(135deg,#5AD8BE,#2FC3A3)}
+#mbti-rpt .r-bar8 div.win.t-tf{background:linear-gradient(135deg,#9B8CFF,#7C6BF0)}
+#mbti-rpt .r-bar8 div.win.t-jp{background:linear-gradient(135deg,#FFC178,#FFAE4F)}
+#mbti-rpt .r-cap{font-size:11px;color:var(--ink-3);text-align:center;margin-bottom:2px}
+#mbti-rpt .r-dim{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:var(--r-sm);padding:16px 18px;margin-top:12px;box-shadow:var(--shadow-l)}
+#mbti-rpt .r-dim.t-ei{border-left-color:var(--ei)}
+#mbti-rpt .r-dim.t-sn{border-left-color:var(--sn)}
+#mbti-rpt .r-dim.t-tf{border-left-color:var(--tf)}
+#mbti-rpt .r-dim.t-jp{border-left-color:var(--jp)}
+#mbti-rpt .r-dimh{display:flex;justify-content:space-between;align-items:center;margin-bottom:13px;gap:8px;flex-wrap:wrap}
+#mbti-rpt .r-dn{font-size:14px;font-weight:700;letter-spacing:.3px}
+#mbti-rpt .r-win{font-size:12px;font-weight:700;border-radius:999px;padding:4px 13px;color:var(--accent);background:var(--accent-bg)}
+#mbti-rpt .r-dim.t-ei .r-win{color:var(--ei);background:var(--ei-bg)}
+#mbti-rpt .r-dim.t-sn .r-win{color:var(--sn);background:var(--sn-bg)}
+#mbti-rpt .r-dim.t-tf .r-win{color:var(--tf);background:var(--tf-bg)}
+#mbti-rpt .r-dim.t-jp .r-win{color:var(--jp);background:var(--jp-bg)}
+#mbti-rpt .r-pair{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+#mbti-rpt .r-side .r-nm{font-size:13px;font-weight:700;display:flex;justify-content:space-between;margin-bottom:6px;gap:8px}
+#mbti-rpt .r-side .r-pct{color:var(--ink-3);font-weight:600}
+#mbti-rpt .r-track{height:8px;border-radius:999px;background:var(--sunk);overflow:hidden}
+#mbti-rpt .r-track i{display:block;height:100%;border-radius:999px;background:var(--line-2);transition:width .5s cubic-bezier(.4,0,.2,1)}
+#mbti-rpt .r-side.win .r-track i{background:var(--grad)}
+#mbti-rpt .r-dim.t-ei .r-side.win .r-track i{background:linear-gradient(135deg,#FF9AA6,#FF7A8A)}
+#mbti-rpt .r-dim.t-sn .r-side.win .r-track i{background:linear-gradient(135deg,#5AD8BE,#2FC3A3)}
+#mbti-rpt .r-dim.t-tf .r-side.win .r-track i{background:linear-gradient(135deg,#9B8CFF,#7C6BF0)}
+#mbti-rpt .r-dim.t-jp .r-side.win .r-track i{background:linear-gradient(135deg,#FFC178,#FFAE4F)}
+#mbti-rpt .r-side.win .r-nm{color:var(--accent)}
+#mbti-rpt .r-dim.t-ei .r-side.win .r-nm{color:var(--ei)}
+#mbti-rpt .r-dim.t-sn .r-side.win .r-nm{color:var(--sn)}
+#mbti-rpt .r-dim.t-tf .r-side.win .r-nm{color:var(--tf)}
+#mbti-rpt .r-dim.t-jp .r-side.win .r-nm{color:var(--jp)}
+#mbti-rpt .r-side.win .r-pct{font-weight:700}
+#mbti-rpt .r-feat{font-size:12px;color:var(--ink-2);margin-top:7px;line-height:1.7}
+#mbti-rpt .r-side.win .r-feat{color:var(--ink)}
+#mbti-rpt details{margin-top:14px;border-top:1px dashed var(--line-2);padding-top:11px}
+#mbti-rpt summary{cursor:pointer;font-size:13px;font-weight:700;color:var(--accent);list-style:none;display:flex;align-items:center;gap:6px}
+#mbti-rpt summary::-webkit-details-marker{display:none}
+#mbti-rpt summary::before{content:"＋";font-weight:800}
+#mbti-rpt details[open] summary::before{content:"－"}
+#mbti-rpt .r-txt{font-size:13px;line-height:1.85;margin:0;color:var(--ink-2)}
+#mbti-rpt .r-sec{font-size:12px;font-weight:800;margin:15px 0 7px;color:var(--accent);letter-spacing:.6px}
+#mbti-rpt .r-dim.t-ei .r-sec{color:var(--ei)}
+#mbti-rpt .r-dim.t-sn .r-sec{color:var(--sn)}
+#mbti-rpt .r-dim.t-tf .r-sec{color:var(--tf)}
+#mbti-rpt .r-dim.t-jp .r-sec{color:var(--jp)}
+#mbti-rpt .r-duo{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+#mbti-rpt .r-sc{border:1px solid var(--line);border-radius:var(--r-sm);padding:12px 14px;background:var(--soft)}
+#mbti-rpt .r-sc .h{font-size:13px;font-weight:700;margin-bottom:3px}
+#mbti-rpt .r-sc .f{font-size:12px;color:var(--ink-3);margin-bottom:6px;font-weight:600}
+#mbti-rpt .r-sc p{font-size:12px;line-height:1.85;margin:0 0 6px;color:var(--ink-2)}
+#mbti-rpt .r-feats{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+#mbti-rpt .r-feat2{border:1px solid var(--line);border-radius:var(--r-sm);padding:14px 16px;background:var(--soft)}
+#mbti-rpt .r-feat2 .h{font-size:13px;font-weight:800;margin-bottom:7px}
+#mbti-rpt .r-feat2 p{font-size:12.5px;line-height:1.85;margin:0;color:var(--ink-2)}
+#mbti-rpt .r-feat2.adv{border-left:4px solid var(--sn);background:var(--sn-bg)}
+#mbti-rpt .r-feat2.adv .h{color:var(--sn)}
+#mbti-rpt .r-feat2.dis{border-left:4px solid var(--jp);background:var(--jp-bg)}
+#mbti-rpt .r-feat2.dis .h{color:var(--jp)}
+#mbti-rpt .r-tags{display:flex;flex-wrap:wrap;gap:9px;margin-top:9px}
+#mbti-rpt .r-tag{font-size:12.5px;border-radius:999px;padding:5px 14px;font-weight:600;color:var(--accent);background:var(--accent-bg)}
+#mbti-rpt .r-note{font-size:12px;color:var(--ink-3);margin-top:15px;line-height:1.85;background:var(--soft);border:1px dashed var(--line-2);border-radius:var(--r-sm);padding:12px 16px}
+@media (max-width:560px){#mbti-rpt .r-pair,#mbti-rpt .r-duo,#mbti-rpt .r-feats,#mbti-rpt .r-meta{grid-template-columns:1fr}
+  #mbti-rpt .r-hdr{flex-direction:column;text-align:center}#mbti-rpt .r-bar8{gap:5px}}
+
+/* ===== 报告页操作区 ===== */
+.r-actions{max-width:720px;margin:16px auto 0;display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.r-actions button{font-family:inherit;font-size:13px;font-weight:700;padding:10px 24px;border-radius:999px;cursor:pointer;border:1.5px solid var(--line);background:var(--card);color:var(--ink);transition:border-color .16s,background .16s,transform .16s}
+.r-actions button:hover{border-color:var(--line-2);background:var(--soft);transform:translateY(-1px)}
+.r-actions button.primary{color:#fff;background:var(--grad);border-color:transparent;box-shadow:0 6px 18px rgba(108,92,231,.26)}
+.page-foot{max-width:720px;margin:26px auto 0;font-size:12px;line-height:1.85;color:var(--ink-3);text-align:center}
+</style>
+</head>
+<body>
+
+<div class="page-head">
+  <span class="badge">✦ 44 题 · 16 型人格 · 完整报告</span>
+  <h1>MBTI 职业性格测评</h1>
+  <p>每题二选一（A / B）。8 个维度字母各出现 11 次，四段对称设计。全部作答后提交，生成完整人格报告。</p>
+</div>
+
+<div class="view" id="quizView">
+  <div id="mbti-card">
+    <div class="q-head"><h2 class="q-title">职业性格测评问卷</h2><span class="q-count" id="mbtiCount">0 / 44</span></div>
+    <p class="q-sub">请根据真实感受选择「A」或「B」，本测评无对错之分</p>
+    <div class="q-track"><i id="mbtiBar"></i></div>
+    <div class="q-list" id="mbtiList"></div>
+    <div class="q-foot">
+      <span class="q-tip" id="mbtiTip"></span>
+      <button type="button" class="q-submit" id="mbtiSubmit">提交并生成报告</button>
+    </div>
+  </div>
+</div>
+
+<div class="view" id="reportView" hidden>
+  <div id="mbti-rpt"></div>
+  <div class="r-actions">
+    <button type="button" class="primary" id="btnRetest">重新测评</button>
+    <button type="button" id="btnToggle">查看题目</button>
+  </div>
+</div>
+
+<div class="page-foot">
+  数据与算法源自 career-personality skill v2.1.0（题库 44 题 / 16 型人格档案 / 维度对详情），评分逻辑为其 scripts/calculate_mbti.py 的 JS 等价移植，结果与该脚本一致。
+</div>
+
+<script>
+/* MBTI 评分引擎
+ * 精确移植自 career-personality skill: scripts/calculate_mbti.py (v2.1.0)
+ * 常量、算法、字段顺序与该脚本严格一致，保证同一组作答产出相同结果。
+ *
+ * 关键移植点：
+ *  1) 百分比用 divRoundHalfUp 做整数有理数四舍五入，等效 Python decimal.ROUND_HALF_UP，
+ *     避免 JS Number 二进制误差与 Python 默认 banker's rounding 的差异。
+ *  2) DISPLAY_ORDER 与 SKILL.md §3.2.1 同源：视觉位置 1-44 → 题库真实 id。
+ *  3) 16 型档案 / 维度对详情一律查表原文透传，不做任何文字生成。
+ */
+(function (root, factory) {
+  var api = factory();
+  if (typeof module !== "undefined" && module.exports) module.exports = api;
+  else root.MBTIEngine = api;
+})(typeof self !== "undefined" ? self : this, function () {
+  "use strict";
+
+  var DIMENSION_PAIRS = [
+    { pair: "EI", option1: "E", option2: "I", name1: "外倾", name2: "内倾", label: "外倾-内倾" },
+    { pair: "SN", option1: "S", option2: "N", name1: "实感", name2: "直觉", label: "实感-直觉" },
+    { pair: "TF", option1: "T", option2: "F", name1: "思维", name2: "情感", label: "思维-情感" },
+    { pair: "JP", option1: "J", option2: "P", name1: "判断", name2: "知觉", label: "判断-知觉" }
+  ];
+
+  var DISPLAY_ORDER = [
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 41,
+    11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 42,
+    21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 43,
+    31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 44
+  ];
+
+  var NORMALIZE_MAP = {
+    Y: "A", YES: "A", TRUE: "A", "1": "A",
+    N: "B", NO: "B", FALSE: "B", "2": "B"
+  };
+
+  function has(obj, key) {
+    return Object.prototype.hasOwnProperty.call(obj, key);
+  }
+
+  function val(v) {
+    return v === undefined ? null : v;
+  }
+
+  function normalizeAnswer(value) {
+    if (value === null || value === undefined) return "";
+    var s = String(value).trim().toUpperCase();
+    if (has(NORMALIZE_MAP, s)) return NORMALIZE_MAP[s];
+    if (s === "A" || s === "B") return s;
+    return "";
+  }
+
+  /* 视觉位置键 {1..44} → 真实题号 id 键。与 Python remap_display_answers 同校验。 */
+  function remapDisplayAnswers(answers) {
+    if (!answers || typeof answers !== "object" || Array.isArray(answers)) {
+      throw new Error("答案必须是 JSON 对象，收到：" + Object.prototype.toString.call(answers));
+    }
+    var posToId = {}, i;
+    for (i = 0; i < DISPLAY_ORDER.length; i++) posToId[String(i + 1)] = String(DISPLAY_ORDER[i]);
+
+    var actual = Object.keys(answers);
+    var missing = [], extra = [];
+    for (i = 1; i <= 44; i++) if (!has(answers, String(i))) missing.push(String(i));
+    for (i = 0; i < actual.length; i++) if (!has(posToId, actual[i])) extra.push(actual[i]);
+    if (missing.length || extra.length) {
+      throw new Error("答案键不合法：必须恰好提交视觉位置 1..44 共 44 键（值 A/B）。缺失键="
+        + (missing.length ? missing.join(",") : "无") + "；多余键=" + (extra.length ? extra.join(",") : "无"));
+    }
+
+    var out = {};
+    for (i = 1; i <= 44; i++) {
+      var pos = String(i), real = posToId[pos], ans = normalizeAnswer(answers[pos]);
+      if (!ans) throw new Error("视觉位置 " + pos + "（真实 id " + real + "）答案不合法：" + answers[pos] + "，必须为 A 或 B");
+      out[real] = ans;
+    }
+    return out;
+  }
+
+  /* N/D 四舍五入取整（N>=0, D>0），等效 ROUND_HALF_UP：floor((2N+D)/(2D)) */
+  function divRoundHalfUp(n, d) {
+    return Math.floor((2 * n + d) / (2 * d));
+  }
+
+  function buildRoleProfiles(items) {
+    var map = {}, i;
+    for (i = 0; i < items.length; i++) map[String(items[i].type).toUpperCase()] = items[i];
+    return map;
+  }
+
+  function buildDimensionDetails(items) {
+    var index = {}, i, j;
+    for (i = 0; i < items.length; i++) {
+      var d = items[i], detailMap = {}, det = d.detail || [];
+      for (j = 0; j < det.length; j++) detailMap[String(det[j].option).toUpperCase()] = det[j];
+      index[String(d.dimension).toUpperCase()] = { object: d, detail: detailMap };
+    }
+    return index;
+  }
+
+  function detailFor(entry, letter) {
+    var d = (entry && entry.detail ? entry.detail[letter] : null) || null;
+    if (!d) return { name: null, feature: null, traits: null, characteristics: null };
+    return {
+      name: val(d.title),
+      feature: val(d.feature),
+      traits: val(d.traits),
+      characteristics: val(d.characteristics)
+    };
+  }
+
+  function calculateScores(answers, questions, profiles, dimensions) {
+    var i, k;
+    var counts = {};
+    for (i = 0; i < DIMENSION_PAIRS.length; i++) {
+      counts[DIMENSION_PAIRS[i].option1] = 0;
+      counts[DIMENSION_PAIRS[i].option2] = 0;
+    }
+
+    var answeredIds = {};
+    for (i = 0; i < questions.length; i++) {
+      var q = questions[i], qid = String(q.id);
+      if (!has(answers, qid)) continue;
+      answeredIds[qid] = true;
+      var ans = normalizeAnswer(answers[qid]);
+      if (!ans) continue;
+      var opts = q.options || [];
+      for (k = 0; k < opts.length; k++) {
+        if (String(opts[k].option).toUpperCase() === ans) {
+          if (has(counts, opts[k].dimension)) counts[opts[k].dimension]++;
+          break;
+        }
+      }
+    }
+
+    var totalQuestions = questions.length;
+    var answeredCount = Object.keys(answeredIds).length;
+    var status = answeredCount >= totalQuestions ? "completed" : "incomplete";
+
+    var roleProfiles = buildRoleProfiles(profiles);
+    var dimDetails = buildDimensionDetails(dimensions);
+
+    var pairResults = [], resultLetters = [], dominantPercents = [];
+    for (i = 0; i < DIMENSION_PAIRS.length; i++) {
+      var pair = DIMENSION_PAIRS[i];
+      var o1 = pair.option1, o2 = pair.option2;
+      var s1 = counts[o1], s2 = counts[o2], total = s1 + s2;
+      var p1 = 0, p2 = 0, result = null;
+
+      if (total > 0) {
+        p1 = divRoundHalfUp(s1 * 10000, total) / 100;
+        p2 = divRoundHalfUp(s2 * 10000, total) / 100;
+        result = s1 >= s2 ? o1 : o2;
+      }
+      if (result !== null) {
+        resultLetters.push(result);
+        dominantPercents.push(result === o1 ? p1 : p2);
+      }
+
+      var entry = dimDetails[pair.pair] || { object: {}, detail: {} };
+      var winner = detailFor(entry, result);
+
+      pairResults.push({
+        pair: pair.pair,
+        label: pair.label,
+        option1: o1, name1: pair.name1, score1: s1, percent1: p1,
+        option2: o2, name2: pair.name2, score2: s2, percent2: p2,
+        result: result,
+        result_name: winner.name,
+        result_feature: winner.feature,
+        result_traits: winner.traits,
+        result_characteristics: winner.characteristics,
+        option1_detail: detailFor(entry, o1),
+        option2_detail: detailFor(entry, o2),
+        dimension_name: val(entry.object.name),
+        dimension_description: val(entry.object.description),
+        dimension_prompt: val(entry.object.prompt)
+      });
+    }
+
+    var dominantType = resultLetters.length === 4 ? resultLetters.join("") : null;
+
+    var displayScore = 0;
+    if (dominantPercents.length) {
+      var sum = 0;
+      for (i = 0; i < dominantPercents.length; i++) sum += dominantPercents[i];
+      displayScore = Math.floor(sum / dominantPercents.length + 0.5);
+    }
+
+    var roleDetail = null;
+    if (dominantType && roleProfiles[dominantType]) {
+      var rp = roleProfiles[dominantType];
+      roleDetail = {
+        type: dominantType,
+        name: val(rp.name),
+        proportion: val(rp.proportion),
+        description: val(rp.description),
+        advantages: val(rp.advantages),
+        disadvantages: val(rp.disadvantages),
+        careers: val(rp.careers)
+      };
+    }
+
+    var analysis = null;
+    if (dominantType && roleDetail) {
+      var lettersStr = resultLetters.join("、");
+      var roleName = roleDetail.name || "";
+      var careersStr = roleDetail.careers || "";
+      var careersArr = careersStr.split("、").map(function (c) { return c.trim(); })
+        .filter(function (c) { return c.length > 0; });
+      var tail = careersArr.length ? careersArr.slice(0, 5).join("、") + " 等" : "";
+      analysis = {
+        summary: "用户在 " + lettersStr + " 四个维度胜出，人格类型为 " + dominantType
+          + "（" + roleName + "），适合 " + tail + "方向。",
+        recommendations: careersArr
+      };
+    }
+
+    var out = {
+      assessment_id: "MBTI-44-001",
+      assessment_name: "MBTI 职业性格测评",
+      status: status,
+      answered_count: answeredCount,
+      total_questions: totalQuestions,
+      dimension_counts: counts,
+      dimension_pairs: pairResults,
+      dominant_type: dominantType,
+      display_score: displayScore,
+      max_score: 100,
+      role_detail: roleDetail,
+      analysis: analysis
+    };
+
+    if (status === "incomplete") {
+      out.missing_questions = questions
+        .filter(function (q) { return !has(answeredIds, String(q.id)); })
+        .map(function (q) { return String(q.id); });
+    }
+    return out;
+  }
+
+  return {
+    DIMENSION_PAIRS: DIMENSION_PAIRS,
+    DISPLAY_ORDER: DISPLAY_ORDER,
+    normalizeAnswer: normalizeAnswer,
+    remapDisplayAnswers: remapDisplayAnswers,
+    calculateScores: calculateScores
+  };
+});
+
+</script>
+<script>
+var MBTI_DATA = {"questions":[{"id":1,"question":"你心情不好的时候更倾向于如何处理","prompt":"凭直觉作答，勿思对错和他人期望，只选实际会采取的行动。","options":[{"option":"A","dimension":"E","content":"直接向好友倾诉"},{"option":"B","dimension":"I","content":"让我静静，我自己消化一下"}]},{"id":2,"question":"业余时间里你常与一群人积极交往，参加聚会、一起购物","prompt":"凭直觉作答，勿思对错和他人期望，只选实际会采取的行动。","options":[{"option":"A","dimension":"E","content":"是的"},{"option":"B","dimension":"I","content":"不，我独自待着比较舒服"}]},{"id":3,"question":"好朋友倾向对你说","prompt":"凭直觉作答，勿思对错和他人期望，只选实际会采取的行动。","options":[{"option":"A","dimension":"E","content":"你难道不可以安静一会儿吗？"},{"option":"B","dimension":"I","content":"可以请你从你的世界中出来一下吗？"}]},{"id":4,"question":"哪种更接近朋友对你的评价","prompt":"凭直觉作答，勿思对错和他人期望，只选实际会采取的行动。","options":[{"option":"A","dimension":"I","content":"外表平静，大家都说我闷骚"},{"option":"B","dimension":"E","content":"开朗活泼，大家都说我太聒噪了"}]},{"id":5,"question":"在同学聚会中，你通常","prompt":"凭直觉作答，勿思对错和他人期望，只选实际会采取的行动。","options":[{"option":"A","dimension":"I","content":"较安静并保留，直到你觉得舒服"},{"option":"B","dimension":"E","content":"整体来说很健谈"}]},{"id":6,"question":"当不得不主动同生人打交道时，我","prompt":"凭直觉作答，勿思对错和他人期望，只选实际会采取的行动。","options":[{"option":"A","dimension":"I","content":"有点担心别人不愿被打扰"},{"option":"B","dimension":"E","content":"感到自信并且轻松"}]},{"id":7,"question":"你更喜欢远离外界的喧嚣","prompt":"凭直觉作答，勿思对错和他人期望，只选实际会采取的行动。","options":[{"option":"A","dimension":"I","content":"是的"},{"option":"B","dimension":"E","content":"不，我喜欢热闹"}]},{"id":8,"question":"你更倾向于","prompt":"凭直觉作答，勿思对错和他人期望，只选实际会采取的行动。","options":[{"option":"A","dimension":"E","content":"随意分享自己个人情况"},{"option":"B","dimension":"I","content":"更愿意在小群体中分享个人情况"}]},{"id":9,"question":"当遇到聚会中第一次见面的人对你很热情时，你会","prompt":"凭直觉作答，勿思对错和他人期望，只选实际会采取的行动。","options":[{"option":"A","dimension":"E","content":"很高兴，情绪会受到感染，并对其产生好感"},{"option":"B","dimension":"I","content":"热情应付，但心存一丝疑虑：对方为什么要这样热情，是否有其他目的"}]},{"id":10,"question":"你时常容易流露和说出你的感觉和感情","prompt":"凭直觉作答，勿思对错和他人期望，只选实际会采取的行动。","options":[{"option":"A","dimension":"E","content":"是的"},{"option":"B","dimension":"I","content":"不易流露感情"}]},{"id":11,"question":"你容易看出具体事件背后的普遍原理","prompt":"凭直觉作答，勿思对错和他人期望，只选实际会采取的行动。","options":[{"option":"A","dimension":"S","content":"不是"},{"option":"B","dimension":"N","content":"是的"}]},{"id":12,"question":"你更倾向于和别人聊哪些内容","prompt":"凭直觉作答，勿思对错和他人期望，只选实际会采取的行动。","options":[{"option":"A","dimension":"S","content":"今天在哪儿吃饭，路上遇到什么趣事"},{"option":"B","dimension":"N","content":"人生，理想，哲学，未来的某个发明，宇宙之类的抽象的概念"}]},{"id":13,"question":"大多数时候，你是这种人......","prompt":"凭直觉作答，勿思对错和他人期望，只选实际会采取的行动。","options":[{"option":"A","dimension":"N","content":"阐述观点时，喜欢笼统，大概，观全局而不注重细节。常用“大致如此”、“基本正确”、“总体来讲”这些不解释细节，而表示一个大概情况的词汇。"},{"option":"B","dimension":"S","content":"喜欢具体、精准、确定性强的描述。比如，“明天上午9点15分准时从公司楼下出发”"}]},{"id":14,"question":"你倾向相信......","prompt":"凭直觉作答，勿思对错和他人期望，只选实际会采取的行动。","options":[{"option":"A","dimension":"S","content":"你直接地观察和现成经验"},{"option":"B","dimension":"N","content":"你的直觉"}]},{"id":15,"question":"哪种描述较符合你","prompt":"凭直觉作答，勿思对错和他人期望，只选实际会采取的行动。","options":[{"option":"A","dimension":"N","content":"如果对于一个东西没有一套合理的系统解释，我就会感觉搞不清楚，一片模糊"},{"option":"B","dimension":"S","content":"享受生活和现实，给什么东西都进行抽象和解释太累了"}]},{"id":16,"question":"喜欢推测、预测和分析","prompt":"凭直觉作答，勿思对错和他人期望，只选实际会采取的行动。","options":[{"option":"A","dimension":"N","content":"是的"},{"option":"B","dimension":"S","content":"这些对我而言都是浮云，我只想把握当下"}]},{"id":17,"question":"哪种更符合你","prompt":"凭直觉作答，勿思对错和他人期望，只选实际会采取的行动。","options":[{"option":"A","dimension":"N","content":"过于抽象，因此在必要后续行动上不切实际"},{"option":"B","dimension":"S","content":"沉浸于细节，导致视野不开阔"}]},{"id":18,"question":"哪种更符合你","prompt":"凭直觉作答，勿思对错和他人期望，只选实际会采取的行动。","options":[{"option":"A","dimension":"S","content":"习惯于按规则，手册办事"},{"option":"B","dimension":"N","content":"习惯于跟着感觉走"}]},{"id":19,"question":"哪种更符合你","prompt":"凭直觉作答，勿思对错和他人期望，只选实际会采取的行动。","options":[{"option":"A","dimension":"S","content":"喜欢使用和琢磨已知技能"},{"option":"B","dimension":"N","content":"喜欢学习新技能，但学习后容易厌倦"}]},{"id":20,"question":"你经常被看作是......","prompt":"凭直觉作答，勿思对错和他人期望，只选实际会采取的行动。","options":[{"option":"A","dimension":"S","content":"务实的人"},{"option":"B","dimension":"N","content":"有想象力、有灵感的人"}]},{"id":21,"question":"认识你的人倾向形容你为","prompt":"凭直觉作答，勿思对错和他人期望，只选实际会采取的行动。","options":[{"option":"A","dimension":"T","content":"逻辑而明确"},{"option":"B","dimension":"F","content":"热情而敏感"}]},{"id":22,"question":"哪种更符合你","prompt":"凭直觉作答，勿思对错和他人期望，只选实际会采取的行动。","options":[{"option":"A","dimension":"T","content":"很自然看到缺点，工作中较少表达感情，也不喜欢别人感情用事"},{"option":"B","dimension":"F","content":"很自然看到优点，从赞美中得到享受，也希望得到别人赞美"}]},{"id":23,"question":"当你的朋友心情很不好的时候，你会倾向于","prompt":"凭直觉作答，勿思对错和他人期望，只选实际会采取的行动。","options":[{"option":"A","dimension":"F","content":"先顾及他的情绪，再解决问题"},{"option":"B","dimension":"T","content":"先帮他解决问题，再解决情绪问题"}]},{"id":24,"question":"我更容易被认为是一个","prompt":"凭直觉作答，勿思对错和他人期望，只选实际会采取的行动。","options":[{"option":"A","dimension":"T","content":"很理性的人"},{"option":"B","dimension":"F","content":"重感情的人"}]},{"id":25,"question":"当你不同意朋友的想法时","prompt":"凭直觉作答，勿思对错和他人期望，只选实际会采取的行动。","options":[{"option":"A","dimension":"F","content":"你尽可能地避免伤害对方的感情；若是会对对方造成伤害的话，你就不会说"},{"option":"B","dimension":"T","content":"你通常毫无保留地说话，并且对朋友直言不讳，因为对的就是对的"}]},{"id":26,"question":"我常看到感人的电视或电影情景看到泪流不止","prompt":"凭直觉作答，勿思对错和他人期望，只选实际会采取的行动。","options":[{"option":"A","dimension":"F","content":"是的"},{"option":"B","dimension":"T","content":"我很少因为这样的事情哭。只有在特别伤心的事发生在自己身上时才会哭"}]},{"id":27,"question":"哪种更符合你......","prompt":"凭直觉作答，勿思对错和他人期望，只选实际会采取的行动。","options":[{"option":"A","dimension":"F","content":"我很少质疑指责他人，更愿意做一个随和与包容的人"},{"option":"B","dimension":"T","content":"我不想充当老好人，发现他人犯错就会直言不讳指出来"}]},{"id":28,"question":"你容易被强烈的情感影响","prompt":"凭直觉作答，勿思对错和他人期望，只选实际会采取的行动。","options":[{"option":"A","dimension":"F","content":"是这样"},{"option":"B","dimension":"T","content":"不会"}]},{"id":29,"question":"只要有爱，什么都可以原谅","prompt":"凭直觉作答，勿思对错和他人期望，只选实际会采取的行动。","options":[{"option":"A","dimension":"T","content":"不认同，就算相爱，凡事都有分寸"},{"option":"B","dimension":"F","content":"认同，爱情能冲淡一切不快"}]},{"id":30,"question":"你更擅长......","prompt":"凭直觉作答，勿思对错和他人期望，只选实际会采取的行动。","options":[{"option":"A","dimension":"T","content":"运用逻辑，分析及批判性思维解决问题"},{"option":"B","dimension":"F","content":"运用人际关系解决问题"}]},{"id":31,"question":"热衷于猎奇和掌握新概念","prompt":"凭直觉作答，勿思对错和他人期望，只选实际会采取的行动。","options":[{"option":"A","dimension":"P","content":"是的"},{"option":"B","dimension":"J","content":"不是"}]},{"id":32,"question":"你选择的生活充满着......","prompt":"凭直觉作答，勿思对错和他人期望，只选实际会采取的行动。","options":[{"option":"A","dimension":"P","content":"自然发生和弹性"},{"option":"B","dimension":"J","content":"日程表和组织"}]},{"id":33,"question":"你有时候会心血来潮做一件事情","prompt":"凭直觉作答，勿思对错和他人期望，只选实际会采取的行动。","options":[{"option":"A","dimension":"P","content":"是的"},{"option":"B","dimension":"J","content":"极少会这样"}]},{"id":34,"question":"若你有时间和金钱，你的朋友邀请你到国外度假，并且在前一天才通知，你会","prompt":"凭直觉作答，勿思对错和他人期望，只选实际会采取的行动。","options":[{"option":"A","dimension":"J","content":"必须先检查你的时间表"},{"option":"B","dimension":"P","content":"立刻收拾行装"}]},{"id":35,"question":"对我而言，解决问题本身就是一种乐趣","prompt":"凭直觉作答，勿思对错和他人期望，只选实际会采取的行动。","options":[{"option":"A","dimension":"J","content":"是的"},{"option":"B","dimension":"P","content":"我更喜欢发现和体验美好的东西"}]},{"id":36,"question":"你是此类型的人......","prompt":"凭直觉作答，勿思对错和他人期望，只选实际会采取的行动。","options":[{"option":"A","dimension":"J","content":"喜欢在一段时间里专心于一件事情直至完成"},{"option":"B","dimension":"P","content":"享受同时进行好几件事情"}]},{"id":37,"question":"你偏好......","prompt":"凭直觉作答，勿思对错和他人期望，只选实际会采取的行动。","options":[{"option":"A","dimension":"J","content":"事先知道约会行程：要去哪里，有谁参加，你会在那里多久"},{"option":"B","dimension":"P","content":"让约会自然地发生，不做太多实现的计划"}]},{"id":38,"question":"哪种意境更符合你","prompt":"凭直觉作答，勿思对错和他人期望，只选实际会采取的行动。","options":[{"option":"A","dimension":"P","content":"人生就像一场旅行，不必在意目的地，在乎的是沿途的风景和看风景的心情"},{"option":"B","dimension":"J","content":"人生需要树立目标并为之奋斗，专注于人生目标的人往往无暇欣赏路途美景"}]},{"id":39,"question":"哪种更符合你","prompt":"凭直觉作答，勿思对错和他人期望，只选实际会采取的行动。","options":[{"option":"A","dimension":"P","content":"凡事追求个性，完全凭自己兴趣，没有固定程式"},{"option":"B","dimension":"J","content":"传统而保守，不喜欢标新立异"}]},{"id":40,"question":"哪种更符合你","prompt":"凭直觉作答，勿思对错和他人期望，只选实际会采取的行动。","options":[{"option":"A","dimension":"P","content":"喜欢惊喜并适应最后的变化"},{"option":"B","dimension":"J","content":"不喜欢变化，追求稳定和踏实"}]},{"id":41,"question":"哪种更符合你","prompt":"凭直觉作答，勿思对错和他人期望，只选实际会采取的行动。","options":[{"option":"A","dimension":"E","content":"我从与人交流中获取动力和能量"},{"option":"B","dimension":"I","content":"我从独处和思考中获取动力和能量"}]},{"id":42,"question":"哪种更符合你","prompt":"凭直觉作答，勿思对错和他人期望，只选实际会采取的行动。","options":[{"option":"A","dimension":"N","content":"我的思想天马行空，走路经常在想事情"},{"option":"B","dimension":"S","content":"我比较关注现实的，可见的事情，走路的时候更关注周围的人和物"}]},{"id":43,"question":"哪种更符合你","prompt":"凭直觉作答，勿思对错和他人期望，只选实际会采取的行动。","options":[{"option":"A","dimension":"T","content":"我是一个冷酷，客观，公正的人"},{"option":"B","dimension":"F","content":"我是一个宽容，感性，友善的人"}]},{"id":44,"question":"哪种更符合你","prompt":"凭直觉作答，勿思对错和他人期望，只选实际会采取的行动。","options":[{"option":"A","dimension":"J","content":"我更喜欢制定计划，但是一旦计划被打乱会迟迟无法调整"},{"option":"B","dimension":"P","content":"我更喜欢随性，灵活，一旦行动被打乱可以很快的调整过来"}]}],"profiles":[{"type":"ISTJ","name":"物流师","proportion":11.6,"description":"每个齿轮都精准咬合，世界才不会脱轨。","careers":"审计师、会计、财务经理、办公室行政管理、后勤和供应管理、中层经理、公务（法律、税务）执行人员、银行信贷员、预算分析师、保险精算师、税务经纪人、税务检查员、机械、电气工程师、计算机程序员、数据库管理员、地质、气象学家、法律研究者、律师、外科医生、药剂师、实验室技术人员、牙科医生、医学研究员、信息总监、电脑编程员、证券经纪人、会计、文字处理专业人士","advantages":"你是一个认真而严谨的人，勤奋而负有责任感，认准的事情很少会改变或气馁，做事深思熟虑，信守承诺并值得信赖。\n你依靠理智的思考来做决定，总是采取客观、合乎逻辑的步骤，不会感情用事，甚至在遇到危机时都能够表现得平静。\n你谨慎而传统，重视稳定性、合理性；你天生独立，需要把大量的精力倾注到工作中，并希望其它人也是如此，善于聆听并喜欢将事情清晰而条理的安排好。\n你喜欢先充分收集各种信息，然后根据信息去综合考虑实际的解决方法，而不是运用理论去解决。你对细节非常敏感，有很实际的判断力，决定时能够运用精确的证据和过去的经验来支持自己的观点，并且非常系统有条不紊，对那些不这样做的人没有耐心。","disadvantages":"你非常固执，一旦决定的事情，会对其他的观点置之不理，并经常沉浸于具体的细节和日常的操作中。\n你看问题有很强的批判性，通常持怀疑态度，你需要时常的换位思考，更广泛的收集信息，并理智的评估自己的行为带来的可能后果。\n你非常独立，我行我素，不能理解不合逻辑的事情，忽视他人的情感，并对与你风格不同的人不能理解，非常挑剔；你要学会欣赏他人的优点并及时表达出来。\n你非常有主见，时常会将自己的观点和标准强加给别人，而且无视那些不自信的人的建议。在处理问题时，强求别人按照自己的想法来做，对于未经检验或非常规的方法不加考虑。若能在以后多尝试和接受新颖的、有创造性的方法，你就能做出更有效的决策。"},{"type":"ISFJ","name":"守卫者","proportion":13.8,"description":"用温柔筑起城墙，守护每一份易碎的美好。","careers":"内科医生、营养师、图书/档案管理员、室内装潢设计师、顾客服务代表、记账员、特殊教育教师、酒店管理、人事管理人员、电脑操作员、信贷顾问、零售业主、房地产代理或经纪人、艺术人员、商品规划师、语言病理学者、审计师、会计、财务经理、办公室行政管理、后勤和供应管理、中层经理、公务（法律、税务）执行人员、银行信贷员、成本估价师、保险精算师、税务经纪人、税务检查员、机械、电气工程师、计算机程序员、数据库管理员、地质、气象学家、法律研究者、律师、外科医生、药剂师、实验室技术人员、牙科医生、医学研究员","advantages":"你具有友善、负责、认真、忠于职守的特点，只要你认为应该做的事，不管有多少麻烦都要去做，但却厌烦去做你认为毫无意义的事情。\n你务实、实事求是，追求具体和明确的事情，喜欢做实际的考虑。善于单独思考、收集和考察丰富的外在信息。不喜欢逻辑的思考和理论的应用，拥有对细节很强的记忆力，诸如声音的音色或面部表情。\n你与人交往时较为敏感，谦逊而少言、善良、有同情心，喜欢关心他人并提供实际的帮助，你们对朋友忠实友好，有奉献精神。虽然在很多情况下你有很强烈的反应，但通常不愿意将个人情感表现出来。\n你做事有很强的原则性，尊重约定，维护传统。工作时严谨而有条理，愿意承担责任，你依据明晰的评估和收集的信息来做决定，充分发挥自己客观的判断和敏锐的洞察力。","disadvantages":"你有高度的责任心，会陷入日常事务的细节中去，以至于没完没了的工作。每件事情你都会从头做到尾，这总是让你过度劳累，压力很大时，你会过度紧张，甚至产生消极情绪。\n由于你的现实、细致，有时容易忽略事情的全局和发展变化趋势，难以预见存在的可能性。建议你周到考虑解决问题的不同方法和可能性，需要增强对远景的关注。\n你总是替别人着想，以至于让人感觉“关心过度”，你需要学会给别人空间。在工作中，你过多的承受和忍耐，不太习惯表达，却将情绪在家庭和生活中发泄出来。\n你不停地制订计划并保证完成，以致于经常花费更多的时间和投入更多的精力来完成工作，建议你给自己安排必要的娱乐和放松的活动，不要总是“低头拉车”，需要考虑“抬头看路”。"},{"type":"INFJ","name":"提倡者","proportion":1.5,"description":"在暗夜擎起火炬，带世界走向应许之地。","careers":"特殊教育教师、建筑设计师、培训经理/培训师、职业指导顾问、心理咨询师、网站编辑、作家、仲裁人、人力资源经理、事业发展顾问、营销人员、企业组织发展顾问、职位分析人员、媒体特约规划师、编辑／艺术指导（杂志）、口译人员、社会科学工作者、心理诊疗师、大学教师（人文学科、艺术类）、心理学、教育学、社会学、哲学及其它领域的研究人员、作家、诗人、剧作家、电影编剧、电影导演、画家、雕塑家、音乐家、艺术顾问、设计师","advantages":"你有计划、有条理，喜欢遵照固有的模式处理问题，乐于探求独特的方式以获得有意义的成长和发展。你通过认同和赞扬与别人进行沟通，具有很强的说服力，你可以成为伟大的领导者。你的贡献被人尊敬和推崇。\n你喜欢独处，性格复杂，有深度，是独立的思考者。你忠诚、有责任心，喜欢解决问题，通常在认真思考之后行动。你在同一时间内只专注一件事情。\n你有敏锐的洞察力，相信灵感，努力寻求生活的意义和事件的内在联系。你有坚定的原则，就算被别人怀疑，也相信自己的想法和决定，依靠坚韧不拔取得成功。\n他人能随时体会到你的善良和体贴，但不太了解你，因为你总是做的含蓄和复杂。事实上你是非常重感情，忠于自我价值观，有强烈的愿望为大家做贡献，有时候你也很紧张和敏感，但表现的深藏不露；你倾向于拥有小范围的而深长久远的友谊。","disadvantages":"你的完美和固执，使你易走极端。一旦决定后，拒绝改变，并抵制那些与你的价值相冲突的想法，以至于变的没有远见。你专注的追求一个理想，不会听取别人的客观意见，因为自己的地位是不容置疑的。\n你总是探寻事情的意义和价值，过于专注各种想法，会显得不切实际，而且经常会忽视一些常规的细节。你需要留意周围的情况，并学会运用已被证实的信息，这样可以帮助你更好的在现实世界中发挥你的创造性思维。\n你敏感，非常关注个人的感受和他人的反应，对任何批评都很介意，甚至会视为人身攻击。对你来讲，你需要客观的认识自己和周围的人际关系，更好的促进事情向正面转化。"},{"type":"ISTP","name":"鉴赏家","proportion":5.4,"description":"给我一把扳手，我能拆解宇宙法则。","careers":"信息服务业经理、计算机程序员、警官、软件开发员、律师助理、消防员、私人侦探、药剂师、证券分析员、银行职员、管理顾问、财务顾问、电子专业人士、技术培训人员、信息服务开发人员、软件开发商、海洋生物学者、后勤与供应经理、经济学者、贸易商、商品经销商、产品代理商（有形产品）、警察、侦探、体育工作者、赛车手、飞行员、雕塑家、手工制作、画家","advantages":"你密切关注周围发生的事情，常常充当解决困难的人。一旦需要，会快速反应，抓住问题的核心以最有实效的方式予以解决。你好奇心强，对事实敏感，能很好的利用手头的资源。\n你善于思考和分析，关注事情是什么，及可以解决什么具体问题，不关注理论。你喜欢客观独立地作决定，并把一切都清楚直接地安排妥当。你对技术工作很有天赋，是使用工具和双手工作的专家。\n你非常独立，不愿受规则约束，以独有的好奇心和富有创意的幽默观察和分析生活。具备很好的迎接挑战和处理问题的能力，天性喜欢兴奋和行动，通常很喜欢户外活动和运动。\n你通常是安静或沉默的，喜欢行动而非言语，看上去比较“酷”，时常被认为不太愿意接近人。","disadvantages":"你非常实际，总能找到简捷的解决办法，这使你有时会偷工减料，不能完成所有的步骤和细节。你过分的关注眼下的结果，以至忽略了自己的决策和行动的长远影响。建议你学会做计划并坚持完成，以克服自己主动性弱的特点。\n你总是独立分析，独自判断，不喜欢与别人分享自己的反应、情感和担忧，也不愿意把具体的情况甚至是最重要的部分与他人进行交流，使得周围的人行动或配合起来比较被动。\n你非常喜欢多样化和新奇刺激，对所有的选择都持开放态度，所以你不善于做决定。你需要认真给自己一些约束，避免总是变动和无规律所带来的危害。\n你通常无视自己的情感和需要，忽视他的人感受，对于自己的决定对他人产生的影响不够重视。"},{"type":"ISFP","name":"探险家","proportion":8.8,"description":"此刻心跳的颜色，就是生命存在的证明。","careers":"客户销售代表、行政人员、商品规划师、测量师、海洋生物学者、厨师、室内装潢设计师、园艺设计师、计算机软件界面设计、旅游销售经理、旅行社销售人员、职业病理专业人员、时装、首饰设计师、陶器制作者、乐器制作者、 卡通漫画制作者、素描画家、舞蹈演员、画家、出诊医生、出诊护士、理疗师、牙科医生、个人健康和运动教练、体育用品、个人理疗用品销售员、餐饮业、娱乐业业主","advantages":"你和蔼、友善、敏感，谦虚地看待自己的能力。你能平静愉悦地享受目前的生活，喜欢体验。珍视自由自在地安排自己的活动，有自己的空间，支配自己的时间。\n你善于观察、务实、讲求实际，了解现实和周围的人，并且能够灵活地对他们的情况和需要做出反应，但很少寻求其动机和含义。你是优秀的短期规划者，能够全身心地投到此时此刻的工作中，喜欢享受现今的经验而不是迅速冲往下一个挑战。\n你有耐心，易通融，很好相处。你没有领导别人的愿望，往往是忠实的跟随者和很好的合作伙伴。你很客观，而且能以一种实事求是的态度接受他人的行为，但你需要基本的信任和理解，需要和睦的人际关系，而且对矛盾和异议很敏感。\n你很有艺术天份，对自然的美丽情有独钟，对直接从经验中和感觉中得到的信息非常感兴趣，喜欢为自己创造一种幽雅而个性化的环境，你希望为社会的福利和人类的幸福做些贡献。你内心深沉，其实很热情，不太喜欢表现。","disadvantages":"你完全着眼于现在，从不喜欢寻找和发现那些你认为不存在的可能性,这使你无法发现更广阔的前景,也不能为将来做打算,不能很好地安排时间和精力。\n你天生对他人具有高度的敏感,总是难以拒绝别人，有时为了满足他人的需求而拼命地工作，以至于在此过程中忽视了自己。\n你过分忽视事物之间的内在联系和逻辑思考,难以理解复杂的事情。\n你对他人的批评会感到生气或气馁，有时容易过分自责。你容易相信别人，很少对别人的动机有所怀疑，也不会发现别人行为背后的隐含意义。你们需要更注重自己的需求，而且要对别人的行为加以分析。在分析中加入一些客观和怀疑的态度会让你们更准确地判断人的性格。"},{"type":"INTP","name":"逻辑学家","proportion":3.3,"description":"在思维迷宫中追猎真相，答案本身就是奖赏。","careers":"电脑软件设计师、系统分析人员、计算机程序员、研究开发专业人员、数据库管理、故障排除专家、战略规划师、金融规划师、信息服务开发商、变革管理顾问、企业金融律师、大学教授、科研机构研究人员、数学家、物理学家、经济学家、考古学家、历史学家、证券分析师、金融投资顾问、律师、法律顾问、财务专家、侦探、各类发明家、作家、设计师、音乐家、艺术家、艺术鉴赏","advantages":"你极其聪慧，有逻辑性，善于处理概念性的问题，且有很强的创造灵感，对发现可能性更感兴趣。\n你非常独立，有批判性和怀疑精神，深藏不露，内心通常在投入地思考问题，总是试图找运用理论分析各种问题；对一个观点或形势能做出超乎超于常人的、独立准确的分析，会提出尖锐的问题，也会向自己挑战以发现新的合乎逻辑的方法。\n你擅长用极端复杂的方式思考问题，看重自己的才学，也喜欢向别人挑战；你更善于处理概念和想法，而不是与人打交道。喜欢有逻辑性的和目的性的交谈，但有时想法过于复杂以至于难与别人交流和让别人理解，也会只是为了高兴而就一点儿小事儿争论不休。\n你能宽容很多不同的行为，只是在自己认为应该的时候才争论和提出问题，但是如果你的基本原则受到挑战，你就不在保持灵活性而以原则办事。\n你是天才而有创意的思考者，喜欢投机和富于想像力的活动，对找到创造性解决问题的办法更感兴趣，而不是看到这些办法真正奏。","disadvantages":"如果你没有机会运用自己的才能，或得不到赏识，会感到沮丧，爱打嘴仗，好争论，冷嘲热讽，消极的批判一切。\n你过于注重逻辑分析，只要不合逻辑，就算对你再重要，也很有可能放弃它。\n你过分理智，忽视情感和现实，察觉不到他人的需要，也不考虑自己的观点对他人的影响，以”不符合”逻辑为由，主观断定某些自己或他人看重的东西的是不重要的，不够实际。\n当你把自己批判的思维用在人的身上时，你的直率会变成无心的伤害。你需要找到自己真正在乎的事，这将帮助你们更真实地对待自己的情感。\n你对解决问题非常着迷，极善于发现想法中的缺陷，却很难把它们表达出来，你对常规的细节没有耐心，如果事情需要太多的琐碎细节，你会失去兴趣，也会因计划中很小的缺陷而陷入困境，你绝不容忍任何一点不合逻辑。"},{"type":"ENTP","name":"辩论家","proportion":3.2,"description":"用质疑炸开认知边界，废墟上建起新世界。","careers":"人事系统开发人员、投资经纪人、工业设计经理、后勤顾问、金融规划师、投资银行业职员、营销策划人员、广告创意总监、国际营销商、投资顾问（房地产、金融、贸易、商业等）、各类项目的策划人和发起者、 投资银行家、风险投资人、企业业主（新兴产业）、市场营销人员、各类产品销售经理、艺术总监、访谈类节目主持人、制片人、公共关系专家、公司对外发言人、社团负责人、政治家、文案、演员、大学校长","advantages":"你喜欢挑战和让你兴奋的事情，聪慧，许多事情都比较拿手，致力于自己才干和能力的增长。\n你有很强的创造性和主动性，绝大多数是事业型的。你好奇心强，喜欢新鲜事物，关注事物的意义和发展的可能性。通常把灵感看得比什么都重要，多才多艺，适应性强且知识渊博，很善于处理挑战性的问题。\n你善于快速抓住事物的本质，喜欢从新的角度和独到的方式思考问题，对问题经常有自己独到的见解。你机警而坦率，有杰出的分析能力，并且是优秀的策略家。\n你不喜欢条条框框的限制和因循守旧的工作方式，习惯便捷的问题解决方法。你喜欢自由的生活并善于发现其中的乐趣和变化。\n你认为“计划赶不上变化”，并以实际行动证明大部分规定和规律都是有弹性，可伸缩的，通常会超出被认可和期望的限度。\n你善于理解，而非判断他人。乐观，善于鼓舞他人，能用自己的热情感染他人。","disadvantages":"你总是充满热情的寻找新鲜事物，但行事缺少稳定的计划和流程，经常依靠临场发挥，可能因为忽视必要的准备工作，而草率地身陷其中。\n你的注意力容易游移，对目标的韧性和坚持性不够，缺乏足够的耐心，有时不能贯彻始终。一旦主要问题被解决了，就会转移到下一个目标，而不能坚持将一件事完完整整地结束。\n你非常注重创造力和革新，容易忽略简单、常规的方法和一些重要的细节，不愿遵守规则和计划。建议多关注解决问题的常规方法。\n你通常同时展开多项任务与活动，不愿丢掉任何一种可能性，致力于寻找新的变化，可能使别人的计划和时间安排受到影响。你要好好考虑一下自己的行动给他人带来的影响，这有助于你变得更可靠。\n你有天生的直觉和预知能力，会使你误认为知道了别人的想法。建议你认真倾听他人，避免表现的不耐烦。"},{"type":"ENTJ","name":"指挥官","proportion":1.8,"description":"把愿景铸成利刃，在现实战场劈出未来疆域。","careers":"各类企业的高级主管、总经理、企业主、社会团体负责人、政治家、投资银行家、风险投资家、股票经纪人、公司财务经理、财务顾问、经济学家、企业管理顾问、企业战略顾问、项目顾问、专项培训师、律师、法官、知识产权专家、大学教师、科技专家、房产开发商、教育咨询顾问、投资顾问、（人事、销售、营销）经理、技术培训人员、（后勤、电脑信息服务和组织重建）顾问、国际销售经理、特许经营业主、程序设计员、环保工程师","advantages":"你直率、果断，能够妥善解决组织的问题，是天生的领导者和组织的创建者。你擅长发现一切事物的可能性并很愿意指导他人实现梦想，是思想家和长远规划者。\n你逻辑性强，善于分析，能很快地在头脑里形成概念和理论，并能把可能性变成计划。树立自己的标准并一定要将这些标准强加于他人。你看重智力和能力，讨厌低效率，如果形势需要，可以非常强硬。你习惯用批判的眼光看待事物，随时可以发现不合逻辑和效率低的程序并强烈渴望修正它们。\n你善于系统、全局地分析和解决各种错综复杂的问题，为了达到目的，你会采取积极行动，你喜欢研究复杂的理论问题，通过分析事情的各种可能性，事先考虑周到，预见问题，制定全盘计划和制度并安排好人和物的来源，推动变革和创新。\n愿意接受挑战，并希望其他人能够象自己一样投入，对常规活动不感兴趣。长于需要论据和机智的谈吐的事情，如公开演讲之类。","disadvantages":"你经常在没有了解细节和形势之前就草率地做决定。\n你总是很客观、带有批判性地对待生活，容易对别人的情况和需要表现得较粗心、直率、无耐心。建议你注意倾听周围人的心声，并对别人的贡献表示赞赏。你需要学会在实施自己的计划之前听取别人的建议，以免独断专横。\n你考虑问题非常理智，很少受无关因素影响。你没有时间和兴趣去体会情感，容易忽略他人的感受，显得不尽人情。但当你的感情被忽视或没有表达出来的时候，你会非常敏感。你们需要给自己一点儿时间来了解自己的真实感情，学会正确地释放自己的情感，而不是爆发，并获得自己期望和为之努力的地位。\n你容易夸大自己的经验、能力。 你需要接受他人实际而有价值的协助，才能更好的提高能力并获得成功。"},{"type":"INTJ","name":"建筑师","proportion":2.1,"description":"把现实当棋盘，下一局百年必胜的棋。","careers":"首席财政执行官、知识产权律师、设计工程师、精神分析师、心脏病专家、媒体策划、网络管理员、建筑师、管理顾问、经济学者、国际银行业务职员、金融规划师、综合网络专业人员、各类科学家、研究所研究人员、系统分析员、计算机程序员、研究开发部经理、各类技术顾问、技术专家、投资专家、法律顾问、医学专家、经济学家、投资银行研究员、证券投资和金融分析员、投资银行家、财务计划人、企业并购专家、各类发明家、建筑师、社论作家、艺术家","advantages":"考虑问题理智、清晰、简洁，不受他人影响，客观的批判一切，运用高度理性的思维做出判断，不以情感为依据。用批判的眼光审视一切，如果形势需要，会非常坚强和果断。\n你不屈从于权威，并且很聪明，有判断力，对自己要求严格，近乎完美，甚至也这样去要求别人，尤其讨厌那些不知所措、混乱和低效率的人。你有很强的自制力，以自己的方式做事，不会被别人的冷遇和批评干扰，是所有性格中最独立的。\n你是优秀的策略家和富有远见的规划者，高度重视知识，能够很快将获取的信息进行系统整合，把情况的有利与不利方面看的很清楚。具有独特的、创造性的观点，喜欢来自多方面的挑战。在你感兴趣的领域里，会投入令人难以置信的精力、专心和动力。","disadvantages":"你只注重自己，很少去理解他人，自以为是，对他人没有耐心，总是想当然的把自己的观点强加给别人，制定不切实际的高标准。你需要学会去了解别人的感受和想法，以避免你冒犯他人。\n你过于注重远见卓识，很容易忽略和错过与自己理论模式不符的细节和现象；爱玩弄智力游戏，说些对他人没有意义、似是而非的话语。你需要简化你既理论又复杂的想法，更好的与别人交流。\n你过分独立的个性和工作习惯，使得你总是“拒绝”别人的参与和帮助，难以发现自己计划中的缺陷。建议你保持耐心，多向他人请教，这样可以帮助你提早了解一些不合实际的想法，或者在大量投入之前做出必要的修正和改进。\n你有时会过于固执和死板，沉迷于一些出色的但不重要的想法中，并且事事要求完美；如果你想成功，你需要判断事情的重要性，学习接受生活并与他相处，学会放弃。"},{"type":"INFP","name":"调停者","proportion":4.4,"description":"在现实的裂缝里种花，让银河从伤口流淌。","careers":"心理学家、心理辅导和咨询人员、人力资源管理、翻译、大学教师（人文学科）、社会工作者、图书管理员、服装设计师、编辑、网站设计师、计算机程序UI设计员、团队建设顾问、艺术指导、记者、口笔译人员、娱乐业人士、建筑师、社科类研究人员、教育顾问、各类艺术家、插图画家、诗人、小说家","advantages":"你比较敏感，非常崇尚内心的平和，看重个人的价值，忠诚，并且理想化，一旦做出选择，就会约束自己完成。\n你外表看起来沉默而冷静，但内心对他人的情感十分在意。你非常善良，有同情心，善解人意。你重视与他人有深度、真实、共同进步的关系，希望参与有助于自己及他人的进步和内在发展的工作，欣赏那些能够理解你价值的人。\n你有独创性、有个性，好奇心强，思路开阔，有容忍力。乐于探索事物的可能性，致力于自己的梦想和远见。\n你很喜欢探索自己和他人的个性。一旦全身心地投入一项工作时，你往往发挥出冲刺式的干劲，全神贯注，全力以赴。你对人、事和思想信仰负责，一般能够忠实履行自己的义务。但是，对于意义不大的日常工作，你做起来可能有些困难。","disadvantages":"你追求完美，会花很长时间酝酿自己的想法，难以用适当的方式来表达自己。你需要更加注重行动。\n你经常忽略逻辑思考和具体现实，沉浸于梦想。当意识到自己的理想与现实之间的差距，你就容易灰心丧气。你需要听取他人更实际的建议，考虑方法的现实性和可行性。\n你非常固执，经常局限在自己的想法里，对外界的客观具体事物没有兴趣，甚至忙的不知道周围发生了什么事情。\n你总是用高标准来要求自己，投入太多的感情，导致你对批评相当敏感。压力很大的时候，你可能会非常怀疑自己或他人的能力，而变得吹毛求疵，又爱瞎判断，对一切都有抵触情绪。"},{"type":"ENFP","name":"竞选者","proportion":8.1,"description":"用彩虹编织可能性，每个念头都能点燃星辰。","careers":"人力资源经理、变革管理顾问、营销经理、企业／团队培训师、广告客户经理、战略规划人员、宣传人员、事业发展顾问、环保律师、研究助理、播音员、开发总裁、广告创意、广告撰稿人、市场营销和宣传策划、市场调研人员、公关专家、公司对外发言人、儿童教育老师、大学老师（人文类）、心理学工作者、心理辅导和咨询人员、职业规划顾问、社会工作者、演讲家、记者（访谈类）、节目策划和主持人、专栏作家、剧作家、设计师、卡通制作者、电影、电视制片人","advantages":"你对周围的人和事物观察得相当透彻，能够洞察现在和将来。随时可以发现事物的深层含义和意义，并能看到他人看不到的事物内在的抽象联系。\n你崇尚和谐善意、情感多样、热情、友好、体贴、情绪强烈，需要他人的肯定，也乐于称赞和帮助他人。你总是避免矛盾，更在意维护人际关系。\n你富有活力，待人宽厚，有同情心，有风度，喜欢让人高兴。只要可能，你就会使自己适应他人的需要和期望。你倾向于运用情感作出判断，决策时通常考虑他人的感受。你在意维护人际关系，愿意花费很多心思，结交各种各样的人，而不是做事。\n你有丰富的想象力，善于创新，自信，富有灵感和新思想，警觉，善于寻找新方法，更注重理解，而不是判断。你喜欢提出计划，并大力将其付储实施。你特别善于替别人发现机会，并有能力且愿意帮助他们采取行动抓住机会。","disadvantages":"你非常理想化，容易忽视现实和事物的逻辑，只要感兴趣，什么都去做。你通常在事情开始阶段或有变化的阶段较为投入，而对后续较为常规或沉闷的部分，难以持续投入。\n你总是能轻意想出很多新注意，喜欢着手许多事情，无法专注于一件事情，很少能把事情“从头做到尾”。你总能看到太多的可能性，因此无法确定那些事情是自己真正追求的。建议你认真选择一个目标，善始善终，以免浪费时间和挥霍自己的天赋。\n你组织纪律性比较弱，不肯服从，无视限制和程序。你喜欢即兴发挥，不愿意筹备和计划，对细节没有兴趣。如果你要有所作为，应尽量使自己的新思路现实，可操作。与更实际的人一起工作会对你很有帮助，这也符合你的特点，因为你不喜欢独自工作。"},{"type":"ENFJ","name":"主人公","proportion":2.5,"description":"看见你眼中的火种，我的使命是让它燎原。","careers":"人力资源培训主任、销售经理、小企业经理、程序设计员、生态旅游业专家、广告客户经理、公关专业人士、协调人、交流总裁、作家／记者、非营利机构总裁、杂志编辑、电视制片人、市场专员、社会工作者、人力资源管理、职业指导顾问、心理咨询工作者、大学教师（人文学科类）、教育学、心理学研究人员、撰稿人、节目主持人（新闻、采访类）、公共关系专家、社会活动家、文艺工作者、平面设计师、 画家、音乐家","advantages":"你善于社交、气宇不凡、易感应、善劝服。你精力旺盛，热情洋溢，能很快理解他人情感的需要、动机和所忧虑的事情，因此能做到与他人高度协调。你把注意力放在帮助他人，鼓励他人进步向上。你是催化剂，能引发出他人的最佳状态。既可以做有号召力的领袖，也可以做忠实的追随者。\n你性情平和，心胸宽阔，且很圆滑，很会促进周边关系的和睦，对于批评和紧张特别敏感。你容易看出他人的发展潜力，并倾力帮助他人发挥潜力，是体贴的助人为乐者。你愿意组织大家参与活动，使大家和睦又感到愉快。\n你是理想主义者，非常看重自己的价值，对自己尊重景仰的人、事业和公司都非常忠诚。有责任感、谨慎、坚持不懈，同时对新观点很好奇。若能为人类的利益有所贡献，会感到深受鼓舞。\n你对现实以外的可能性，以及对他人的影响非常感兴趣，容易看出他人的发展潜力和最大的优点，发现别人看不到的意义和联系，并感到自己与万物息息相关，可以井然有序地安排生活和工作。","disadvantages":"你非常理想化，认为世界是自己想象中的那样，不愿意接受与此相抵触的事情，经常忽略理想所需要的现实和细节问题。\n你依照情感行事，很少用逻辑，主要根据个人的价值观进行判断，无视行为所带来的后果，有时会过度陷入别人的情感和问题中。总是避免冲突，有时会不够诚实和公平。试着更多地去关注事情，而不只是人，更有利于你合理地做出决定。\n你有很高的热情，急于迎接新的挑战，有时会做出错误的假设或过于草率的决定。建议你对计划中的细节多加注意，等获取足够多的信息之后再做决策。\n你总想得到表扬，希望自己的才能和贡献得到赏识，你对于批评非常脆弱，容易忧虑，感到内疚，失去自信。当压力很大时，会变得暴燥，慌乱、吹毛求疵。"},{"type":"ESTP","name":"企业家","proportion":4.3,"description":"规则？那是用来打破再重建的乐高积木！","careers":"企业家、业务运作顾问、个人理财专家、证券经纪人、银行职员、预算分析者、技术培训人员、综合网络专业人士、旅游代理、促销商、手工艺人、新闻记者、土木工程师、工业工程师、机械工程师、贸易商、批发商、中间商、 零售商、房地产经纪人、保险经济人、汽车销售人员、私家侦探、警察、餐饮、娱乐及其他各类服务业的业主或主管、特许经营者、自由职业者、娱乐节目主持人、体育节目评论、脱口秀、音乐、舞蹈表演者、健身教练、体育工作者","advantages":"你是敏锐的发现者，善于看出眼前的需要，并迅速做出反应来满足这种需要，天生爱揽事并寻求满意的解决办法。你精力充沛，积极解决问题，很少被规则或标准程式框住。能够想出容易的办法去解决难办的事情，以此使自己的工作变得愉快。\n你天生的乐天派，积极活跃，随遇而安，乐于享受今天。对提供新经验的任何事物、活动、食物、服饰、人等都感兴趣，只愿享受今天，享受现在。\n你好奇心强，思路开扩，容易接受事物，倾向于通过逻辑分析和推理做出决定，不会感情用事。如果形势需要，你会表现出坚韧的意志力。偏爱灵活地处理实际情况，而不是根据计划办事。\n你长于行动，而非言语，喜欢处理各种事情，喜欢探求新方法。你具有创造性和适应性，有发明的才智和谋略，能够有效地缓解紧张氛，并使矛盾双方重归于好。\n你性格外向，友好而迷人，很受欢迎，并且能在大多数社会情况中很放松自如。","disadvantages":"由于你关注外界各种变化信息，喜欢处理紧急情况，不愿意制订规划去预防紧急情况的发生。常常一次着手许多事情，超出自己的负荷，不能履行诺言，可能使周围的人陷入混乱。你需要试着找到一些能让自己按时完成任务的方法。\n你的注意力完全集中在有趣的活动上，喜欢不断地接受新的挑战，不愿意在目前沉闷的工作中消磨时间，难以估计自己行为带来的结果。你需要为自己订立一个行为标准。\n当情况环境转变时，你很容易忽视他人的情感，变得迟钝和鲁莽。"},{"type":"ESFP","name":"表演者","proportion":8.5,"description":"生活是永不散场的派对，聚光灯要追着心跳打。","careers":"公关专业人士、劳工关系调解人、零售经理、商品规划师、团队培训人员、旅游项目经营者、演员、特别事件的协调人、社会工作者、旅游销售经理、融资者、保险代理／经纪人、幼教老师、职业策划咨询师、旅游管理/导游、促销员、海洋生物学家、精品店、商场销售人员、娱乐、餐饮业客户经理、房地产销售人员、汽车销售人员、市场营销人员（消费类产品）、广告企业中的设计师、创意人员、客户经理、时装设计和表演人员、摄影师、节目主持人、脱口秀演员、社区工作人员、自愿工作者、公共关系专家、健身和运动教练、医护人员","advantages":"你对人和新的经历都感兴趣，善于观察，看重眼前事物；你更多地从做事的过程中学到东西，而不是研究或读书。你相信自己五感所感触到的信息，喜欢有形的东西，能够看到并接受事物的本来面目，是现实的观察者，并具有运用常识处理问题的实际能力。\n你热爱生活，适应性强且随遇而安，爱热闹，爱玩耍，热情、友好，表现欲强烈，有魅力和说服力；喜欢意料之外的事情并给他人带来快乐和惊喜；你的饱满情绪和热情能够吸引了别人，灵活、随和，很好相处。通常很少事先做什么计划，自信能够遇事随机应变，当机立断。讨厌框框，讨厌老一套，总能设法避开这些东西。\n你善于处理人际关系，经常扮演和事老的角色，圆滑得体，富有同情心，愿意以实际的方式帮助他人，通常可以让别人接受自己的建议，不喜欢将自己的意愿强加别人，是非常好的交谈者，天生受人欢迎。","disadvantages":"你对各种事情都好奇，以致于总是分心，工作受到干扰。做事容易拖拉，难以约束自己，显得不是那么尽职尽责。建议集中注意力，平衡工作和生活，努力把工作放在首位，借鉴一些成功的或已为人所接受的安排工作和控制时间的方法。\n因为你积极活跃的个性，总是使你忙碌于具体的事务中，并无暇去制订计划，致使面临应急和变化时你会不知所措，你应该未雨绸缪，学会计划和预测事物的发展变化。\n你经常忽视理论思考和逻辑分析，做决定时习惯于相信自己的感觉，或凭一时兴趣、冲动，有时不考虑结果。你们对朋友的评价很高，并只看到他们积极的一面。你需要更进一步考虑事情的起因和结果，并学会拒绝。"},{"type":"ESTJ","name":"总经理","proportion":8.7,"description":"目标锁定，资源整合，战场就要赢得漂亮。","careers":"公司首席执行官、军官、预算分析师、药剂师、房地产经纪人、保险经纪人、教师（贸易/工商类）、物业管理、银行官员、项目经理、数据库经理、信息总监、后勤与供应经理、业务运作顾问、证券经纪人、电脑分析人员、保险代理、普通承包商、工厂主管、大、中型外资企业员工、业务经理、中层经理（多分布在财务、营运、物流采购、销售管理、项目管理、工厂管理、人事行政部门）、职业经理人、各类中小型企业主管和业主","advantages":"你做事速度快，讲求效率，有责任感，善于自我约束，能够尽职尽责地完成工作。\n你喜欢推进事情并掌控局势，敏锐，对细节有出色的记忆力，善于组织，能够系统化、结构化地通过有效的方式安排时间并达成目标。你有计划、有条理、喜欢把事情安排的井井有条，按照计划和步骤行事。你是一个有极强的逻辑性、非常喜欢做决定的人。\n你做事客观、善于分析，而且有很强的推理能力。通常根据自己的经验进行判断和决策，善于看到工作系统中不合逻辑，不协调和无效的部分，并做出积极改进。你习惯从细节出发，关注现实，重视经验和感受。你关注实用价值，对于听到、看到、闻到、尝到、触摸到的“具体事物”更加感兴趣，而不是一些抽象的理念。\n你关注眼前，一般对于事情的远景和潜在价值难以关注到。你性格外向，为人友好、直爽，处事讲求原则。通常是坚定的、可以信赖的伙伴。你喜欢传统，遵照规范办事，是原则和传统的良好维护者，你擅长判断人，严于律已，在人际关系上始终如一。","disadvantages":"你看问题具有很强的批判性，注意力更多关注存在的问题，通常不能对别人的贡献表示赞赏和肯定。你需要留意和发现别人的才能和努力，并适时给予鼓励和表扬。当提出批评时，多注意技巧。\n你喜欢把自己的标准强加给别人，对自己和他人都要求严格，通常被周围的人看成“独裁者”。你需要学会更加通融、开放，不要过于固执。建议以更加开放的观念和发展的眼光，看待周围的新事物，对不同的人，不同的事更有耐心和包容性。你遵照逻辑和客观的原则做事，较少考虑自己的行为和决定给他人带来的影响。建议你更加留心和尊重自己及他人的情绪和感受。\n你专注于实施自己细致的计划，容易错过外界的很多变化和信息，甚至难以停下来听一听别人的意见，你忽视了许多发展的可能性及事物潜在的关联关系。你需要学会放慢节奏，倾听别人的建议，考虑所有的可能性，更好地检查其它可以利用的资源，增加做事的周全性。如果你希望更好地适应社会，并获取成功，你需要尝试多角度地理解和处理问题，加强灵活性，不要事事控制，尝试转换思维方式，并且懂得和接受生活中有介于黑与白之间的灰色区域。"},{"type":"ESFJ","name":"执政官","proportion":12,"description":"用笑容串联每个灵魂，让温暖在人群中循环满格。","careers":"劳工关系调解人、零售经理、商品规划师、团队培训人员、旅游项目经营者、演员、特别事件的协调人、社会工作者、旅游销售经理、融资者、保险代理／经纪人、幼教老师、职业策划咨询师、旅游管理/导游、促销员、海洋生物学家、精品店、商场销售人员、娱乐、餐饮业客户经理、房地产销售人员、汽车销售人员、市场营销人员（消费类产品）、广告企业中的设计师、创意人员、客户经理、时装设计和表演人员、摄影师、节目主持人、脱口秀演员、社区工作人员、自愿工作者、公共关系专家、健身和运动教练","advantages":"你非常重视与别人的关系，易觉察出他人的需要，并善于给他人实际关怀，待人友好、善解人意并有很强的责任心。看到周围的人舒适和快乐，也会感到快乐和满足，很健谈，因此非常受欢迎。\n你热情，有活力，乐于合作，有同情心，机敏圆滑，希望得到别人的赞同和鼓励，冷淡和不友善会伤害你。你需要和睦的人际关系，对于批评和漠视非常敏感，竞争和冲突会让你感觉到不愉快，因此尽力避免发生这样的事情。\n你很实际、有条理，做事彻底，有一致性，对细节和事实有出色的记忆力，并且希望别人也如此。着眼于目前，在经验和事实之上做出决策，将事情安排妥当，喜欢自己成为活跃而有用的人物。能很好地适应日常的常规工作和活动，不喜欢做需要掌握抽象观点或客观分析的工作。喜爱自己的全部，对自己爱护有加。\n喜欢组织众人和控制形势，与他人合力圆满又按时地完成任务。喜欢安全和稳定的环境，支持现存制度，注重并很好地遵守社会约定规范。忠于自己的职责，并愿意超出自己的责任范围而做一些对别人有帮助或有益处的事情，在遇到困难和取得成功时，都很积极活跃，希望付出能得到回报或赞扬。","disadvantages":"你过分在意别人的情感和想法，以至于总是给予别人额外的关心和帮助，有时态度强硬，容易侵占别人的空间，你需要考虑一下自己提供的帮助是不是他人的需要。当遇到冲突时，为了保护和睦的人际关系，通常采取回避或是妥协的方式，而非积极的、正面的处理。\n你的敏感，做事总是希望得到别人的鼓励和赞赏，担心被忽视，不愿接受批评，很可能变得沮丧和郁闷。\n你总是容易陷入情感和细节中，很难从问题中跳出来更宏观、更客观的对待；取悦或帮助他人的内心很忽视自己的需求，难以说出“不”，怕让别人失望。\n你通常很难变通，拒绝尝试新方法，习惯根据经验做出决定，以至于信息不足造成决策的草率。建议尽量开放的接受外部变化，放慢决定的速度。"}],"dimensions":[{"dimension":"EI","name":"外倾E&内倾I","description":"第一个维度：根据个人的能量更集中地指向哪里来区分，分为内倾与外倾两种类型（I—E）。\n我们以自身为界，可以将世界分为自身以外的世界和自我的世界两个部分，也可称为外部世界和内部世界。外倾型的人倾向于将注意力和精力投注在外部世界，外在的人，外在的物，外在的环境等，而内倾的人则相反，较为关注自我的内部状况，如内心情感、思想。\n两种类型的个体在自己偏好的世界里会感觉自在、充满活力，而到相反的世界力则会不安、疲惫。因此，外倾与内倾的个体之间的区分是广泛而明显的，并不象我们平时讲的“外向者健谈、内向者害羞”那么简单，具体可以从下列几个方面进行分析：","prompt":"人毕竟生活在社会中，有时会顺应外在环境的、工作的需要调整自己的行为，再外倾的人，在权威人士目前或者十分隆重、严肃的场合，也会是个好的倾听者，再内倾的人，走上领导岗位，该发表意见的还得发表，准备充分的话，也会滔滔不绝。\n关键在于，我们需扪心自问：到底以什么样的方式行事，才是自己感觉最好的，最习惯的。","detail":[{"option":"E","title":"外倾型E","feature":"向外联结，破界而行","traits":"与他人相处精力充沛，希望成为注意的焦点，行动，之后思考，喜欢边想边说出声，易于“读”和了解；随意地分享个人信息，说的比听的多，高度热情地社交，反应快，喜欢快节奏，重于广度而不是深度。","characteristics":"你热爱参与社交，往往是社交活动的发起者。\n你倾向在社交中从他人处获得力量，独处时感觉消耗较大。比较开放，喜欢看到别人对自己行为的反应。\n关注自己如何影响外部环境：将心理能量和注意力聚集于外部世界和与他人的交往上。\n在面临疑问时或者新发现时，往往会迫不及待地找人讨论，交流分享。\n外倾的人则把注意力聚集在外部事物上，与内倾者的内省相对的，他们更注重别人对他们的评价和看法，以实际的东西来检验自我。"},{"option":"I","title":"内倾型I","feature":"向内深耕，静思蓄能","traits":"独自度过时光精力充沛，避免成为注意的焦点，思考，之后行动，在心中思考问题不善于表露，相对封闭，更愿意在经挑选的小群体中分享个人的信息，听的比说的多，不把热情表现出来，仔细考虑后，才有所反应，喜欢慢节奏，喜欢深度而不是广度","characteristics":"你往往不爱社交，或者社交活动经常作为参与者，只有别人喊你才会去。\n你倾向在独处中获得力量，社交消耗较多的精力，有较高的羞耻心，身处的环境越热闹，内心越孤独。\n关注外部环境的变化对自己的影响：将心理能量和注意力聚集于内部世界，注重自己的内心体验。\n在面临疑问的时候或者有想法和发现，往往会习惯先独立思考、独自消化。\n内倾者本质上更内省，会对从外部世界接受到的东西去内部转化和理解，作用于自我。而对外呈现超然性，既即便缺乏鼓舞也很难改变他们的想法。"}]},{"dimension":"SN","name":"实感S&直觉N","description":"第二个维度：根据个人收集信息的方式不同分为实感与直觉两种类型（S—N）。\n我们每个人都在不断接受着信息，这是我们跟上外界节拍的必要前提。但不同类型的个体接受信息的方式不同，这便有了实感型与直觉型之别。\n首先，面对同样的情景，两者的注意中心不同，依赖的信息通道也不同。事实型的人关注的是事实本身，注重细节，而灵感型的人注重的是基于事实的含义、关系和结论；事实型的人信赖五官听到、看到、闻到、感觉到、尝到的实实在在、有形有据的事实和信息，而灵感型的人注重“第六感觉”，注重“弦外之音”，灵感型的人的许多结论在事实型的人眼里，也许是飘忽的，不实在的。注重细节的结果是事实型的人擅长记忆大量事实与材料，他们有时候像本“词典”，能清晰地讲出大量的数据、人名、概念乃至定义，常使其他人感到吃惊。而灵感型的更擅长解释事实，捕捉零星的信息，分析事情的发展趋向。\n其次，事实型的人对待任务，习惯于按照规则、手册办事，比如照着手册使用家电，比如看着地图辨认交通路线，而灵感型的人，习惯尝试，跟着感觉走，他不习惯仔细地看完一大本说明书再动手，结果呢？可能比事实型的人更快地完成了任务，也可能因为失败而须重新开始。事实型习惯于固守现实，享受现实，使用已有的技能，灵感型的人更习惯变化、突破现实。简言之，事实型注意“是什么”，实际而仔细。灵感型则更关心“可能是什么”。具体区别如下：","prompt":"在我们的周围，两种类型的人都会存在，当然极端典型的比较少，大多数人兼有两种特质，但其中一种会更突出一些，成为本人的特色，也由此可以确定本人的类型。使用哪种方式接受信息都有利有弊。","detail":[{"option":"S","title":"实感型S","feature":"扎根现实，细节为锚","traits":"相信确定和有型的事物，喜欢新想法—它们必须有实际意义，重视现实性和常识性，喜欢使用和琢磨已知的技能，留心具体的和特殊的；进行细节描述，循序渐进地讲述有关情况，着眼于现实或现在","characteristics":"长期使用五官感受，实实在在的真实食物更能带来安全感，故倾向于看到、关注眼见为实的食物，喜欢凭事实和数据做出客观决定；注意力集中在外部环境具体。形象、客观的人事物上，能够专心于外部现实环境中吃饭喝茶、逛街闲聊这些事上，\n倾向于去做，而不愿想太多，专注于行动，行动进一步带来动力。比如感觉型常说“别想那么多，赶紧去做”“光想不做，什么事都解决不了”“先做着，边做边改进”。\n你更愿意活在当下，享受现在拥有的，倾向于维持现状，追求确定感。认为未来是危险的，即使有可能，仍感到不安全。因此不愿打破常规而冒险。故喜欢一板一眼，讲究先后顺序，一步一个脚印的做事情。\n你可能更喜欢在现实环境中可以动手操作，肢体参与的兴趣爱好。比如手工、烹饪、瑜伽、舞蹈、游泳、骑行等。在参与这些活动时，能集中注意力在这些行为动作本身上，因此更容易掌握技巧，进步更快。\n社交中，更喜欢谈论实际的、生活化的话题，比如美食、房车、邻里同事间的八卦，并且容易留意到这些衣食住行，现实世界中的信息。"},{"option":"N","title":"直觉型N","feature":"预见可能，抽象成图","traits":"相信灵感和推断，喜欢新思想和概念，重视想象力和独创力，喜欢学习新技能，但掌握之后很容易就厌倦了，留心普遍的和有象征性的；使用隐喻和类比，跳跃性地展现事实以一种绕圈子的方式，着眼于未来","characteristics":"长期使用心灵观察了解食物，看待事物越过表象，追求其背后蕴含的内涵、启示、规律、真相。更相信客观存在的事物给自己带来的灵感、启发和感受，而不是客观事物本身。喜欢拼自己的愿望、目标作出主观的决定；注意力聚焦在内部精神世界抽象、主观的灵感，观点，计划想法上，很难在现实环境中保持形和心一致，经常是看似做着一件事，但注意力却在精神世界里想事情，\n倾向于想多过做，需要想清楚后才能执行，否则宁愿不做。专注于思想，在大脑中构建行事方法。因此，直觉型常说“等我想清楚再做”“我还没有想明白”。\n你更愿意活在未来，难以满足现状，倾向于不断进取改变，追求可能性。脑海中有很多想法和创意，认为未来是充满可能性的，即使需要承担风险。因此更喜欢创新，发挥想象力，追求变化而做事情。\n更喜欢在精神世界中畅想，偏好理论学习多于动手操作，或者能表达其想象、创造力的兴趣爱好。比如阅读、影音、哲思、心理、创作等。N型也会有动手操作的兴趣爱好，但在参与这些活动的时候，头脑里仍是在天马行空地想事情、做计划、出灵感。\n社交中，更喜欢谈论精神层面的话题，比如想法、计划、感悟、理想、价值观、未来趋势。并且因为活在未来，对当下现实环境中的信息不常留意，对旁人津津乐道的八卦和琐碎话题不敢兴趣。"}]},{"dimension":"TF","name":"思维T&情感F","description":"第三个维度：根据个人做决定的方式的不同，可分为思考与情感两种类型（T—F）。\n这是从作决策的方式来看。仅看这个维度的名称，也许你会觉得，思考型的人是理性的，而情感性的人是非理性的，事实上并非如此。两类人都有理性思考的成分，但作决定或下结论的主要依据不一样。\n情感型的人常从自我的价值观念出发，变通地贯彻规章制度，做出一些自己认定是对的决策，比较关注决策可能给他人带来的情绪体验，人情味较浓。思维型的人则比较注重依据客观事实的分析，一以贯之、一视同仁地贯彻规章制度，不太习惯根据人情因素变通，哪怕做出的决定并不令人舒服。具体区别如下：","prompt":"不同性别的个体在这个维度上的偏好有所差异，据研究，大约2/3的女性偏好情感型，2/3的男性偏好思维型。其实，这两种类型无所谓好或坏，重要的是理解和自己不同类型的人的做法，并且尽量避免走入极端，极端的思维倾向，可能会给人“冷酷”的感觉，而极端的情感倾向则给人“无原则”的感觉。","detail":[{"option":"T","title":"思维型T","feature":"逻辑为尺，精准解构","traits":"退后一步思考，对问题进行客观的分析，重视符合逻辑、公正、公平的价值；一视同仁，容易发现缺点，有吹毛求疵的倾向，倾向于批评，被认为冷酷、麻木、漠不关心，认为坦率比圆通重要，只有情感符合逻辑时，才是正确的，才可取，渴望成就而激励","characteristics":"在交友中，更注重的是利益，欣赏和共赢。\n看上去缺乏情感的，较少关注情感类型题材的文学、影视作品。\n行为通常不带太多感情色彩，情感不外露，也很少向人倾诉自己的感想情绪。\n思维型的理性思维讲求“逻辑性”，天生追求“符合逻辑、批判、怀疑”。因而，更容易本能地发现别人做事、说话、计划中不合逻辑的地方，言辞中让人感觉是在鸡蛋里挑骨头。\n多数情况下是理性客观、条理清晰、富有逻辑的，有些冷漠、不好商量。对待规章制度，倾向于建立统一标准，贯彻实施，公事公办；对待合同协议，倾向于严格按订立条款执行；解决问题时，更擅长运用理性的逻辑思维和聪明才智。\n对别人的情绪察觉比较木讷，也没有情感型那样会照顾别人的情绪"},{"option":"F","title":"情感型F","feature":"共情为舟，柔韧通达","traits":"超前思考，考虑行为对他人的影响，重视同情与和睦：重视准则的例外性，给人快乐，容易理解别人，被认为感情过多，缺少逻辑性，软弱，认为圆通比坦率更重要,说大实话而伤害他人感情是情商低的表现，无论是否有意义，认为任何感情都可取，为了获得欣赏而激励","characteristics":"更加注重的是得到的感情支持，以满足自身的情感需要。\n情绪化，容易陷入感人至深的影视作品中，感动流泪。\n关心别人的感受，对情绪的敏感，使他们不愿拿人开玩笑，或者将人置于尴尬的境地，更不愿伤害别人。因而他们通常不喜欢看暴力的电影，而对故事、电影中的感人情节，常深陷其中，感动流泪，显得多愁善感。\n情感型的感性思维讲求“认可、赞赏”，天生追求友好和谐，注重他人感受和情绪的。因而，常本能地看到别人身上好的一面，习惯性夸赞别人，创造友好的交流氛围。\n多数是感性主观、温和友好、顾忌他人感受的，好说话、好通融。对待规章制度，倾向于视具体情况而定，人性化处理。对待合同协议，倾向于在特殊情况下可以通融，富有人情味的。解决问题时，更擅长安抚情绪，处理好人际关系后再处理事件本身。\n对别人的情绪很敏感，能察觉到别人内心的细微变化。"}]},{"dimension":"JP","name":"判断J&知觉P","description":"第四个维度：根据个人最感到舒适的生活方式，可分为判断与认知两种类型（J—P）。\n这是从喜好的生活方式来看。如果我们看看人们的办公桌上、包内或柜子里摆放的物品，可以发现，有些人经常是井然有序，而有些人就不那么习惯于保持整齐，前者是判断型具有的特征，后者是知觉型的人经常有的状态。不仅如此，在处事方式上，判断型的人目的性较强，一板一眼，他们喜欢有计划、有条理的世界，更愿意以比较有序的方式生活。知觉型的人好奇性、适宜性强，他们会不断关注新的信息，喜欢变化，也会考虑许多可能的变化因素，更愿意以比较灵活、随意、开放的方式生活。\n在做决策时，判断型的人较为果断，而知觉型的人总希望获得更多信息后再决断。逛了两天商场，还决定不了买什么的人，多半是知觉型的。两者的具体区别如下：","prompt":"多数人兼具两种倾向，只是更偏向某一端。我们在日常生活、工作中，也会受其它因素影响，改变一贯的方式，如面临紧急的、或期限明确的任务，知觉型的人也会果断起来。兴致所至，也会把物品收拾的整整齐齐，但这些并不是他们常有的行为方式，也不是他们内心感到真正自然、舒服的方式。作为个体，一方面根据内心的感受识别自我的偏好，发挥优势，另一方面，则要约束一下性格的弱点。如完全的判断型，比较容易走入刻板、教条的境地，完全的知觉型则容易使事情的进行没有限制。","detail":[{"option":"J","title":"判断型J","feature":"谋定后动，自成方圆","traits":"做了决定后感到快乐，有“工作原则”：先工作再玩（如果有时间的话），\n建立目标，并准时地完成，愿意知道它们将面对的情况，着重结果(重点在于完成任务)，满足感来源于完成计划，把时间看作有限的资源，认真地对待最后期限","characteristics":"追求的是控制感，最害怕失控。所以决策时倾向保守，浅尝辄止。\n更喜欢做判断、做决策，做各种计划，且严格按照计划行事，他们喜欢掌控和管理生活的方方面面，这样有足够安全感。\n喜欢收纳整理，摆放物品井然有序。\n喜欢有效利用好时间，如果没有事先告知，临时通知一个事项，并且不得不做时，会恼怒生气，认为不在计划内，也打乱了原本的计划。\n更喜欢有挑战、有追求的人生，不断制定目标，完成目标，获得成就感"},{"option":"P","title":"知觉型P","feature":"乘风而变，万径皆通","traits":"当各种选择都存在时，感到快乐，“玩的原则”：先玩再完成工作(如果有时间的话)，随着新信息的获取，不断改变目标，喜欢适应新情况，着重过程(重点在于如何完成工作)，满足感来源于计划的开始，认为时间是可更新的资源，而最后期限也是有收缩的","characteristics":"更喜欢冒险，总觉得有新的更好的选项，所以迟迟不决策，喜欢留改变的余地。\n更喜欢不断的搜集信息、生活生活、感知世界，他们不喜欢做决定，更喜欢宽松、自由、顺其自然的生活方式，也更容易遇遇而安。\n通常不喜欢整理和分类，在凌乱的环境中怡然自得。\n不会过多在意利用时间，临时发生的时候，不会恼怒，觉得临时的提议/安排也都可以，没什么关系。\n更喜欢轻松自在、随遇而安的生活，若不是大环境所迫，宁愿选择清闲、平淡的人生。"}]}]};
+</script>
+<script>
+(function(){
+  "use strict";
+  var QUESTIONS = MBTI_DATA.questions;
+  var SECTIONS = [
+    {name:"第一部分 外倾-内倾（E/I）",cls:"s-ei",desc:"下面列举了若干情境，请根据你通常的思考和行为方式选择最接近的答案。选 A 即倾向外倾（E），选 B 即倾向内倾（I）。请按顺序回答本部分全部 11 题。",ids:[1,2,3,4,5,6,7,8,9,10,41]},
+    {name:"第二部分 实感-直觉（S/N）",cls:"s-sn",desc:"下面列举了若干情境，请根据你通常接收信息的方式选择最接近的答案。选 A 即倾向实感（S），选 B 即倾向直觉（N）。请按顺序回答本部分全部 11 题。",ids:[11,12,13,14,15,16,17,18,19,20,42]},
+    {name:"第三部分 思维-情感（T/F）",cls:"s-tf",desc:"下面列举了若干情境，请根据你通常做决策的方式选择最接近的答案。选 A 即倾向思维（T），选 B 即倾向情感（F）。请按顺序回答本部分全部 11 题。",ids:[21,22,23,24,25,26,27,28,29,30,43]},
+    {name:"第四部分 判断-知觉（J/P）",cls:"s-jp",desc:"下面列举了若干情境，请根据你通常的生活方式选择最接近的答案。选 A 即倾向判断（J），选 B 即倾向知觉（P）。请按顺序回答本部分全部 11 题。",ids:[31,32,33,34,35,36,37,38,39,40,44]}
+  ];
+
+  var esc = function(s){
+    return String(s === null || s === undefined ? "" : s)
+      .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  };
+  var escP = function(s){ return esc(s).replace(/\n/g,"<br>"); };
+
+  var QMAP = {}, i;
+  for (i = 0; i < QUESTIONS.length; i++) QMAP[QUESTIONS[i].id] = QUESTIONS[i];
+
+  var ANSWERS = {};
+  var list = document.getElementById("mbtiList");
+  var count = document.getElementById("mbtiCount");
+  var bar = document.getElementById("mbtiBar");
+  var tip = document.getElementById("mbtiTip");
+  var submit = document.getElementById("mbtiSubmit");
+  var quizView = document.getElementById("quizView");
+  var reportView = document.getElementById("reportView");
+
+  var html = "", pos = 0;
+  SECTIONS.forEach(function (sec) {
+    html += '<div class="q-sec ' + esc(sec.cls) + '"><p class="q-sec-t">' + esc(sec.name) + '</p><p class="q-sec-d">' + esc(sec.desc) + '</p></div>';
+    sec.ids.forEach(function (id) {
+      pos++;
+      var q = QMAP[id], opts = "", k;
+      for (k = 0; k < q.options.length; k++) {
+        var o = q.options[k];
+        opts += '<button type="button" class="q-opt" data-pos="' + pos + '" data-v="' + esc(o.option) + '">' + esc(o.option) + '. ' + esc(o.content) + '</button>';
+      }
+      html += '<div class="q-item" id="q-' + pos + '"><div class="q-top"><span class="q-num">' + pos + '</span>'
+        + '<div class="q-body"><p class="q-text">' + esc(q.question) + '</p>'
+        + '<p class="q-prompt">' + esc(q.prompt) + '</p>'
+        + '<div class="q-opts">' + opts + '</div></div></div></div>';
+    });
+  });
+  list.innerHTML = html;
+
+  var optBtns = list.querySelectorAll(".q-opt");
+  for (i = 0; i < optBtns.length; i++) {
+    optBtns[i].onclick = function () {
+      var p = this.getAttribute("data-pos");
+      var sib = this.parentNode.querySelectorAll(".q-opt"), j;
+      for (j = 0; j < sib.length; j++) sib[j].classList.remove("on");
+      this.classList.add("on");
+      ANSWERS[p] = this.getAttribute("data-v");
+      var done = 0, n;
+      for (n = 1; n <= 44; n++) if (ANSWERS[n]) done++;
+      count.textContent = done + " / 44";
+      bar.style.width = Math.round(done / 44 * 100) + "%";
+      tip.style.display = "none";
+    };
+  }
+
+  submit.onclick = function () {
+    var n, miss = null, missCount = 0, sorted = {};
+    for (n = 1; n <= 44; n++) {
+      if (!ANSWERS[n]) { if (miss === null) miss = n; missCount++; }
+    }
+    if (missCount > 0) {
+      tip.textContent = "还有 " + missCount + " 题未作答，请先完成第 " + miss + " 题";
+      tip.style.display = "block";
+      var el = document.getElementById("q-" + miss);
+      if (el) {
+        el.classList.add("miss");
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+        setTimeout(function () { el.classList.remove("miss"); }, 1600);
+      }
+      return;
+    }
+    for (n = 1; n <= 44; n++) sorted[n] = ANSWERS[n];
+
+    var real, report;
+    try {
+      real = MBTIEngine.remapDisplayAnswers(sorted);
+    } catch (e) {
+      tip.textContent = "答案校验失败：" + e.message;
+      tip.style.display = "block";
+      return;
+    }
+    report = MBTIEngine.calculateScores(real, MBTI_DATA.questions, MBTI_DATA.profiles, MBTI_DATA.dimensions);
+    renderReport(report);
+    quizView.hidden = true;
+    reportView.hidden = false;
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  function renderReport(R) {
+    if (!R || !R.dominant_type || !R.role_detail) return;
+    var PAIR_CLS = { EI: "t-ei", SN: "t-sn", TF: "t-tf", JP: "t-jp" };
+    var PAIR_OF = { E: "EI", I: "EI", S: "SN", "N": "SN", T: "TF", F: "TF", J: "JP", P: "JP" };
+    var h = "";
+
+    h += '<div class="r-hdr">'
+      + '<div class="r-avatar"><img src="avatars/' + esc(R.dominant_type) + '.png" alt="' + esc(R.dominant_type) + ' ' + esc(R.role_detail.name) + '" onerror="this.parentNode.style.display=\'none\'"></div>'
+      + '<div class="r-hdr-t"><span class="r-type">' + esc(R.dominant_type) + '</span>'
+      + '<span class="r-nm">' + esc(R.role_detail.name) + ' · ' + esc(R.role_detail.proportion) + '% 的人群属于此类型</span>'
+      + '</div></div>';
+
+    var wins = R.dimension_pairs.map(function (p) { return p.result; }).join(" · ");
+    h += '<div class="r-meta">';
+    h += '<div class="r-mc"><b>' + R.display_score + '</b><span>倾向强度</span></div>';
+    h += '<div class="r-mc"><b>' + esc(R.role_detail.proportion) + '%</b><span>人群占比</span></div>';
+    h += '<div class="r-mc"><b>' + esc(wins) + '</b><span>胜出维度</span></div>';
+    h += '</div>';
+
+    var letters = ["E", "I", "S", "N", "T", "F", "J", "P"], k;
+    h += '<div class="r-bar8">';
+    for (k = 0; k < 8; k++) {
+      var L = letters[k], pair = PAIR_OF[L], cls = "", dp = null;
+      for (i = 0; i < R.dimension_pairs.length; i++) if (R.dimension_pairs[i].pair === pair) dp = R.dimension_pairs[i];
+      if (dp && dp.result === L) cls = "win " + PAIR_CLS[pair];
+      h += '<div class="' + cls + '">' + L + '<span class="v">' + R.dimension_counts[L] + '</span></div>';
+    }
+    h += '</div><div class="r-cap">胜出维度标色 · 数值=该端答题数</div>';
+
+    R.dimension_pairs.forEach(function (p) {
+      var cls = PAIR_CLS[p.pair];
+      h += '<div class="r-dim ' + cls + '">';
+      h += '<div class="r-dimh"><span class="r-dn">' + esc(p.dimension_name) + '</span>'
+        + '<span class="r-win">胜出：' + esc(p.result) + ' ' + esc(p.result_name) + '</span></div>';
+      h += '<div class="r-pair">';
+      h += side(p, p.option1, p.name1, p.score1, p.percent1, p.option1_detail);
+      h += side(p, p.option2, p.name2, p.score2, p.percent2, p.option2_detail);
+      h += '</div>';
+      h += '<details><summary>维度解读</summary>';
+      h += '<p class="r-sec">胜出端特质</p><p class="r-txt">' + escP(p.result_traits) + '</p>';
+      h += '<p class="r-sec">维度解读</p><p class="r-txt">' + escP(p.dimension_description) + '</p>'
+        + '<p class="r-txt">' + escP(p.dimension_prompt) + '</p>';
+      h += '<p class="r-sec">两端详情对比</p><div class="r-duo">';
+      h += duo(p.option1_detail);
+      h += duo(p.option2_detail);
+      h += '</div></details></div>';
+    });
+
+    h += '<p class="r-sec">人格特点</p><div class="r-dim"><div class="r-feats">';
+    h += '<div class="r-feat2 adv"><div class="h">优势</div><p>' + escP(R.role_detail.advantages) + '</p></div>';
+    h += '<div class="r-feat2 dis"><div class="h">潜在短板</div><p>' + escP(R.role_detail.disadvantages) + '</p></div>';
+    h += '</div></div>';
+
+    h += '<p class="r-sec">适配职业方向</p><div class="r-dim"><p class="r-txt">' + escP(R.analysis.summary) + '</p><div class="r-tags">';
+    R.analysis.recommendations.forEach(function (t) { h += '<span class="r-tag">' + esc(t) + '</span>'; });
+    h += '</div></div>';
+
+    h += '<div class="r-note">本报告基于 MBTI 职业性格测评（44 题）计算结果生成，供职业规划参考，不构成绝对结论。</div>';
+    document.getElementById("mbti-rpt").innerHTML = h;
+
+    function side(p, opt, name, score, percent, detail) {
+      var s = '<div class="r-side ' + (p.result === opt ? "win" : "") + '">';
+      s += '<div class="r-nm">' + esc(opt) + ' ' + esc(name)
+        + '<span class="r-pct">' + score + ' 题 · ' + percent + '%</span></div>';
+      s += '<div class="r-track"><i style="width:' + percent + '%"></i></div>';
+      s += '<div class="r-feat">' + esc(detail.feature) + '</div>';
+      return s + '</div>';
+    }
+    function duo(d) {
+      return '<div class="r-sc"><div class="h">' + esc(d.name) + '</div><div class="f">' + esc(d.feature) + '</div>'
+        + '<p>' + escP(d.traits) + '</p><p>' + escP(d.characteristics) + '</p></div>';
+    }
+  }
+
+  document.getElementById("btnRetest").onclick = function () {
+    ANSWERS = {};
+    var all = list.querySelectorAll(".q-opt"), j;
+    for (j = 0; j < all.length; j++) all[j].classList.remove("on");
+    count.textContent = "0 / 44";
+    bar.style.width = "0%";
+    tip.style.display = "none";
+    document.getElementById("mbti-rpt").innerHTML = "";
+    reportView.hidden = true;
+    quizView.hidden = false;
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+  document.getElementById("btnToggle").onclick = function () {
+    reportView.hidden = true;
+    quizView.hidden = false;
+  };
+})();
+</script>
+</body>
+</html>

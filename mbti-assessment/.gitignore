@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyc
+.Python
+venv/
+.venv/
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-error.log*
+
+# EdgeOne
+.edgeone/
+.edgeone/.token
+edgeone.json
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Backups (old business-style avatars, kept locally only)
+avatars/_business_backup/
+
+# Build artifacts / temp
+*.log
+*.tmp
+
+# Root Workbuddy_Place .gitignore ignores any data.json; un-ignore ours
+!src/data.json
