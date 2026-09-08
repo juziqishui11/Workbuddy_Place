@@ -1,0 +1,1958 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>90 天 FDE 学习计划 · 从 Python 基础到可交付 Agent</title>
+<style>
+:root{
+  --bg:#f6f7fb;
+  --bg-soft:#eef1f8;
+  --card:#ffffff;
+  --ink:#1b1f35;
+  --ink-2:#4b5273;
+  --ink-3:#7b83a3;
+  --line:#e4e7f2;
+  --brand:#6d5efc;
+  --brand-2:#22c1c3;
+  --brand-soft:#efecff;
+  --ok:#16a34a;
+  --warn:#f59e0b;
+  --danger:#ef4444;
+  --radius:16px;
+  --shadow:0 2px 6px rgba(27,31,53,.05),0 12px 28px rgba(27,31,53,.06);
+  --shadow-sm:0 1px 3px rgba(27,31,53,.07);
+  --mono:"JetBrains Mono","Cascadia Code",Consolas,"SFMono-Regular",Menlo,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:
+    radial-gradient(1100px 500px at 12% -8%, #e9e5ff 0%, rgba(233,229,255,0) 60%),
+    radial-gradient(900px 420px at 92% 0%, #d9f5f6 0%, rgba(217,245,246,0) 55%),
+    var(--bg);
+  color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--brand)}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px 80px}
+
+/* ---------- header ---------- */
+header.hero{padding:34px 0 18px}
+.hero-top{display:flex;gap:26px;align-items:center;flex-wrap:wrap}
+.hero-title{flex:1;min-width:300px}
+.badge-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.badge{font-size:12px;padding:4px 11px;border-radius:999px;background:var(--card);border:1px solid var(--line);color:var(--ink-2);box-shadow:var(--shadow-sm)}
+.badge.b1{background:linear-gradient(135deg,#6d5efc,#22c1c3);color:#fff;border:none}
+.badge.b2{background:#fff7e6;border-color:#ffe2a8;color:#a35c00}
+.badge.b3{background:#eafaf0;border-color:#bdeccd;color:#10703c}
+h1{margin:0 0 6px;font-size:31px;line-height:1.25;letter-spacing:-.4px}
+h1 em{font-style:normal;background:linear-gradient(135deg,#6d5efc,#22c1c3);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:var(--ink-2);margin:0;font-size:14.5px}
+
+.dash{display:flex;gap:18px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px 20px;box-shadow:var(--shadow)}
+.ring{position:relative;width:92px;height:92px;flex:none}
+.ring svg{transform:rotate(-90deg)}
+.ring .val{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:700;font-size:20px;letter-spacing:-.5px}
+.ring .val small{font-size:10px;font-weight:600;color:var(--ink-3);letter-spacing:0}
+.stats{display:grid;grid-template-columns:repeat(2,minmax(88px,1fr));gap:10px 18px}
+.stat .n{font-size:19px;font-weight:700;line-height:1.1}
+.stat .l{font-size:11.5px;color:var(--ink-3)}
+
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+button.btn,label.btn{font-family:inherit;font-size:13px;cursor:pointer;background:var(--card);border:1px solid var(--line);color:var(--ink-2);padding:8px 14px;border-radius:10px;box-shadow:var(--shadow-sm);transition:.15s;display:inline-flex;align-items:center;gap:6px}
+button.btn:hover,label.btn:hover{border-color:var(--brand);color:var(--brand);transform:translateY(-1px)}
+button.btn.primary{background:linear-gradient(135deg,#6d5efc,#5b8cff);color:#fff;border:none}
+button.btn.primary:hover{filter:brightness(1.06);color:#fff}
+
+/* ---------- tabs ---------- */
+nav.tabs{position:sticky;top:0;z-index:40;background:rgba(246,247,251,.86);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);margin:18px -20px 0;padding:0 20px}
+nav.tabs .inner{max-width:1180px;margin:0 auto;display:flex;gap:4px;overflow-x:auto}
+nav.tabs button{font-family:inherit;font-size:14px;background:none;border:none;padding:14px 16px;color:var(--ink-3);cursor:pointer;border-bottom:2.5px solid transparent;white-space:nowrap;font-weight:600}
+nav.tabs button:hover{color:var(--ink)}
+nav.tabs button.on{color:var(--brand);border-bottom-color:var(--brand)}
+section.view{display:none;padding-top:24px}
+section.view.on{display:block;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* ---------- generic card ---------- */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+.sec-title{font-size:17px;font-weight:700;margin:0 0 4px}
+.sec-desc{color:var(--ink-3);font-size:13px;margin:0 0 16px}
+
+/* ---------- timeline ---------- */
+.tl-legend{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.tl-legend span{font-size:11.5px;padding:3px 9px;border-radius:8px;color:#fff;font-weight:600}
+.tl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(52px,1fr));gap:8px}
+.tl-cell{aspect-ratio:1;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;font-weight:700;font-size:12px;color:#fff;position:relative;transition:.15s;box-shadow:var(--shadow-sm)}
+.tl-cell:hover{transform:scale(1.08);z-index:2}
+.tl-cell.done::after{content:"✓";position:absolute;top:3px;right:5px;font-size:11px;background:rgba(255,255,255,.92);color:#111;border-radius:50%;width:15px;height:15px;display:flex;align-items:center;justify-content:center}
+.tl-cell .t{font-size:9.5px;font-weight:600;opacity:.9;margin-top:1px}
+.phases{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:22px}
+.phase{padding:14px 16px;border-radius:14px;border:1px solid var(--line);background:var(--card)}
+.phase h4{margin:0 0 6px;font-size:14px}
+.phase p{margin:0;font-size:12.5px;color:var(--ink-2)}
+.phase .w{font-size:11px;color:var(--ink-3);display:block;margin-bottom:6px;letter-spacing:.4px;text-transform:uppercase;font-weight:700}
+
+/* ---------- week cards ---------- */
+.week{margin-bottom:14px;overflow:hidden}
+.week-head{display:flex;gap:14px;align-items:flex-start;padding:16px 18px;cursor:pointer;user-select:none}
+.week-head:hover{background:var(--bg-soft)}
+.wk-chip{flex:none;width:52px;height:52px;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;font-weight:800;line-height:1.05}
+.wk-chip small{font-size:9.5px;font-weight:600;opacity:.9}
+.week-head .meta{flex:1;min-width:0}
+.week-head h3{margin:0 0 3px;font-size:16px}
+.week-head .tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.tag{font-size:11px;padding:2px 8px;border-radius:6px;background:var(--bg-soft);color:var(--ink-2)}
+.tag.s{background:#eef2ff;color:#3f47c9}
+.tag.f{background:#fff4e5;color:#9a5b00}
+.tag.d{background:#eafaf0;color:#0f7a3d}
+.wk-prog{flex:none;text-align:right}
+.wk-prog .p{font-size:13px;font-weight:700;color:var(--ink-2)}
+.wk-prog .bar{width:76px;height:6px;border-radius:99px;background:var(--bg-soft);margin-top:5px;overflow:hidden}
+.wk-prog .bar i{display:block;height:100%;border-radius:99px;transition:.3s}
+.wk-body{display:none;border-top:1px solid var(--line);padding:6px 18px 18px}
+.week.open .wk-body{display:block}
+.week.open .caret{transform:rotate(180deg)}
+.caret{flex:none;color:var(--ink-3);font-size:12px;transition:.2s;margin-top:6px}
+
+.day{border:1px solid var(--line);border-radius:12px;margin-top:10px;background:#fdfdff;overflow:hidden}
+.day-head{display:flex;gap:10px;align-items:center;padding:11px 13px;cursor:pointer}
+.day-head:hover{background:var(--bg-soft)}
+.cbox{flex:none;width:19px;height:19px;border-radius:6px;border:2px solid #c9cee2;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;transition:.15s}
+.cbox.on{background:linear-gradient(135deg,#6d5efc,#22c1c3);border-color:transparent}
+.day-head .dn{flex:none;font-size:11px;font-weight:800;color:var(--ink-3);width:30px}
+.day-head .dt{flex:1;font-size:14px;font-weight:600}
+.day-head .dm{flex:none;font-size:11.5px;color:var(--ink-3);background:var(--bg-soft);padding:2px 8px;border-radius:6px}
+.day-body{display:none;padding:0 13px 14px 13px;border-top:1px dashed var(--line)}
+.day.open .day-body{display:block}
+.day.open .caret{transform:rotate(180deg)}
+.day.done .dt{text-decoration:line-through;color:var(--ink-3)}
+.steps{margin:10px 0 0;padding-left:18px}
+.steps li{margin:4px 0;font-size:13.5px;color:var(--ink-2)}
+.box{border-radius:11px;padding:11px 13px;margin-top:11px;font-size:13px}
+.box .bt{font-size:11.5px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;margin-bottom:5px;display:flex;align-items:center;gap:6px}
+.box.concept{background:#f3f0ff;border:1px solid #e0daff}
+.box.concept .bt{color:#5b46d8}
+.box.code{background:#0f1424;border:1px solid #1d2440;padding:0;overflow:hidden}
+.box.code .bt{color:#8ea2d8;padding:9px 13px 7px;background:#151b30;margin:0;display:flex;justify-content:space-between;align-items:center}
+.box.code pre{margin:0;padding:0 13px 13px;overflow-x:auto}
+.box.code code{font-family:var(--mono);font-size:12.3px;line-height:1.65;color:#dbe4ff;white-space:pre}
+.cp{font-size:11px;background:#263050;border:none;color:#c6d3f5;padding:3px 9px;border-radius:6px;cursor:pointer;font-family:inherit}
+.cp:hover{background:#33406b}
+.box.quiz{background:#fff8ec;border:1px solid #f6dfae}
+.box.quiz .bt{color:#97650a}
+.box.note{background:#eff8ff;border:1px solid #cbe4fb}
+.box.note .bt{color:#1471b8}
+details.ans{margin-top:7px}
+details.ans summary{cursor:pointer;font-size:12.5px;color:var(--ink-2);font-weight:600;outline:none}
+details.ans .ansbody{margin-top:7px;padding:9px 11px;background:#fff;border:1px solid var(--line);border-radius:8px;font-size:13px;color:var(--ink-2);white-space:pre-wrap}
+.box.deliver{background:#eefbf3;border:1px solid #bdeccd}
+.box.deliver .bt{color:#0f7a3d}
+
+/* ---------- exercises ---------- */
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;align-items:center}
+.filters input,.filters select{font-family:inherit;font-size:13px;padding:8px 12px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);outline:none}
+.filters input:focus,.filters select:focus{border-color:var(--brand)}
+.ex{border:1px solid var(--line);border-radius:13px;background:var(--card);margin-bottom:10px;overflow:hidden}
+.ex-head{display:flex;gap:11px;align-items:flex-start;padding:13px 15px;cursor:pointer}
+.ex-head:hover{background:var(--bg-soft)}
+.ex-id{flex:none;font-family:var(--mono);font-size:11px;font-weight:700;padding:3px 8px;border-radius:7px;background:var(--bg-soft);color:var(--ink-2)}
+.ex-body{display:none;padding:0 15px 15px;border-top:1px dashed var(--line)}
+.ex.open .ex-body{display:block}
+.lvl{font-size:10.5px;font-weight:800;padding:2px 7px;border-radius:5px;color:#fff}
+.lvl.L1{background:#8b93b5}.lvl.L2{background:#3f8ff5}.lvl.L3{background:#a855f7}.lvl.L4{background:#f0821e}
+.kind{font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:5px}
+.kind.py{background:#e6f4ea;color:#0f7a3d}
+.kind.agent{background:#f3e8ff;color:#7b2ec7}
+.kind.fde{background:#fff0e6;color:#b1520a}
+.ex pre{background:#0f1424;color:#dbe4ff;font-family:var(--mono);font-size:12.2px;padding:11px 13px;border-radius:9px;overflow-x:auto;margin:8px 0 0}
+
+/* ---------- glossary ---------- */
+.gl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:11px}
+.gl{border:1px solid var(--line);border-radius:13px;background:var(--card);padding:13px 15px}
+.gl h4{margin:0 0 4px;font-size:14px;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.gl .en{font-family:var(--mono);font-size:11px;color:var(--ink-3);font-weight:500}
+.gl p{margin:0;font-size:13px;color:var(--ink-2)}
+.gl .cat{font-size:10px;font-weight:700;padding:1px 6px;border-radius:5px;background:var(--bg-soft);color:var(--ink-3)}
+
+/* ---------- checklist ---------- */
+.ck-group{margin-bottom:18px}
+.ck-group h4{margin:0 0 9px;font-size:14.5px;display:flex;align-items:center;gap:8px}
+.ck{display:flex;gap:11px;align-items:flex-start;padding:11px 14px;border:1px solid var(--line);border-radius:11px;background:var(--card);margin-bottom:8px}
+.ck .txt{flex:1;font-size:13.5px}
+.ck .txt small{display:block;color:var(--ink-3);font-size:12px;margin-top:2px}
+.ck.done .txt{text-decoration:line-through;color:var(--ink-3)}
+
+.foot{text-align:center;color:var(--ink-3);font-size:12px;margin-top:40px;line-height:1.9}
+table.t{width:100%;border-collapse:collapse;font-size:13px;background:var(--card);border-radius:12px;overflow:hidden}
+table.t th,table.t td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+table.t th{background:var(--bg-soft);font-weight:700;font-size:12.5px}
+table.t td{color:var(--ink-2)}
+
+@media(max-width:720px){
+  .phases{grid-template-columns:1fr}
+  .dash{flex-direction:column;align-items:flex-start}
+  h1{font-size:24px}
+}
+@media print{
+  nav.tabs,.toolbar,.filters{display:none!important}
+  section.view{display:block!important;padding-top:10px}
+  .wk-body,.day-body,.ex-body{display:block!important}
+  body{background:#fff}
+  .card,.week,.day{box-shadow:none;break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <div class="hero-top">
+    <div class="hero-title">
+      <div class="badge-row">
+        <span class="badge b1">FDE · Forward Deployed Engineer</span>
+        <span class="badge b2">每日 1–2 小时</span>
+        <span class="badge b3">90 天 / 12 周</span>
+        <span class="badge">有 Python 基础 · 零项目 & 零 Agent 经验</span>
+      </div>
+      <h1>90 天从 <em>会写 Python</em> 到 <em>交付过真实 Agent</em></h1>
+      <p class="sub">终点不是"学过 AI"，而是拥有一条能被追问证据的交付链：可部署的工具 + 模拟用户使用数据 + 一页案例 + 面试 STAR。</p>
+    </div>
+    <div class="dash">
+      <div class="ring">
+        <svg width="92" height="92" viewBox="0 0 92 92">
+          <circle cx="46" cy="46" r="38" fill="none" stroke="#e9ecf7" stroke-width="10"/>
+          <circle id="ringArc" cx="46" cy="46" r="38" fill="none" stroke="url(#g1)" stroke-width="10" stroke-linecap="round" stroke-dasharray="238.76" stroke-dashoffset="238.76" style="transition:stroke-dashoffset .5s"/>
+          <defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6d5efc"/><stop offset="1" stop-color="#22c1c3"/></linearGradient></defs>
+        </svg>
+        <div class="val"><span id="ringPct">0%</span><small>总进度</small></div>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="n" id="sDays">0<span style="font-size:12px;color:var(--ink-3)">/90</span></div><div class="l">完成天数</div></div>
+        <div class="stat"><div class="n" id="sStreak">0</div><div class="l">最长连续</div></div>
+        <div class="stat"><div class="n" id="sEx">0<span style="font-size:12px;color:var(--ink-3)">/36</span></div><div class="l">练习题</div></div>
+        <div class="stat"><div class="n" id="sCk">0</div><div class="l">验收项</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="toolbar">
+    <button class="btn primary" id="btnToday">跳到今天</button>
+    <button class="btn" id="btnExpand">展开本周</button>
+    <button class="btn" id="btnExport">导出进度</button>
+    <label class="btn" for="fileImport">导入进度</label><input type="file" id="fileImport" accept="application/json" style="display:none">
+    <button class="btn" id="btnReset">重置</button>
+    <button class="btn" id="btnPrint">打印 / 存 PDF</button>
+  </div>
+</header>
+
+<nav class="tabs"><div class="inner">
+  <button data-v="timeline" class="on">时间轴</button>
+  <button data-v="weeks">12 周任务</button>
+  <button data-v="exercises">练习题 36</button>
+  <button data-v="glossary">概念词典</button>
+  <button data-v="checklist">验收清单</button>
+  <button data-v="about">怎么用</button>
+</div></nav>
+
+<section class="view on" id="view-timeline">
+  <h2 class="sec-title">90 天全景</h2>
+  <p class="sec-desc">点任意一天可跳到该周任务；已完成的格子右上角打勾。</p>
+  <div class="phases" id="phases"></div>
+  <div class="tl-legend" id="tlLegend"></div>
+  <div class="tl-grid" id="tlGrid"></div>
+</section>
+
+<section class="view" id="view-weeks">
+  <h2 class="sec-title">12 周任务</h2>
+  <p class="sec-desc">点周标题展开；每天点开有 步骤 / 概念卡 / 代码 / 练习。勾选状态自动保存在本机浏览器。</p>
+  <div id="weeks"></div>
+</section>
+
+<section class="view" id="view-exercises">
+  <h2 class="sec-title">Python 练习题库 · 36 道</h2>
+  <p class="sec-desc">L1 工程基础 / L2 工程进阶 / L3 Agent 概念 / L4 综合。建议每周 3 道，跟着周次做。</p>
+  <div class="filters">
+    <input type="search" id="exSearch" placeholder="搜索题目 / 考察点…" style="flex:1;min-width:200px">
+    <select id="exLvl"><option value="">全部难度</option><option>L1</option><option>L2</option><option>L3</option><option>L4</option></select>
+    <select id="exKind"><option value="">全部类型</option><option value="py">Python 工程</option><option value="agent">Agent 概念</option><option value="fde">FDE 交付</option></select>
+    <label class="btn" style="margin:0"><input type="checkbox" id="exHideDone" style="margin:0 6px 0 0">隐藏已完成</label>
+  </div>
+  <div id="exList"></div>
+</section>
+
+<section class="view" id="view-glossary">
+  <h2 class="sec-title">概念词典</h2>
+  <p class="sec-desc">Agent 与 FDE 黑话速查。面试被问到时用大白话讲出来，比背名词更值钱。</p>
+  <div class="filters"><input type="search" id="glSearch" placeholder="搜索术语…" style="flex:1;min-width:220px"></div>
+  <div class="gl-grid" id="glList"></div>
+</section>
+
+<section class="view" id="view-checklist">
+  <h2 class="sec-title">验收清单</h2>
+  <p class="sec-desc">每周必须交出一个"东西"。做不到就砍范围，不要砍验收物。</p>
+  <div id="ckList"></div>
+</section>
+
+<section class="view" id="view-about">
+  <h2 class="sec-title">这份计划怎么用</h2>
+  <div id="aboutBody"></div>
+</section>
+
+<div class="foot">
+  单文件离线页面 · 进度保存在本机浏览器 localStorage · 换电脑请先「导出进度」<br>
+  内容对齐公众号《90天，我和 WorkBuddy 学 Agent》系列 Round 结构，并按 FDE 岗位要求补入工程地基与交付证据
+</div>
+</div>
+
+<script>
+/* ============================================================
+   数据容器 —— 后续 script 块逐段 push 内容
+   ============================================================ */
+const DATA = { weeks: [], exercises: [], glossary: [], checklist: [], phases: [] };
+</script>
+
+<script>
+/* ============================ 阶段 ============================ */
+DATA.phases = [
+  {w:'第 1 月 · 基础与单 Agent', c:'#6d5efc', h:'把模型接上电，再给它手、脚和记忆', p:'W1 API 精熟 → W2 首个 Agent → W3 Agent 框架 → W4 RAG。阶段项目：知识库问答原型。每周 1 天补工程地基（Git/SQL/HTTP/Docker）。'},
+  {w:'第 2 月 · 生产级 Agent', c:'#22c1c3', h:'从能跑 Demo 到敢上生产', p:'W5-6 多 Agent 编排 + 三道保护 → W7 Eval 与可观测 → W8 可靠性工程。阶段项目：主线项目 v1，docker compose 一键起。'},
+  {w:'第 3 月 · FDE 实战与求职', c:'#f0821e', h:'把技术变成别人愿意用的东西，并证明它有用', p:'W9-10 部署+前端+模拟用户连用两周 → W11 客户侧能力 → W12 作品集+面试。毕业项目：端到端可演示 Agent 产品。'}
+];
+
+/* ============================ W1 ============================ */
+DATA.weeks.push({
+  w:1, range:'D1–D7', theme:'LLM API 精熟', color:'#6d5efc',
+  series:'对齐系列 Round 1（Day 1–7）',
+  foundation:'工程地基：Git 初始化 / .env 密钥 / 目录规范',
+  deliver:'minillm.py（chat / stream / tool / cost 四个函数）+ 第一个 GitHub 提交',
+  days:[
+    {d:1,t:'第一次跑通 LLM 调用：四个参数掰开看',min:90,
+      steps:['git init 建仓库，按 week1/ week2/ … 分目录，notes/ 放笔记','根目录建 .env：OPENAI_API_KEY / OPENAI_BASE_URL / OPENAI_MODEL，用 python-dotenv 读','写 common/config.py 统一拿配置，换模型只改 .env，代码不动','写 week1/day1_basic.py，发一次请求，打印 回复 / finish_reason / usage','把 temperature 从 0 调到 1，同一问题问两次，观察差异'],
+      concept:{t:'四个核心参数',b:'model 决定用哪个模型（能力/价格差异大）；messages 是模型唯一能看到的上下文，system 放第一条立规矩；temperature 0 最确定、1 最发散，代码与事实类用 0～0.3；max_tokens 既省钱又防截断，配合 finish_reason=length 判断是否被砍。'},
+      code:{t:'week1/day1_basic.py',src:`import os
+from openai import OpenAI
+from dotenv import load_dotenv, find_dotenv
+
+load_dotenv(find_dotenv())          # 向上递归找 .env
+client = OpenAI(
+    api_key=os.getenv("OPENAI_API_KEY"),
+    base_url=os.getenv("OPENAI_BASE_URL"),
+)
+
+resp = client.chat.completions.create(
+    model=os.getenv("OPENAI_MODEL", "deepseek-chat"),
+    messages=[
+        {"role": "system", "content": "你是一个说话简洁的助手。"},
+        {"role": "user", "content": "用一句话解释什么是大语言模型。"},
+    ],
+    temperature=0.7,
+    max_tokens=200,
+)
+
+print("回答:", resp.choices[0].message.content)
+print("结束原因:", resp.choices[0].finish_reason)   # stop / length / tool_calls
+print("用量:", resp.usage.prompt_tokens, "+", resp.usage.completion_tokens)`},
+      quiz:{q:'为什么 system 消息要放在 messages 第一条？',a:'模型会看到全部消息，人设与总指令放最前面 = 先立规矩再干活，后续 user 内容对它的影响才可控。放中间或末尾，指令权重会被最近的内容稀释。'}},
+
+    {d:2,t:'usage 与 finish_reason：把账看清楚',min:80,
+      steps:['打印完整 response.usage，逐字段对应到钱','把 max_tokens 改成 20，让回答被截断，观察 finish_reason=length','对比 temperature=0 与 1，同一问题各跑 3 次，记录答案稳定性','查 DeepSeek 等推理模型的 reasoning_tokens 字段，算清隐形成本','把结论写进 notes/day02.md'],
+      concept:{t:'finish_reason 与 token 账单',b:'stop=正常结束；length=被 max_tokens 截断；tool_calls=模型要调工具；content_filter=被安全策略拦。账单 = prompt_tokens（输入）+ completion_tokens（输出），推理模型还要加 reasoning_tokens——做 Agent 成本核算时最容易漏的就是这块。'},
+      quiz:{q:'回答被截断了，第一反应应该做什么？',a:'先看 finish_reason 是不是 length。是→加大 max_tokens 或改成分段生成；不是→问题在别处（内容过滤、工具调用未处理）。不要一上来就加大 max_tokens 乱试。'}},
+
+    {d:3,t:'工程地基① Git + 目录规范 + 密钥管理',min:60,
+      steps:['.gitignore 加 .env、__pycache__/、*.log、venv/','确认 git status 里看不到 .env；若已提交过，立刻轮换 key','把本周脚本移到 week1/，笔记放 notes/','首次 commit，建 GitHub 私有/公开仓库并 push','README 写一句话：这个项目是干什么的、怎么跑起来'],
+      concept:{t:'FDE 为什么必须会 Git',b:'FDE 常年进客户现场改代码：能回滚、能开分支做实验、能看 diff 解释"我改了什么"，是基本职业素养。密钥进 Git 是最常见的事故——面试问到"你踩过什么坑"，这是一个真实且加分的答案。'},
+      quiz:{q:'不小心把 .env 提交并 push 了，正确的三步是什么？',a:'1) 立刻到平台轮换/作废该 key；2) 把 .env 加入 .gitignore 并从版本库移除（git rm --cached .env）；3) 提交并 push 修正。注意：仅删除文件不够，历史里的 key 已被爬虫盯上，必须轮换。'}},
+
+    {d:4,t:'Function Calling：给模型装上手',min:90,
+      steps:['定义一个 get_weather(city) 工具，写清 name / description / parameters','把 tools 传进请求，问"北京天气怎么样"','打印返回的 tool_calls，看模型选了哪个函数、传了什么参数','本地用字典模拟执行函数，把结果以 role=tool 塞回 messages','再发一次请求，让模型基于工具结果给最终答案'],
+      concept:{t:'工具调用的本质',b:'模型不会真的执行任何代码。它只是输出一段结构化 JSON："我想调用 get_weather，参数是北京"。真正执行的是你的程序。这个"接口契约"是没有它模型就只是聊天机器人的分水岭。'},
+      code:{t:'week1/day4_tool.py（核心片段）',src:`tools = [{
+    "type": "function",
+    "function": {
+        "name": "get_weather",
+        "description": "查询指定城市的当前天气，仅在中国境内城市可用",
+        "parameters": {
+            "type": "object",
+            "properties": {"city": {"type": "string", "description": "城市名，如 北京"}},
+            "required": ["city"],
+        },
+    },
+}]
+
+resp = client.chat.completions.create(
+    model=MODEL,
+    messages=[{"role": "user", "content": "北京今天天气怎么样？"}],
+    tools=tools,
+)
+call = resp.choices[0].message.tool_calls[0]        # 模型只是"请求"调用
+args = json.loads(call.function.arguments)
+
+def get_weather(city):                               # 真正执行的是你的代码
+    return {"北京": "晴，26℃", "上海": "多云，28℃"}.get(city, "暂无数据")
+
+messages.append({"role": "assistant", "tool_calls": resp.choices[0].message.tool_calls})
+messages.append({"role": "tool", "tool_call_id": call.id,
+                 "content": json.dumps(get_weather(args["city"]), ensure_ascii=False)})
+
+final = client.chat.completions.create(model=MODEL, messages=messages)
+print(final.choices[0].message.content)`},
+      quiz:{q:'模型返回了 tool_calls，此时应该直接给用户答复吗？',a:'不该。必须执行工具、把结果以 role="tool" 和对应的 tool_call_id 塞回 messages，再请求一次，让模型基于真实数据作答。跳过这一步 = 模型只能靠猜，幻觉就来了。'}},
+
+    {d:5,t:'结构化输出：让模型按格式吐 JSON',min:80,
+      steps:['用 response_format={"type":"json_object"} 强制 JSON','让模型把一条客户工单解析成 category / priority / reason / need_human_review','用 json.loads 解析并断言字段齐全','故意在提示词里要求输出第五个不存在的字段，观察模型如何处理','写一个 safe_parse：解析失败时重试一次，仍失败则转人工队列'],
+      concept:{t:'结构化输出 = 程序与模型的契约',b:'Agent 的下游是代码，不是人。输出必须能被 json.loads，字段必须稳定。三道保险：schema 约束 + 解析失败重试 + 仍失败转人工。这一步做不牢，后面所有自动化都建在沙子上。'},
+      code:{t:'week1/day5_structured.py（核心片段）',src:`SCHEMA_HINT = """只输出 JSON，字段：
+{"category": "退款问题|物流问题|质量问题|其他",
+ "priority": "high|medium|low",
+ "reason": "一句话说明原因",
+ "need_human_review": true|false}"""
+
+def classify(text):
+    resp = client.chat.completions.create(
+        model=MODEL,
+        messages=[{"role": "system", "content": SCHEMA_HINT},
+                  {"role": "user", "content": text}],
+        response_format={"type": "json_object"},
+        temperature=0,
+    )
+    try:
+        data = json.loads(resp.choices[0].message.content)
+    except json.JSONDecodeError:
+        return {"category": "其他", "priority": "high",
+                "reason": "解析失败，转人工", "need_human_review": True}
+    if set(data) < {"category", "priority", "reason", "need_human_review"}:
+        data["need_human_review"] = True          # 字段缺失 → 不放行
+    return data`},
+      quiz:{q:'为什么结构化输出失败时要转人工而不是重试到成功？',a:'重试到成功会掩盖真实失败率，且模型对同一输入可能持续输出坏格式。转人工队列既保证业务不中断，又给你留下一条真实的失败样本——这批样本正是后面做 eval 的黄金数据。'}},
+
+    {d:6,t:'流式输出 SSE：打字机效果怎么来的',min:80,
+      steps:['stream=True 发请求，逐 chunk 打印 delta.content','实现打字机效果（flush + 无换行）','记录首字延迟（TTFT）与总耗时，对比非流式','把流式内容累加成完整字符串再解析（流式 + JSON 的坑）','思考：什么场景必须流式，什么场景不需要'],
+      concept:{t:'流式改变的是体感，不是能力',b:'模型生成速度没变，但用户从"等 8 秒看到结果"变成"0.5 秒开始出字"。对人参与的界面（客服后台、审核台）几乎是必需；对后台批处理任务反而增加解析复杂度。FDE 要会判断：这个界面需不需要流式。'},
+      code:{t:'week1/day6_stream.py（核心片段）',src:`import time
+t0 = time.time()
+first = None
+buf = []
+
+stream = client.chat.completions.create(
+    model=MODEL, messages=[{"role": "user", "content": "用 200 字讲清什么是 Agent"}],
+    stream=True,
+)
+for chunk in stream:
+    delta = chunk.choices[0].delta.content or ""
+    if delta:
+        if first is None:
+            first = time.time() - t0
+        buf.append(delta)
+        print(delta, end="", flush=True)      # 打字机
+
+print("\\n---")
+print("首字延迟: %.2fs" % (first or 0))
+print("总耗时:   %.2fs" % (time.time() - t0))
+print("完整内容:", "".join(buf))`},
+      quiz:{q:'流式输出还能用 JSON 解析吗？',a:'能，但要先累加完所有 chunk 再 json.loads，不能边收边解析。中途解析必然失败。更好的做法是让模型边流式边用固定分隔符（如先输出 reason 再输出 JSON 块），或干脆对该请求关闭流式。'}},
+
+    {d:7,t:'周末大块：token 成本账本 + 收敛 minillm.py',min:150,
+      steps:['写 cost.py：输入单价、输出单价，按 model 查表计算费用','把 D1–D6 的代码收敛成 common/minillm.py，对外只暴露 chat / stream / tool / cost 四个函数','所有脚本改成从 minillm import，删除重复代码','README 写清：怎么装依赖、怎么配 .env、怎么跑第一个例子','notes/week1.md 写本周复盘：学会了什么、卡在哪、下周怎么改'],
+      concept:{t:'为什么要收敛工具层',b:'FDE 在现场改的是业务逻辑，不是每次重写 API 调用。把模型调用收敛成一个文件后，换模型、加日志、加成本统计都只改一处。这个小动作，是"脚本"和"项目"的分界线。'},
+      deliver:'验收：minillm.py 四个函数都能跑通 + GitHub 有第一个 commit + notes/week1.md'}
+  ]
+});
+
+/* ============================ W2 ============================ */
+DATA.weeks.push({
+  w:2, range:'D8–D14', theme:'Prompt 工程 + 第一个 Agent', color:'#7c6cff',
+  series:'对齐系列 Round 2（Day 8–14）',
+  foundation:'工程地基：异常分层 / logging / pytest',
+  deliver:'CLI 研究 Agent（argparse + logging + ≥3 条 pytest）',
+  days:[
+    {d:8,t:'系统提示词设计：被模型的"随机"整不会了',min:90,
+      steps:['把 system 拆成三段：角色 / 约束 / 输出格式','同一问题写 3 版 system，各跑 3 次，记录输出差异','加"不确定时说不知道"这类反向约束，看幻觉是否减少','把 temperature 降到 0，再跑一遍对比','固定一版作为项目默认提示词，写进 prompts/ 目录'],
+      concept:{t:'提示词是可版本化的资产',b:'不要散落在代码字符串里。放进 prompts/*.txt，用 Git 管理，改一次提交一次。FDE 现场最常见的需求就是"让它别这么说"——提示词独立出来才能快速迭代，也能向客户解释你改了什么。'},
+      quiz:{q:'提示词效果不稳定，先调 temperature 还是先改提示词？',a:'先降 temperature 到 0 排除随机性，确认"到底是提示词不行还是模型在抖"。稳定后再逐步加温。跳过这步直接改提示词，会让你在噪声里做优化。'}},
+
+    {d:9,t:'ReAct 原理：Thinking 不是一次性想完',min:90,
+      steps:['理解 Thought → Action → Observation 的循环','纸上手推一个例子：查某公司成立时间，需搜索两次','用代码跑通 3 轮循环，打印每轮 Thought 与 Observation','故意让工具返回错误，看模型会不会换一种方式重试','记录：什么时候模型会陷入死循环'],
+      concept:{t:'ReAct = 边想边做',b:'不是先想好完整计划再执行，而是每步"想一下 → 做个动作 → 看结果 → 再想"。优点：能根据中间结果调整；缺点：步数不可控、容易绕圈。适合探索性任务（查资料、排查问题）。'},
+      code:{t:'week2/day9_react.py（循环骨架）',src:`for step in range(MAX_STEPS):                 # 必须有步数上限
+    resp = llm(messages, tools=TOOLS)
+    msg = resp.choices[0].message
+
+    if not msg.tool_calls:                     # 不再要工具 → 收工
+        return msg.content
+
+    messages.append(msg)
+    for call in msg.tool_calls:
+        try:
+            out = TOOLS[call.function.name](**json.loads(call.function.arguments))
+        except Exception as e:
+            out = "工具执行失败: %s" % e        # 把错误喂回去，让它换招
+        messages.append({"role": "tool", "tool_call_id": call.id,
+                         "content": str(out)})
+else:
+    return "超过最大步数，转人工"                # 死循环兜底`},
+      quiz:{q:'手写 ReAct 循环里最不能省的是哪一行？',a:'MAX_STEPS 上限和超限后的兜底返回。没有它，模型在两个工具之间来回调用会一直烧钱直到超时——这是 Agent 线上事故里排名前三的原因。'}},
+
+    {d:10,t:'Plan-and-Execute：大任务先列清单',min:90,
+      steps:['实现两阶段：先让模型输出步骤清单，再逐步执行','与 D9 的 ReAct 跑同一个任务，对比步数、耗时、成功率','思考：哪些任务适合先规划，哪些适合边想边做','给计划加"步骤可增删改"的能力（执行中发现计划不对）','把对比结论写进 notes/day10.md'],
+      concept:{t:'两种范式的取舍',b:'Plan-and-Execute：先出全局清单，步骤清晰、成本可控、适合流程固定的任务（报告生成、批处理）。ReAct：边做边看，适合路径不确定的探索任务。真实系统常常是混合——先粗规划，每个步骤内部允许 ReAct。'},
+      quiz:{q:'用户说"帮我做一份调研报告"，选哪种？为什么？',a:'Plan-and-Execute。"检索→起草→润色→配图"的步骤相对固定，先列清单能并行、能控成本、也方便中途给用户看进度。纯 ReAct 会让它在检索里绕圈，你也不知道它到底进行到哪一步。'}},
+
+    {d:11,t:'工程地基② 异常分层 + logging',min:70,
+      steps:['区分三类异常：可重试（网络超时/限流）、需降级（工具失效）、必须停（鉴权失败/数据越界）','写 @retry 装饰器：指数退避 + 最大次数 + 只重试可重试异常','配置 logging：控制台 INFO、文件 DEBUG、含时间/模块/级别','在 minillm.py 里接入日志与重试','故意断网跑一次，看日志能否定位问题'],
+      concept:{t:'错误分类决定处理策略',b:'把所有异常都 catch 成"失败"是最糟的做法。可重试的该重试、需降级的该给用户部分结果、必须停的该立刻报警。FDE 交付的系统里，"出错时它做了什么"比"它平时多聪明"更影响客户信任。'},
+      code:{t:'common/retry.py',src:`import time, functools, logging
+log = logging.getLogger(__name__)
+
+RETRYABLE = (TimeoutError, ConnectionError)
+
+def retry(times=3, base=0.5):
+    def deco(fn):
+        @functools.wraps(fn)
+        def wrapper(*a, **kw):
+            for i in range(times):
+                try:
+                    return fn(*a, **kw)
+                except RETRYABLE as e:
+                    if i == times - 1:
+                        raise
+                    wait = base * (2 ** i)
+                    log.warning("第 %d 次失败: %s，%.1fs 后重试", i + 1, e, wait)
+                    time.sleep(wait)
+        return wrapper
+    return deco`},
+      quiz:{q:'为什么重试要指数退避而不是立刻重试？',a:'限流和瞬时故障需要时间恢复，立刻重试大概率再失败，还会放大下游压力（雪崩）。指数退避 + 抖动既给下游喘息时间，又避免多个请求同时重试造成尖峰。'}},
+
+    {d:12,t:'第一个完整 Agent：提示词 + 工具 + 循环',min:100,
+      steps:['给 Agent 配两个工具：search_web（本地字典模拟）、save_outline（写文件）','把 D8 提示词 + D9/D10 循环 + D11 日志串起来','跑一个真实任务："调研 X 话题并输出大纲到文件"','打印每一步，确认工具真的被调用、文件真的被写入','加步数上限与失败兜底'],
+      concept:{t:'Agent = 模型 + 循环 + 工具 + 记忆',b:'四个零件缺一不可。只接了模型是聊天机器人；加了循环和工具才是 Agent；能记住前面做过什么，才敢交给它长任务。今天你第一次把四件套凑齐。'},
+      quiz:{q:'怎么判断一个东西"真的是 Agent"而不是"调了几次 API"？',a:'看它能不能根据上一步的结果自主决定下一步。硬编码顺序调用 3 次 API 是工作流；模型自己判断"这条查不到，换个关键词再查"才是 Agent。'}},
+
+    {d:13,t:'工程化 CLI：从脚本变成能反复用的工具',min:90,
+      steps:['用 argparse 支持 --query / --max-steps / --verbose / --output','配置从 .env + 命令行参数合并','日志写进 logs/ 目录，按天切分','README 补上使用示例（3 条命令）','让同事/朋友照着 README 跑一次，记录他卡在哪'],
+      concept:{t:'能被别人跑起来才算交付',b:'FDE 交付的不是代码，是"别人能用它完成任务"。README 写不清、依赖装不上、参数靠猜，功能再强也等于没交付。今天让一个真人试着跑一次，是本周最有价值的一步。'},
+      quiz:{q:'别人按 README 跑不起来，最常见的三个原因是什么？',a:'① 依赖没锁版本；② .env 示例缺失或字段名不对；③ 假设了某个前置条件（如当前目录、Python 版本、已登录）却没写。解法：用全新虚拟环境从零跟一遍 README。'}},
+
+    {d:14,t:'周末大块：pytest 三条测试 + 周复盘',min:150,
+      steps:['为 minillm 写 3 条测试：正常调用、工具调用、解析失败转人工','用 monkeypatch 假造 LLM 返回，测试不花一分钱','跑 pytest，覆盖率先不看，先把流程跑通','notes/week2.md 写复盘：Agent 循环里你最没把握的是哪一步','把"最没把握"的那一点记下来，W7 做 eval 时会回来解决'],
+      concept:{t:'不 mock 的 LLM 测试不可持续',b:'每次跑测试都真调 API = 花钱 + 慢 + 不稳定。把模型返回 mock 掉，测的是你的逻辑（解析、分发、兜底），这才是单元测试该干的事。真模型留给 W7 的 eval 套件。'},
+      deliver:'验收：CLI 研究 Agent 可重复运行 + 3 条 pytest 通过 + notes/week2.md'}
+  ]
+});
+
+/* ============================ W3 ============================ */
+DATA.weeks.push({
+  w:3, range:'D15–D21', theme:'Agent 框架：手写 → LangGraph → Pydantic AI', color:'#8b7cff',
+  series:'对齐系列 Round 3（Day 16–21）',
+  foundation:'工程地基：SQL + SQLite 持久化',
+  deliver:'带 checkpoint 记忆的 LangGraph Agent + 一段 ADR（手写 vs 框架）',
+  days:[
+    {d:15,t:'手写 Agent Loop：从零理解编排本质',min:90,
+      steps:['不用任何框架，写 60 行的最小 loop','状态用普通 dict 传递，工具用 dict 分发','对比 W2 的 ReAct 实现，找出你之前没处理的情况','思考：如果工具要并行、要回退、要人工介入，代码会变成什么样','把"变复杂的点"列成清单，这就是框架存在的理由'],
+      concept:{t:'先手写再用框架',b:'直接上框架会让你把"框架的行为"误当成"Agent 的原理"。手写一遍后，再看 LangGraph 的节点/边/状态，你会知道它替你解决了什么、又悄悄拿走了什么控制权。这是面试时区分"用过"和"懂"的分水岭。'},
+      quiz:{q:'什么情况下你应该坚持手写而不是上框架？',a:'工具少于 3 个、流程是线性或单循环、团队没人熟悉该框架、交付周期以天计。框架的价值随"分支/并行/回退/人工介入"的复杂度增长，简单场景上框架是纯负担。'}},
+
+    {d:16,t:'LangGraph 入门：状态图 / 节点 / 边',min:90,
+      steps:['理解三个概念：State（状态）、Node（干活的函数）、Edge（怎么走）','把 D15 手写的 loop 改写成 3 个节点：plan → act → summarize','加一条条件边：需要工具就回 act，否则去 summarize','跑通并打印每一步的状态变化','对比两种写法的代码量与可读性'],
+      concept:{t:'图比链强在哪',b:'Chain 是 A→B→C 一条道；Graph 允许条件分支、循环回退、并行汇合。Agent 的本质是"可能回头"的流程，所以图是更贴合的表达。但图的复杂度会上升——这也是"什么时候不该上框架"的另一面。'},
+      code:{t:'week3/day16_graph.py（核心片段）',src:`from typing import TypedDict
+from langgraph.graph import StateGraph, END
+
+class State(TypedDict):
+    messages: list
+    steps: int
+
+def plan(s: State):  return {"messages": s["messages"] + [llm_plan(s)]}
+def act(s: State):   return {"messages": s["messages"] + run_tool(s), "steps": s["steps"] + 1}
+
+def should_continue(s: State):
+    if s["steps"] >= 5:          return "end"      # 步数闸门
+    return "act" if need_tool(s) else "summarize"
+
+g = StateGraph(State)
+g.add_node("plan", plan); g.add_node("act", act); g.add_node("summarize", summarize)
+g.set_entry_point("plan")
+g.add_conditional_edges("act", should_continue,
+                        {"act": "act", "summarize": "summarize", "end": END})
+app = g.compile()`},
+      quiz:{q:'条件边 should_continue 里为什么要有步数闸门？',a:'图有了回退能力 = 有了死循环的可能。步数闸门是图的"紧急停止按钮"，任何允许回环的边都必须配一个终止条件，否则线上就是一个烧钱黑洞。'}},
+
+    {d:17,t:'Pydantic AI 入门：把输出类型锁死',min:80,
+      steps:['用 Pydantic 定义输出模型（BaseModel + Field 描述）','让框架保证输出符合模型，不符合自动重试','对比手写 json.loads + 校验的代码量','给字段加校验：priority 只能是 high/medium/low','思考：类型安全对 Agent 意味着什么'],
+      concept:{t:'类型即契约',b:'手写解析是"祈祷模型输出对 + 事后检查"；Pydantic 是"声明我要什么 + 框架负责对齐"。对 FDE 而言，它把不确定的模型输出变成了下游可以放心消费的数据结构——这是 Agent 能接进业务系统的前提。'},
+      quiz:{q:'字段校验失败时，框架自动重试算不算好设计？',a:'是，但必须限次数并留痕。自动重试 1-2 次能救回大部分格式抖动；无限重试会掩盖提示词本身的缺陷。每次重试都应记日志——重试率就是一个现成的质量指标。'}},
+
+    {d:18,t:'记忆：checkpoint 让 Agent 记得住事',min:80,
+      steps:['用 SqliteSaver 给图加 checkpoint','跑两次，第二次能接着上次的 thread_id 继续','中断一个长任务，重启程序后恢复','理解 short-term（本轮上下文）vs long-term（跨会话）的区别','思考：你的主线项目需要哪种记忆'],
+      concept:{t:'记忆的类型',b:'短期=对话窗口内的上下文（会随长度被截断）；长期=跨会话持久化的事实（用户偏好、历史工单）；情景=某次任务的完整轨迹（用于回放和审计）。FDE 项目至少要有第三种——出问题时能回放"它当时到底干了什么"。'},
+      quiz:{q:'为什么"能回放"对企业客户特别重要？',a:'因为 Agent 会改动业务数据。出事后客户第一句问的是"它为什么这么干"，第二句是"改了哪些"。没有完整 trace，你无法回答，也就无法取得信任，更无法通过合规审查。'}},
+
+    {d:19,t:'工程地基③ SQL + SQLite 持久化',min:80,
+      steps:['复习：建表 / 主键 / 索引 / 关联 / 事务','写 tickets 表：id, text, category, priority, created_at','把 D5 的分类结果写进 SQLite，再按 category 聚合查询','用参数化查询（? 占位符），杜绝 SQL 拼接','理解：为什么不能把客户数据全塞进提示词'],
+      concept:{t:'数据留在库里，只把需要的喂给模型',b:'把整表塞进提示词 = 成本高、上下文爆、且把全部数据暴露给模型供应商。正确做法：SQL 先过滤聚合，只把相关的几条喂进去。这既是成本问题，也是合规问题。'},
+      code:{t:'week3/day19_db.py（核心片段）',src:`import sqlite3
+
+con = sqlite3.connect("data/app.db")
+con.execute("""CREATE TABLE IF NOT EXISTS tickets(
+    id INTEGER PRIMARY KEY, text TEXT NOT NULL,
+    category TEXT, priority TEXT, created_at TEXT)""")
+
+# 参数化查询，绝不拼接字符串
+con.execute("INSERT INTO tickets(text,category,priority,created_at) VALUES(?,?,?,?)",
+            (text, cat, pri, ts))
+con.commit()
+
+rows = con.execute(
+    "SELECT category, COUNT(*) c FROM tickets WHERE created_at >= ? GROUP BY category",
+    (since,)).fetchall()`},
+      quiz:{q:'让 AI 查数据，是"把数据给它"还是"让它写 SQL"？',a:'生产环境优先：你写固定 SQL + 参数化，模型只填参数（如时间范围、类别）。让模型自由写 SQL 风险高（注入、全表扫描、删库），除非加只读账号 + 白名单 + 结果行数限制三层防护。'}},
+
+    {d:20,t:'用 LangGraph 重写 W2 的 Agent',min:100,
+      steps:['把 W2 的 CLI 研究 Agent 用图重写一遍','保留同样的 CLI 参数，行为一致','对比：代码行数、可读性、可加回退的难易度','给图加一个"人工确认"节点（interrupt）','跑通后把两版都留在仓库，作为 ADR 的素材'],
+      concept:{t:'重写是最好的验收',b:'能用两种方式实现同一个东西，说明你理解的是原理不是语法。而且这次重写会暴露你 W2 没处理好的边界情况——那些就是生产事故的伏笔。'},
+      quiz:{q:'interrupt（人工确认节点）应该放在哪些动作前？',a:'一切不可逆或有外部影响的动作前：发消息、写回业务系统、退款、改权限、删除。只读操作可以不拦。判断标准只有一句：这个动作做错了，能不能撤回？'}},
+
+    {d:21,t:'周末大块：记忆持久化 + 写第一段 ADR',min:150,
+      steps:['把 checkpoint 落到 SQLite 文件，确认重启后可恢复','写 docs/adr-001-agent-framework.md：背景 / 候选方案 / 选择 / 后果','ADR 里明确写出"什么情况下我们会换掉这个选择"','notes/week3.md 复盘：手写 vs 框架，你更倾向哪个，为什么','把 ADR 发到群里/给朋友看，让别人提一个问题'],
+      concept:{t:'ADR 是 FDE 的职场护身符',b:'架构决策记录（Architecture Decision Record）回答三件事：当时为什么这么选、放弃了什么、什么信号出现就该改。它让"技术选型"从个人口味变成可讨论的事实，也是作品集里最能体现工程成熟度的单页文档。'},
+      deliver:'验收：带记忆的 LangGraph Agent + docs/adr-001 一段 + notes/week3.md'}
+  ]
+});
+
+/* ============================ W4 ============================ */
+DATA.weeks.push({
+  w:4, range:'D22–D28', theme:'RAG 全链路：给 Agent 装外接大脑', color:'#22c1c3',
+  series:'对齐系列 Round 4（Day 22–29）',
+  foundation:'工程地基：FastAPI 最小服务',
+  deliver:'本地知识库问答原型 + 召回评估脚本（hit rate / MRR）',
+  days:[
+    {d:22,t:'RAG 概念：从闭卷考试到开卷考试',min:70,
+      steps:['理解三步：检索 → 增强 → 生成','列出模型的四个天然短板（不知私有数据 / 上下文装不下 / 会硬编 / 知识有截止）','判断：你的主线项目哪些问题该用 RAG，哪些不该','写下"不该用 RAG"的三类场景','画一张你的 RAG 流程图（纸上手画即可）'],
+      concept:{t:'RAG 的分工',b:'知识放在你自己的库里，模型只负责"看着资料组织答案"，不负责记住资料。判断口诀：资料多到贴不下 + 答案必须基于资料 + 资料会更新 → 用 RAG。三条都不满足就别上。'},
+      quiz:{q:'公司只有 3 页制度文档，要不要做 RAG？',a:'不要。直接贴进提示词，简单、便宜、准确。上 RAG 反而引入切分和召回误差。等文档涨到贴不下（比如几十页以上）或需要频繁更新时再上——这是 FDE 控制复杂度的典型判断。'}},
+
+    {d:23,t:'Embedding：让"智能体"和"Agent"是一回事',min:90,
+      steps:['调用 embedding 接口，把几句话变成向量','手算余弦相似度，验证近义句向量更近','对比关键词匹配：为什么"智能体"搜不到"Agent"','批量向量化并缓存，避免重复花钱','理解维度与成本、精度的关系'],
+      concept:{t:'Embedding 解决的是"按意思找"',b:'把每句话映射成一个向量，意思相近的句子在数学上距离更近。它是"检索"这一步的地基，也是 RAG 三步里唯一真正的新东西（另两步你早就做过）。'},
+      code:{t:'week4/day23_embed.py（核心片段）',src:`import math
+
+def cosine(a, b):
+    dot = sum(x * y for x, y in zip(a, b))
+    return dot / (math.sqrt(sum(x * x for x in a)) * math.sqrt(sum(y * y for y in b)))
+
+texts = ["如何申请年假", "年假怎么休", "今天的天气"]
+vecs = [client.embeddings.create(model=EMB_MODEL, input=t).data[0].embedding
+        for t in texts]
+
+print("年假 vs 年假:", round(cosine(vecs[0], vecs[1]), 3))   # 高
+print("年假 vs 天气:", round(cosine(vecs[0], vecs[2]), 3))   # 低`},
+      quiz:{q:'Embedding 结果要不要缓存？为什么？',a:'必须缓存。同一段文本向量化结果不变，重复调用是纯浪费；文档更新时按内容哈希失效即可。在几百页的知识库上，缓存能省掉绝大部分嵌入成本，也大幅缩短二次启动时间。'}},
+
+    {d:24,t:'Chunking：资料怎么切才不切碎语义',min:80,
+      steps:['实现固定长度切分和递归分隔符切分两种','用同一批文档对比：切太小（语义断裂）、切太大（噪声多）','加 overlap（重叠），观察召回变化','给每个 chunk 加元数据（来源、页码、版本）','做一张对比表：size / overlap / 召回效果'],
+      concept:{t:'切分决定召回上限',b:'检索再准，如果正确的那段话被切成了两半，也召回不到。经验起点：300–500 字 + 10–20% 重叠，按文档类型调。元数据是救命的——它让你能回答"这句话出自哪份文件第几页"，这是企业客户最在心的可溯源要求。'},
+      quiz:{q:'为什么每个 chunk 都必须带来源元数据？',a:'因为企业场景里"答对了"不够，还要"能溯源"。没有来源，用户无法验证，法务无法审核，出问题无法定责。带元数据的 RAG 是可审计系统，不带的是玩具。'}},
+
+    {d:25,t:'向量库：Chroma 存起来再查',min:90,
+      steps:['把 D23 的向量和 D24 的 chunk 存进 Chroma 本地库','实现 similarity_search(query, k=3)','测试：换不同措辞问同一件事，召回是否稳定','加元数据过滤（只看某个版本的政策）','持久化到磁盘，重启后不用重建'],
+      concept:{t:'向量库不是必需品，但很方便',b:'几百条数据用内存列表 + 余弦相似度就够。上向量库的理由是：持久化、元数据过滤、增量写入、以及后期要换混合检索/重排。先跑通内存版再换库，你会更清楚库替你做了什么。'},
+      quiz:{q:'什么时候该引入重排（Rerank）？',a:'当"召回回来的 10 条里正确那条排在第 7 位"时——向量召回的粗排精度不够。表现为：top-3 命中率低但 top-10 高。加一层重排模型把正确条目前置，比换更大的 embedding 模型更划算。'}},
+
+    {d:26,t:'串成 RAG pipeline：检索 → 增强 → 生成',min:100,
+      steps:['把切分、嵌入、入库、检索、拼提示词、生成串成一条命令','提示词里明确："只依据以下资料回答，资料中没有就说不知道"','让模型在答案里标注引用来源编号','测 5 个问题：3 个资料里有、2 个资料里没有','观察：资料里没有的问题，模型是否老实说不知道'],
+      concept:{t:'"不知道"是特性，不是缺陷',b:'RAG 最大的价值不是答对，而是让模型在被问到盲区时承认不知道，而不是编一个像模像样的答案。这条"拒绝回答"的能力，在企业场景里比准确率更值钱——它决定了用户敢不敢信。'},
+      code:{t:'week4/day26_rag.py（核心片段）',src:`def answer(q, k=3):
+    hits = collection.similarity_search(q, k=k)
+    context = "\\n\\n".join("[%d] %s（来源：%s）" % (i + 1, h.text, h.meta["source"])
+                           for i, h in enumerate(hits))
+    prompt = f"""只依据以下资料回答。资料中没有答案时，直接说"资料中没有相关信息"。
+答案中引用来源编号，如 [1]。
+
+资料：
+{context}
+
+问题：{q}"""
+    return llm(prompt, temperature=0), hits`},
+      quiz:{q:'模型仍然编造了答案，怎么排查？',a:'按顺序查：① 召回了什么（打印 top-k，正确段落是否在内）；② 不在 → 切分或嵌入问题；③ 在但还是编 → 提示词约束不够，加强指令 + 要求引用编号 + 降 temperature。先定位是"检索错"还是"生成错"，二者解法完全不同。'}},
+
+    {d:27,t:'召回质量评估：hit rate 与 MRR',min:90,
+      steps:['造 20 条评估样本：问题 + 标准答案所在 chunk 编号','写脚本算 Hit@3（正确段落是否在前 3）与 MRR（正确段落排第几）','换三种切分策略，对比指标','把结果写成一张表，放进 notes/','找出得分最差的 5 条，人工分析原因'],
+      concept:{t:'没有评估的 RAG 是在算命',b:'RAG 的质量由最弱一环决定。hit rate 看"找没找到"，MRR 看"排得够不够前"。不要凭感觉说"效果还行"——20 条样本 + 两个指标，就能让优化有方向，这也是面试时能拿出手的量化证据。'},
+      code:{t:'week4/day27_eval.py',src:`def hit_rate(gold, ranked, k=3):
+    return sum(1 for g, r in zip(gold, ranked) if g in r[:k]) / len(gold)
+
+def mrr(gold, ranked):
+    s = 0
+    for g, r in zip(gold, ranked):
+        if g in r:
+            s += 1 / (r.index(g) + 1)
+    return s / len(gold)
+
+# 用法：gold = 正确 chunk id 列表；ranked = 每次召回的 id 列表
+print("Hit@3:", round(hit_rate(gold, ranked, 3), 3))
+print("MRR:  ", round(mrr(gold, ranked), 3))`},
+      quiz:{q:'评估集要多少条才够？',a:'起步 20–30 条足够暴露问题，W7 会扩到 30 条以上的 golden set。关键是覆盖真实分布：高频问题、边界问题、以及"资料里没有"的问题各占一部分。只测容易的，等于没测。'}},
+
+    {d:28,t:'周末大块：FastAPI 暴露原型 + 阶段验收',min:150,
+      steps:['用 FastAPI 包一层：POST /ask 接收问题，返回答案 + 引用来源','加 GET /health 健康检查','用 uvicorn 起服务，curl 测通','访问 /docs 看自动生成的接口文档','notes/week4.md 复盘：RAG 三环节里最弱的是哪个'],
+      concept:{t:'能跑在终端里是脚本，能被 HTTP 调用才是服务',b:'FastAPI 顺手给你的还有 OpenAPI 文档和类型校验——这两样在对接前端、对接客户系统时能省掉大量沟通成本。FDE 交付的最小形态往往就是一个能被 curl 通的接口。'},
+      deliver:'验收：本地知识库问答原型（CLI + HTTP）+ 召回评估表 + notes/week4.md'}
+  ]
+});
+
+/* ============================ W5 ============================ */
+DATA.weeks.push({
+  w:5, range:'D29–D35', theme:'多 Agent 编排 ①：分解 · 委派 · 通讯', color:'#2bb3b5',
+  series:'对齐系列 Round 5（Day 31–37 区间）',
+  foundation:'工程地基：HTTP 客户端 / 超时 / 限流',
+  deliver:'2–3 个子 Agent 协作系统（检索 → 起草 → 校对）+ 一页架构说明',
+  days:[
+    {d:29,t:'为什么需要多 Agent：分工、解耦、专业化',min:80,
+      steps:['列出单 Agent 的三个瓶颈：上下文污染、提示词互相打架、无法并行','理解三种拆分动机：按专长拆、按上下文隔离拆、按并行度拆','反面：列出"不该拆"的三种情况','判断你的主线项目该不该拆、拆成几个','写下拆分方案与理由（300 字）'],
+      concept:{t:'拆分的判断标准',b:'任务多步 + 步骤间能并行 + 需要不同专长 → 拆。单步任务、顺序很 trivial、实时性要求极高 → 别拆。多 Agent 不是越高级越好，它带来调度开销和调试难度，FDE 要能说出"这里我故意没拆"的理由。'},
+      quiz:{q:'多 Agent 比单 Agent 更容易出什么问题？',a:'① 上下文碎片化，出错难追溯；② 调度开销让延迟上升；③ Agent 间互相等待造成死锁；④ 错误在传递中被放大。所以必须有 trace（每个 Agent 的输入输出都留痕），否则线上问题无从查起。'}},
+
+    {d:30,t:'每个 Agent 的记忆与状态归谁管',min:80,
+      steps:['设计状态：全局 state（任务进度）vs 局部 state（单个 Agent 的草稿）','明确哪些字段共享、哪些隔离','实现一个共享黑板（blackboard）存放中间产物','测试：一个 Agent 出错，其他 Agent 的状态是否还干净','写一段注释说明你的状态划分理由'],
+      concept:{t:'状态设计决定可调试性',b:'所有 Agent 读写同一个大字典，短期很快，长期一定乱——改一处影响全局，出 bug 找不到是谁写的。清晰的读写边界（谁能写哪个字段）是多 Agent 系统能长期维护的前提。'},
+      quiz:{q:'黑板模式 vs 消息传递，怎么选？',a:'协作密集、产物需要被多方引用（如报告草稿被润色和配图同时用）→ 黑板；流程清晰、上下游明确（流水线）→ 消息传递。也可以混用：流水线 + 共享产物存储。'}},
+
+    {d:31,t:'Decomposer：把一个目标拆成 DAG 任务图',min:90,
+      steps:['定义 Task 结构：id / name / worker / deps / parallel','实现离线版 decompose()（写死一个例子，零成本秒跑）','再实现 --live 版：让模型输出 JSON 任务图','校验依赖合法性（所有 deps 指向已存在的 id，且无环）','打印任务图，标出哪些可并行'],
+      concept:{t:'分解器 = 项目经理',b:'它把一句人话变成一张能派活的工单图：子任务列表 + 依赖边 + 并行标注。粒度要卡在"一个专长角色能独立干完"和"不碎到没意义"之间——拆太粗退化成单 Agent，拆太细调度开销爆炸。'},
+      code:{t:'week5/day31_decomposer.py（核心片段）',src:`from dataclasses import dataclass
+
+@dataclass
+class Task:
+    id: str
+    name: str
+    worker: str
+    deps: list
+    parallel: bool = False
+
+def decompose_offline(goal):
+    return [
+        Task("t1", "检索相关资料", "retriever", [], parallel=True),
+        Task("t2", "起草初稿",     "writer",    [], parallel=True),
+        Task("t3", "润色与结构调整", "editor",   ["t2"]),
+        Task("t4", "生成配图",     "designer",  ["t1"]),
+        Task("t5", "汇总定稿",     "orchestrator", ["t3", "t4"]),
+    ]
+
+def validate(tasks):
+    ids = {t.id for t in tasks}
+    assert all(d in ids for t in tasks for d in t.deps), "依赖指向不存在的任务"
+    # 拓扑排序能跑通 = 无环
+    done, order = set(), []
+    while len(order) < len(tasks):
+        nxt = [t for t in tasks if t.id not in done and set(t.deps) <= done]
+        assert nxt, "存在循环依赖"
+        done.update(t.id for t in nxt); order += nxt
+    return order`},
+      quiz:{q:'分解器最大的风险是什么？怎么防？',a:'无限递归分解（把子任务再拆、再拆）。防法二选一或都要：设最大分解深度、定义"原子任务"判定条件（如"单步可完成的动词短语"）。同时给分解本身也设超时。'}},
+
+    {d:32,t:'子 Agent 委派：按图派活，收不回来怎么办',min:90,
+      steps:['实现编排者：按拓扑序派发，能并行的并发跑','给每个子任务加超时，超时记为失败','失败任务：重试一次 → 仍失败则降级（用更简单的方式）或上报','实现结果收集与汇总','测一个失败场景：故意让某个 worker 抛异常，看系统是否崩'],
+      concept:{t:'委派的核心是"收得回来"',b:'派活容易，难的是子任务失败、超时、返回垃圾时编排者怎么办。三种策略：重试（瞬时故障）、降级（能力不足）、上报（需要人判断）。一个没有失败处理的编排者，比不用编排更危险。'},
+      quiz:{q:'子任务超时了，重试还是跳过？',a:'看是否幂等。只读检索 → 可安全重试；会写外部系统 → 重试前必须确认幂等（用幂等键或先查状态）。判断不了就跳过并标记，交给人工——宁可少做，不要重复做。'}},
+
+    {d:33,t:'多 Agent 通讯：它们之间怎么传话',min:80,
+      steps:['实现消息结构：from / to / type（request|result|error）/ payload','加 correlation_id 串联同一次任务的所有消息','把所有消息落盘，形成一次任务的完整 trace','回放一次任务：只看 trace 就能还原全过程','思考：trace 里哪些字段是合规必须的'],
+      concept:{t:'trace 是 Agent 系统的黑匣子',b:'飞机必须有黑匣子，Agent 也必须有。一次任务的所有输入输出、工具调用、耗时、成本全部留痕，才能做到：事后复盘、问题定位、合规审计、成本归因。这是 FDE 交付物里"可运维"的那一部分。'},
+      quiz:{q:'trace 里必须记录但最容易被漏掉的是什么？',a:'成本与身份。每条 trace 记录 token 消耗和费用（才能归因到客户/功能），以及"这次调用是谁发起的、用的是谁的凭证"（合规审计必问）。只记输入输出，出事时你仍然回答不了关键问题。'}},
+
+    {d:34,t:'工程地基⑤ HTTP 客户端：超时 / 重试 / 限流',min:80,
+      steps:['用 httpx 或 requests 封装一个客户端：连接超时 + 读超时分开设置','统一处理 4xx（不重试）与 5xx（可重试）','实现简单令牌桶限流，控制对外部 API 的 QPS','为所有外部调用加上 trace 日志（URL、耗时、状态码）','测：故意请求一个慢接口，确认超时真的生效'],
+      concept:{t:'不设超时的调用是定时炸弹',b:'默认不设超时 = 一个下游卡死会拖垮你整个服务。连接超时（建立连接）和读超时（等待响应）要分开设，通常 3s / 30s 起步。FDE 接客户系统时，对方接口往往又慢又不稳——这层防护是你的保命符。'},
+      code:{t:'common/httpclient.py（核心片段）',src:`import httpx, logging, time
+log = logging.getLogger(__name__)
+
+class Client:
+    def __init__(self, rps=5):
+        self.cli = httpx.Client(timeout=httpx.Timeout(connect=3.0, read=30.0))
+        self.min_interval = 1 / rps
+        self._last = 0.0
+
+    def _throttle(self):
+        gap = time.time() - self._last
+        if gap < self.min_interval:
+            time.sleep(self.min_interval - gap)
+        self._last = time.time()
+
+    def get_json(self, url, **kw):
+        self._throttle()
+        t0 = time.time()
+        r = self.cli.get(url, **kw)
+        log.info("HTTP %s %s %.0fms", r.status_code, url, (time.time() - t0) * 1000)
+        if r.status_code >= 500:
+            raise RetryableError(r.status_code)
+        r.raise_for_status()
+        return r.json()`},
+      quiz:{q:'4xx 和 5xx 的重试策略为什么不同？',a:'4xx 是客户端错误（参数错、没权限、资源不存在），重试一万次也是同样结果，只会浪费配额；5xx 是服务端暂时故障，重试有意义。把 429（限流）单独处理，按 Retry-After 头等待。'}},
+
+    {d:35,t:'周末大块：三 Agent 协作系统 + 一页架构说明',min:170,
+      steps:['实现 retriever / writer / editor 三个子 Agent','用 D31 的分解器产出任务图，D32 的编排者执行','接入 D33 的 trace 落盘','跑通"给定一个主题 → 产出一份带引用的调研草稿"','画一张架构图（手画或 draw.io），写成 docs/architecture.md 一页','notes/week5.md 复盘：多 Agent 相比单 Agent 真的更好吗，证据是什么'],
+      concept:{t:'架构一页纸该写什么',b:'谁调用谁、数据存在哪、失败怎么兜底、成本花在哪、什么没做。不要写技术名词堆砌，要写"如果它挂了你会先看哪里"。这张纸会在 W11 变成作品集里的脱敏架构图。'},
+      deliver:'验收：三 Agent 协作系统跑通 + docs/architecture.md 一页 + notes/week5.md'}
+  ]
+});
+
+/* ============================ W6 ============================ */
+DATA.weeks.push({
+  w:6, range:'D36–D42', theme:'三道保护 + 主线场景启动', color:'#1fa8ab',
+  series:'系列 Round 5 收尾 + FDE 交付方法介入',
+  foundation:'工程地基：合成数据生成脚本',
+  deliver:'带 guardrail 的 Agent + 主线场景一页交付说明（目标/范围/权限/异常/指标）',
+  days:[
+    {d:36,t:'三道保护① 超时与重试',min:80,
+      steps:['给每个 LLM 调用加超时，超时后 1 次重试','重试失败走降级路径：返回保守结果 + 标记需人工','统计一天内的重试率，作为质量信号','把"超时/重试/降级"三个动作都写进日志','思考：重试会不会造成重复扣款/重复发消息'],
+      concept:{t:'重试的阴暗面',b:'重试对只读操作无害，对写操作可能是灾难（重复下单、重复发消息、重复退款）。写操作必须幂等：带幂等键、或执行前先查状态。这是 Agent 接入业务系统时最容易出事故的地方。'},
+      quiz:{q:'怎么让一个"发消息"的动作幂等？',a:'给每次业务请求生成唯一 idempotency_key（如 任务id + 动作类型 + 内容哈希），服务端先查该 key 是否已执行过，执行过就直接返回上次结果。或者在发送前查询该任务是否已有发送记录。'}},
+
+    {d:37,t:'三道保护② 人工复核节点',min:80,
+      steps:['在写回业务系统前插入 interrupt 人工确认','设计确认界面要展示什么：原工单、AI 结论、置信度、依据来源','实现"同意 / 修改 / 拒绝"三种结果，拒绝要填原因','把所有人工修改记录存下来（这是黄金数据）','统计人工修改率——它就是你的核心指标之一'],
+      concept:{t:'人工修改率是最重要的一个数字',b:'它同时衡量模型质量和产品体验：改得多说明模型不行，或者界面让人不放心。而且每一次人工修改都是一条免费的标注数据——W7 的 golden set 可以直接从这里采样。'},
+      quiz:{q:'客户说"能不能全自动不要人确认"，你怎么办？',a:'先问：哪类错误是他们绝对不能接受的（金额、合规、对外承诺）。用历史数据给出该类错误的发生率，再谈"低风险类别自动放行 + 高风险类别人工确认"的分级方案。全自动化是目标，不是第一步——这是 FDE 典型的期望管理场景。'}},
+
+    {d:38,t:'三道保护③ 失败回退与降级',min:80,
+      steps:['列出三种降级：模型降级（换便宜模型）、功能降级（只给分类不给草稿）、人工降级（全部转人工）','实现一个降级开关：配置里改一行就能切换','写一个"熔断"：连续 N 次失败后暂停调用 X 分钟','人为制造故障（断网/改错 key），验证系统不会崩','把"系统挂了用户看到什么"写清楚'],
+      concept:{t:'降级是设计出来的，不是碰运气',b:'客户能接受"功能变弱"，不能接受"页面转圈然后报错"。提前设计好每一层的兜底，出事时你只需切开关。FDE 的可靠性不在模型多聪明，在出问题时系统有多体面。'},
+      quiz:{q:'熔断和重试会打架吗？',a:'会。重试在放大请求量，熔断在切断请求量，两者必须串联协调：先重试（有限次）→ 仍失败计入熔断计数器 → 达到阈值熔断 → 半开状态试探恢复。只重试不熔断，会把下游彻底打垮。'}},
+
+    {d:39,t:'FDE ① 需求访谈提纲：不问"你想要什么 AI"',min:70,
+      steps:['写访谈提纲：围绕 5 件事——输入从哪来 / 现在什么步骤 / 谁有决定权 / 最怕什么错 / 怎么算验收','设计 10 个问题，全部是"演示最近一次你怎么做的"而不是"你想要什么功能"','准备追问清单：哪些绝不能自动处理？金额超过多少必须升级？发送前谁确认？','找 1 个朋友做一次 30 分钟模拟访谈，录音或记笔记','把访谈结果整理成一页纪要'],
+      concept:{t:'让对方演示，不要让他提需求',b:'问"你想要什么 AI 功能"，得到的是科幻；让对方演示最近一次真实任务，得到的是可交付的需求。FDE 的核心技能之一，就是把模糊的愿望翻译成具体的输入输出与边界条件。'},
+      code:{t:'docs/interview_guide.md（提纲骨架）',src:`## 一、还原现状（请对方演示最近一次真实操作）
+1. 这件事上一次做是什么时候？能演示一遍吗？
+2. 数据/材料从哪里来？什么格式？谁给你的？
+3. 中间要查几个系统？哪一步最花时间？
+4. 做完的结果交给谁？对方怎么验收？
+
+## 二、边界与风险（最重要）
+5. 哪一类情况你绝对不敢让它自动处理？
+6. 涉及金额/对外承诺时，超过多少必须人工？
+7. 出错了谁负责？怎么发现出错了？
+
+## 三、验收与指标
+8. 现在平均一条要多久？你希望变成多久？
+9. 错误率多少你能接受？1%？5%？
+10. 如果做得好，你愿意每周用几次？团队还有谁会用？
+
+## 追问模板
+- "你说希望自动回复——那这几种投诉呢？"（举 3 个极端案例）
+- "如果 AI 不确定，你希望它怎么做？"（要的不是答案，是兜底策略）`},
+      quiz:{q:'访谈时对方说"越快越好"，你怎么往下问？',a:'把模糊词换成数字："现在一条平均几分钟？""如果只能缩短一半，你最希望省掉哪一步？""慢的时候主要卡在哪——是等数据、还是查政策、还是打字？" 得到具体数字和具体卡点，才能定义指标。'}},
+
+    {d:40,t:'选定主线场景 + 写一页交付说明',min:80,
+      steps:['确认主线：客服工单分类与回复助手（合成数据 + 模拟用户）','写一页交付说明：目标 / 范围 / 权限 / 异常 / 指标','目标要可量化：分类耗时从 3 分钟降到 30 秒','范围要写清不做什么：不处理退款审批、不自动发送','指标定义 4 个：使用次数 / 处理时长 / 人工修改率 / 放弃位置'],
+      concept:{t:'一页交付说明 > 二十页产品方案',b:'它把"AI 项目"变成"可以验收的合同"：目标可量化、范围有边界、权限说清楚、异常有兜底、指标能采集。FDE 现场最缺的就是这张纸——有了它，范围蔓延和需求扯皮都会大幅减少。'},
+      deliver:'验收物：docs/delivery-spec.md（一页交付说明）',
+      quiz:{q:'为什么要明确写"不做什么"？',a:'因为 AI 项目的失败大多不是做不出功能，而是范围无限膨胀：客户用着用着就觉得"既然能分类，是不是也能自动退款"。提前写清边界，是保护项目也是保护你自己的交付节奏。'}},
+
+    {d:41,t:'工程地基⑥ 合成数据脚本',min:80,
+      steps:['写 data/generate_synthetic.py：造 tickets(500) / policies(40) / faq(200)','工单用模板拼接 + 随机扰动：错别字、口语、多问题混合','标注字段：category / priority / need_human_review（用于 eval）','故意造 10% 的"难样本"：模糊表述、跨类别、含敏感信息','生成后人工抽查 20 条，确认像真数据'],
+      concept:{t:'合成数据的价值与陷阱',b:'价值：无真实数据也能跑通全链路、能造极端样本、可公开分享。陷阱：分布太干净会让你的 eval 虚高——真实工单有错别字、情绪化、信息不全。所以必须主动加噪声，否则上线即翻车。'},
+      code:{t:'data/generate_synthetic.py（核心片段）',src:`import random, json, hashlib
+
+TEMPLATES = {
+    "退款问题": ["我买的{item}想退款，{reason}", "{item}不想要了能退吗？{reason}"],
+    "物流问题": ["{item}发货了吗，都{x}天了", "物流一直不动，单号{order}"],
+    "质量问题": ["{item}用了两天就{damage}", "收到就是坏的，{damage}"],
+}
+NOISE = ["", "？？？", "急急急", "客服在吗", "（图片）", "  ", "已投诉"]
+
+def make(n=500):
+    rows, rnd = [], random.Random(42)
+    for i in range(n):
+        cat = rnd.choice(list(TEMPLATES))
+        text = rnd.choice(TEMPLATES[cat]).format(
+            item=rnd.choice(["耳机", "水杯", "充电宝", "衬衫"]),
+            reason=rnd.choice(["不合适", "买错了", "和描述不一样"]),
+            damage=rnd.choice(["坏了", "掉色", "有划痕"]),
+            order=str(rnd.randint(10**9, 10**10)), x=rnd.randint(3, 15))
+        if rnd.random() < 0.3:                      # 主动加噪声
+            text += rnd.choice(NOISE)
+        rows.append({"id": i + 1, "text": text, "category": cat,
+                     "priority": rnd.choice(["high", "medium", "low"]),
+                     "noise": True})
+    return rows`},
+      quiz:{q:'合成数据能写进简历/案例吗？',a:'能，但必须诚实标注"合成数据 + 模拟用户"，并说明为什么这么做（无真实数据权限）。绝对不能暗示是真实客户数据——背景调查一问就穿帮。诚实标注反而加分：说明你有合规意识。'}},
+
+    {d:42,t:'周末大块：主线项目骨架 v0.1',min:170,
+      steps:['搭骨架：工单进 → 规则过滤敏感 → 结构化分类 → RAG 查政策 → 草稿 → 人工确认 → 写回 SQLite → 操作日志','先用规则跑通（不接模型），确保流程本身是通的','再接上模型分类','实现操作日志表：谁、什么时候、做了什么、AI 给了什么、人改成什么','跑 20 条工单，看整条链路是否顺畅','notes/week6.md 复盘'],
+      concept:{t:'先用规则跑通，再接模型',b:'这是 FDE 最重要的工程习惯之一。先用确定性代码把流程跑通（哪怕分类是关键词匹配），你就拥有了一个可测的系统；再逐个环节替换成模型，任何回退都能定位到具体环节。反过来做，出了问题你分不清是流程错还是模型错。'},
+      deliver:'验收：主线项目 v0.1 端到端跑通 20 条工单 + 操作日志表 + notes/week6.md'}
+  ]
+});
+
+/* ============================ W7 ============================ */
+DATA.weeks.push({
+  w:7, range:'D43–D49', theme:'Eval 与可观测：让质量可被证明', color:'#a855f7',
+  series:'系列 W7：Eval 与可观测',
+  foundation:'工程地基：pytest fixture / 参数化',
+  deliver:'eval 套件（≥30 条 golden set + 回归测试）+ 成本/延迟统计表',
+  days:[
+    {d:43,t:'为什么 eval 是 FDE 的核心竞争力',min:70,
+      steps:['理解：教程教你做 Demo，企业付钱买的是"稳定不出错"','列出你的 Agent 可能变差的 5 个原因（换模型、改提示词、数据漂移…）','理解回归测试：改动后自动跑一遍，指标掉了吗','写下你的 3 个核心指标及目标值','思考：如果明天模型供应商涨价，你怎么决定换不换'],
+      concept:{t:'没有 eval 就没有迭代',b:'改动提示词后，你如何知道变好了还是变差了？靠感觉？eval 就是你的体检报告：改动前后跑同一批样本，指标说话。这也是 FDE 面试的高频考点——"你怎么证明你的 Agent 是好的"。'},
+      quiz:{q:'客户问"你的准确率多少"，你怎么答？',a:'先问"哪一类、在什么数据上"。给出分类型准确率 + 样本构成 + 失败案例。只报一个总数（如"92%"）会显得不专业；能说清"退款类 96%，但跨类别工单只有 71%，已转人工"才是交付级回答。'}},
+
+    {d:44,t:'造 golden set：30 条能定生死的数据',min:90,
+      steps:['从合成数据里挑 30 条，覆盖：高频 15 / 边界 10 / 陷阱 5','每条标注：输入、期望分类、期望是否转人工、期望关键依据','含 5 条"应该拒绝/转人工"的样本（测拒绝能力）','写成 YAML 或 JSON，纳入版本管理','人工复核一遍标注，确保自己能答对'],
+      concept:{t:'golden set 的质量 > 数量',b:'30 条精心设计的样本，比 3000 条随便抓的更有用。关键是覆盖分布：高频场景决定日常体验，边界场景决定会不会出事，陷阱场景决定会不会被骗。三类缺一，eval 就是自我安慰。'},
+      quiz:{q:'为什么一定要有"应该转人工"的样本？',a:'因为"知道什么时候不做"和"做对"同样重要。只测答对的样本，会激励你把系统调得更激进（什么都敢自动处理），上线后最容易出事的就是那些本该拒绝却自动处理了的case。'}},
+
+    {d:45,t:'指标设计：准确率之外还有什么',min:80,
+      steps:['实现 4 个指标：分类准确率、格式合规率、转人工准确率、平均耗时','加成本指标：每条工单多少钱','加安全指标：敏感信息是否被拦截','写一个 evaluate() 一次跑完所有指标并输出表格','跑第一次基线，保存为 baseline.json'],
+      concept:{t:'指标要分层',b:'任务指标（准不准）、系统指标（快不快、多少钱）、安全指标（会不会出事）。三层都要有——只盯准确率，你会得到一个又慢又贵还偶尔泄露信息的系统。'},
+      code:{t:'week7/day45_metrics.py',src:`def evaluate(cases, predict):
+    n = len(cases)
+    acc = sum(p["category"] == c["expect"] for c, p in zip(cases, predict)) / n
+    fmt = sum(is_valid_schema(p) for p in predict) / n          # 格式合规率
+    esc = sum(p.get("need_human_review") == c["expect_review"]
+              for c, p in zip(cases, predict)) / n              # 转人工准确率
+    cost = sum(p.get("cost", 0) for p in predict) / n
+    return {"accuracy": round(acc, 3), "format_ok": round(fmt, 3),
+            "escalation_acc": round(esc, 3), "cost_per_case": round(cost, 5)}
+
+# 陷阱：naive LLM-as-Judge 在多轮 / 长 trace 上会漂
+# 对策：judge 只看单个环节、给明确 rubric、用 1-5 分制而非对错`},
+      quiz:{q:'格式合规率为什么值得单独列？',a:'因为格式崩了下游直接崩。准确率 95% 但格式合规率 90%，意味着每 10 条就有 1 条让程序抛异常。这两个指标的修复方式完全不同（前者调提示词/模型，后者加解析兜底与 schema 约束）。'}},
+
+    {d:46,t:'LLM-as-Judge：让模型给模型打分',min:90,
+      steps:['写评分提示词：明确的 rubric（1-5 分，每分对应什么）','对"回复草稿"这类无标准答案的输出做评分','验证：让 judge 对同一条打 3 次，看一致性','对比：judge 分数与人工打分的相关性（抽 10 条自己打分）','记录 judge 的失败模式（如偏爱长答案）'],
+      concept:{t:'Judge 不是裁判，是带偏见的评委',b:'已知偏差：偏爱长答案、偏爱先出现的选项、对同模型生成的内容打分偏高。缓解：给明确 rubric + 打乱选项顺序 + 多judge取平均 + 定期用人工标注校准。面试时说出这些偏差，比说出"我用了 LLM-as-Judge"值钱得多。'},
+      quiz:{q:'judge 用同一个模型打分有什么问题？怎么缓解？',a:'自恋偏差——模型倾向给自己风格的输出高分。缓解：① 用更强的模型做 judge；② 打乱候选顺序；③ 与人工标注做相关性校验（抽 20-30 条）；④ 关键决策不用 judge，用规则 + 人工。'}},
+
+    {d:47,t:'回归测试：改一行提示词也不怕',min:80,
+      steps:['把 evaluate() 接进 pytest：pytest tests/test_eval.py','设定阈值：accuracy 低于 baseline - 3% 就失败','改一次提示词，跑测试，看是否捕获到变化','把 baseline.json 纳入 Git，改动可追溯','可选：加一个简单的 CI（GitHub Actions）自动跑'],
+      concept:{t:'回归测试把"感觉"变成"门禁"',b:'有了阈值门禁，任何让指标下滑的改动都会在提交时被拦下。这是从"能跑的项目"到"能维护的系统"的关键一步，也是作品集里最能体现工程素养的部分。'},
+      quiz:{q:'阈值设多少合适？',a:'基于波动幅度：先跑 3 次基线看自然波动（如 ±2%），阈值设为波动的 1.5 倍（如 3%）。设太紧会频繁误报、大家就忽略测试；设太松等于没有。同时区分"warn"和"fail"两级。'}},
+
+    {d:48,t:'Trace 与成本监控：每条请求花多少、卡在哪',min:80,
+      steps:['给每次调用记录：trace_id、耗时、token、成本、模型、是否重试','实现按天/按功能聚合的成本报表','找出成本最高的 3 个环节，各提一个优化方案','实现一个简单的成本上限：超过 X 元自动降级','把成本表放进 notes/，作为案例素材'],
+      concept:{t:'成本是功能的一部分',b:'一个每条工单花 2 块钱的 Agent，在日均 200 条的场景下一年就是十几万。FDE 必须能回答"这个东西跑起来多少钱"——答不上来的方案，客户签字后也会反悔。'},
+      quiz:{q:'成本太高，第一刀砍哪里？',a:'按顺序：① 换便宜模型处理简单环节（分类用小的，写作用大的）；② 缩短上下文（更好的切分、只传必要历史）；③ 缓存（相同问题/相同 embedding）；④ 减少步数（优化提示词降低重试率）。先量出来再砍，别凭直觉。'}},
+
+    {d:49,t:'周末大块：eval 套件成型 + 阶段复盘',min:160,
+      steps:['把 D44-D48 整合成一个命令：python -m eval.run','输出一张完整的指标表（含成本）','跑三次取平均，写入 docs/eval-baseline.md','notes/week7.md 复盘：你的系统最弱的一环是什么','把最弱一环作为 W8 可靠性工程的重点'],
+      concept:{t:'eval 是写给未来的自己看的',b:'三个月后你会忘记当时的取舍。一份带日期、带指标、带失败案例的 eval 报告，能让你和别人快速理解这个系统的真实水平——这也是 W11 案例里最有说服力的那一页。'},
+      deliver:'验收：eval 套件一键跑通 + docs/eval-baseline.md + notes/week7.md'}
+  ]
+});
+
+/* ============================ W8 ============================ */
+DATA.weeks.push({
+  w:8, range:'D50–D56', theme:'可靠性工程 + Docker 化（阶段项目）', color:'#7c4dff',
+  series:'系列 W8：可靠性工程 · 阶段项目',
+  foundation:'工程地基：Dockerfile / docker compose',
+  deliver:'主线项目 v1：docker compose up 一键起（RAG + Agent + eval + 日志）',
+  days:[
+    {d:50,t:'失败模式清单：先把所有可能挂的地方列出来',min:80,
+      steps:['画一条链路，每个环节问"这里挂了会怎样"','对每个失败点填：概率 / 影响 / 现有防护 / 还缺什么','重点标注：会造成不可逆后果的（重复写回、误发消息）','挑出 Top 3 高风险项，本周解决','写成 docs/failure-modes.md'],
+      concept:{t:'FMEA 简化版',b:'不要做复杂表格，一张四列清单就够：会怎么挂 / 多严重 / 现在有没有防护 / 谁来发现。FDE 的价值很大程度体现在"别人没想到的失败模式你想到了"。'},
+      quiz:{q:'最容易被忽略的失败模式是什么？',a:'静默失败——不报错但结果是错的。比如模型返回了格式正确但内容荒谬的分类，系统照单全收。防护：置信度阈值 + 抽样人工复核 + 异常分布监控（某类占比突变就报警）。'}},
+
+    {d:51,t:'幂等与去重：同样的请求别做两遍',min:80,
+      steps:['给写操作加幂等键（工单id + 动作类型）','执行前查状态：已处理则直接返回上次结果','实现一个去重表，记录已处理的 id','测试：连续调用两次，确认只写回一次','把这个机制写进架构图'],
+      concept:{t:'重试 + 无幂等 = 事故',b:'只要系统里有重试，就必须有幂等。这是分布式系统的铁律，在 Agent 场景更容易被忽略——因为你会觉得"模型应该只会调一次"。上线前的检查清单里，这一条必须打勾。'},
+      quiz:{q:'幂等键怎么设计？',a:'业务唯一标识 + 动作类型，如 (ticket_id, "write_back")。不要用时间戳或随机数（每次不同就失去意义）。服务端存已执行键与结果，重复请求命中即返回，需设置合理过期时间。'}},
+
+    {d:52,t:'限流与并发：别把下游打挂',min:80,
+      steps:['给 LLM 调用加并发上限（信号量），避免瞬时打满配额','给外部 API 加 QPS 限制（复用 D34 的令牌桶）','处理 429：读 Retry-After，指数退避','压测：一次丢 50 条工单进去，看会不会崩','记录并发下的平均耗时与失败率'],
+      concept:{t:'并发是延迟的解药，也是事故的毒药',b:'并行能大幅缩短总耗时，但会把下游 QPS 和成本瞬间拉高。正确做法：有上限的并发 + 退避 + 熔断。FDE 常要在"客户要快"和"系统要稳"之间找平衡点。'},
+      quiz:{q:'客户要求 500 条工单 5 分钟内处理完，怎么做？',a:'先算：单条平均耗时 × 500 / 并发数 ≤ 300s，反推需要的并发与 QPS。再确认 API 配额是否够、成本多少。达不到就谈分批或放宽时限——用数据谈判，而不是硬着头皮承诺。'}},
+
+    {d:53,t:'配置化：所有魔法数字都要能改',min:70,
+      steps:['把所有阈值、模型名、并发数、超时抽到 config.yaml','实现配置校验：启动时检查必填项，缺了就报清晰错误','区分环境：dev / prod 两套配置','敏感值只从环境变量读，不进配置文件','README 补上配置项说明表'],
+      concept:{t:'配置化 = 现场可调试',b:'FDE 在客户现场最常做的事是"调一下试试"。阈值写死在代码里，每次调整都要改代码重启服务；配置化后，改一行重启即生效，客户也更容易接受"我们先保守一点"。'},
+      quiz:{q:'哪些值绝对不能写进配置文件？',a:'密钥、Token、密码、Webhook URL、客户标识。这些只能走环境变量或密钥管理服务，且必须进 .gitignore。配置文件可以提交，密钥不行——这是最基础的红线。'}},
+
+    {d:54,t:'工程地基⑦ Dockerfile：把环境打包',min:90,
+      steps:['写 Dockerfile：基于 python:3.11-slim，分层装依赖','.dockerignore 排除 .venv / data / logs / .env','构建镜像并本地跑起来，确认行为一致','优化：依赖层缓存、镜像体积（目标 < 500MB）','注意：不要把 .env 打进镜像'],
+      concept:{t:'镜像解决的是"在我机器上能跑"',b:'FDE 交付经常要部署到客户机器或陌生服务器。Docker 把 Python 版本、系统库、依赖全部固化，消除环境差异。代价是要理解分层缓存和镜像体积——这两点做不好会导致构建巨慢。'},
+      code:{t:'Dockerfile',src:`FROM python:3.11-slim
+WORKDIR /app
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
+
+COPY requirements.txt .              # 先复制依赖，利用缓存
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .                             # 代码后复制，改动不触发重装依赖
+# 注意：.dockerignore 必须排除 .env / data / logs
+
+EXPOSE 8000
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]`},
+      quiz:{q:'为什么 requirements.txt 要单独先 COPY？',a:'Docker 按层缓存，依赖装好后只要 requirements.txt 不变，改代码就不会重装依赖，构建从几分钟缩到几秒。这是 Dockerfile 最实用的一条优化，也是区分"会写"和"会用"的标志。'}},
+
+    {d:55,t:'docker compose：一键起全家桶',min:90,
+      steps:['写 docker-compose.yml：app + 可选的数据库/向量库','挂载卷：data/ 与 logs/ 持久化','配置环境变量注入（env_file: .env）','加健康检查 healthcheck','跑 docker compose up -d，curl 验证'],
+      concept:{t:'一条命令启动 = 交付门槛',b:'评价者/客户/面试官要验证你的项目，第一步就是"怎么跑起来"。docker compose up 一条命令能起来，和需要装 8 个依赖配 3 个环境变量才能跑，是天壤之别的第一印象。'},
+      code:{t:'docker-compose.yml',src:`services:
+  app:
+    build: .
+    ports: ["8000:8000"]
+    env_file: .env                    # 密钥走环境变量，不进镜像
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped`},
+      quiz:{q:'restart: unless-stopped 有什么风险？',a:'如果启动即失败（如配置错误、端口冲突），它会无限重启刷日志，掩盖真实错误。生产上更稳妥的是配合健康检查 + 告警，并给重启次数设上限（如 on-failure:5），让故障暴露出来而不是被自动重启掩盖。'}},
+
+    {d:56,t:'周末大块：阶段项目 v1 验收 + 第二月复盘',min:180,
+      steps:['完整跑一遍：docker compose up → 导入 500 条工单 → 跑 eval → 看日志','补 README：架构图、启动命令、指标基线、已知限制','录一段 3 分钟演示（先不剪，W11 会用）','notes/week8.md 复盘：第二月最大的认知变化','把项目推到 GitHub，README 写成能被陌生人看懂'],
+      concept:{t:'阶段项目是"能维护"的证明',b:'第一月的原型证明"能做出来"，第二月的 v1 证明"能稳定运行"。面试官看作品集，重点不是功能多炫，而是：能不能一键跑起来、有没有测试、出错怎么办、成本多少。'},
+      deliver:'验收：主线项目 v1（docker compose 一键起）+ README + eval 基线 + 3 分钟演示粗剪'}
+  ]
+});
+
+/* ============================ W9 ============================ */
+DATA.weeks.push({
+  w:9, range:'D57–D63', theme:'部署 + 前端：让别人用得上', color:'#f0821e',
+  series:'系列 W9：部署 + 前端',
+  foundation:'前端输入校验 / 错误态 / 加载态',
+  deliver:'可访问的 demo（局域网或公网）+ 操作日志表 + 最小权限鉴权',
+  days:[
+    {d:57,t:'部署选型：别一上来就上云',min:70,
+      steps:['列出三种方案：本机 / 局域网 / 云服务器（轻量 2C4G 足够）','对比成本、复杂度、可访问性、合规风险','选定一种（建议：先局域网或内网穿透给 3-5 人用）','配置 HTTPS 与基础防火墙（若上云）','写下选择理由，这就是一个 ADR'],
+      concept:{t:'部署方式取决于"谁要用"',b:'给 3 个朋友演示：局域网或内网穿透足够，成本 0。给客户长期使用：必须有正式的云环境、备份和监控。FDE 要能按场景选最省事的方案，而不是默认上 K8s。'},
+      quiz:{q:'演示环境要不要上 HTTPS 和鉴权？',a:'只要能被公网访问，就必须有。哪怕只是 demo——暴露的界面会被扫描器扫到，未鉴权的管理接口等于把你的 API key 和数据送人。最低限度：一个登录口令 + 不要暴露 /docs 调试接口。'}},
+
+    {d:58,t:'做一个能用的界面：Streamlit 或单页 HTML',min:90,
+      steps:['用 Streamlit 搭最小界面：粘贴工单 → 看分类/优先级/草稿/依据','或直接写单页 HTML + fetch 调你的 FastAPI','核心三件套：输入框、结果区、确认按钮','确认"同意/修改/拒绝"三个按钮都接到了后端','让一个非技术的朋友看一眼，问他每个按钮是什么意思'],
+      concept:{t:'界面的目标是让人敢用',b:'不是好看，是"我知道它要我做什么、我做的会有什么后果"。AI 界面三要素：能看到依据（为什么这么判）、能改（人比模型懂业务）、能拒绝（有退路）。缺一个，采用率就会掉。'},
+      quiz:{q:'为什么一定要展示"依据来源"？',a:'没有依据，用户只能全信或全不信。一旦它错一次，信任归零，从此弃用。展示依据后，用户会把它当"助手"而不是"黑箱"——出错时他会修改而不是放弃。这个细节直接决定人工修改率。'}},
+
+    {d:59,t:'前端三态：加载 / 成功 / 失败都要设计',min:80,
+      steps:['加载态：流式打字或进度提示，不要只转圈','成功态：结果 + 依据 + 确认按钮','失败态：人话提示 + 重试按钮 + 错误码（便于报障）','空态：没有结果时不要显示空白','超时态：超过 X 秒给出提示而不是一直等'],
+      concept:{t:'错误提示是产品的一部分',b:'"500 Internal Server Error" 对用户等于"这玩意儿坏了"。正确的错误提示说三件事：出了什么问题、是不是你的错、接下来怎么办。FDE 做交付，用户遇到错误时的体验，直接决定他会不会继续用。'},
+      quiz:{q:'AI 界面为什么特别需要流式？',a:'因为模型响应普遍 3-15 秒，远超人类耐心阈值（约 1 秒）。流式把"等待"变成"观看"，主观等待感大幅下降。对客服、审核这类人机协同界面，流式几乎是必备。批处理任务则不必。'}},
+
+    {d:60,t:'用户身份与最小权限',min:80,
+      steps:['实现最简登录：用户名 + 口令（或一次性邀请码）','区分角色：使用者 / 审核者 / 管理员','最小权限：使用者只能提交与查看自己的工单','所有操作带上"是谁"的标识','测试：用使用者账号尝试管理员接口，确认被拒'],
+      concept:{t:'最小权限不是安全洁癖，是交付前提',b:'企业客户第一个问的就是"谁能看到什么、谁能改什么"。一个没有身份概念的系统，在甲方眼里就是玩具。哪怕只有两个角色，也要做——它体现的是你对生产系统的理解。'},
+      quiz:{q:'模拟项目也要做权限吗？',a:'要，而且成本低收益高。面试官打开你的 demo，看到一个"审核者才能写回"的设计，和看到一个谁都能改的系统，对你的评价完全不同。权限设计是作品集里性价比最高的一块。'}},
+
+    {d:61,t:'操作日志与审计：谁在什么时候改了什么',min:80,
+      steps:['设计 audit_log 表：时间 / 用户 / 动作 / 对象 / AI 建议 / 人工最终值 / 原因','每次写回、每次修改、每次拒绝都记一笔','实现按用户和时间筛选的日志页','导出 CSV 用于 W10 分析','思考：如果客户投诉"系统乱改数据"，你怎么自证'],
+      concept:{t:'审计日志是信任的基础设施',b:'它同时服务三个目的：事故追溯（谁改的）、模型改进（人工修改就是标注）、合规证明（有没有越权）。一个字段都别省——尤其是"AI 建议 vs 人工最终值"，这就是你衡量模型价值的核心数据。'},
+      quiz:{q:'审计日志要存多久、存什么？',a:'至少覆盖一个业务周期（通常 3-6 个月）。必存：时间戳、操作者身份、动作类型、对象 id、变更前值、变更后值、来源（AI/人工）。不存：完整请求正文（可能含敏感信息，且体积大）——存 hash 或摘要即可。'}},
+
+    {d:62,t:'结果导出与写回：闭环的最后一步',min:80,
+      steps:['实现导出：CSV / JSON 两种格式','实现"写回"：把确认后的结果写回工单表','写回前二次确认 + 幂等校验（用 D51 的机制）','提供撤销：记录变更前值，支持回滚','测试完整闭环：导入 → 处理 → 确认 → 写回 → 导出'],
+      concept:{t:'不能写回的系统，价值减半',b:'很多 AI 工具死在最后一步：给了建议，但用户还要手动复制到另一个系统。省下的时间被复制粘贴吃掉，采用率就上不去。"能写回"是工具变成流程一部分的分界线。'},
+      quiz:{q:'写回失败了怎么办？',a:'三件事：① 不丢失用户的确认结果（先落本地再写回）；② 明确告诉用户写回失败、建议已保存、可稍后重试；③ 记录失败原因并告警。绝不能让用户以为已经成功——静默失败是最伤信任的。'}},
+
+    {d:63,t:'周末大块：demo 上线 + 邀请第一批用户',min:170,
+      steps:['把 demo 部署到可访问地址，自己用手机访问一遍','写一份 200 字使用说明（给非技术用户看）','邀请 3-5 位朋友，发说明 + 5 个典型任务','确认每个人都能独立完成第一个任务（记下卡点）','notes/week9.md 复盘：onboarding 哪里最卡'],
+      concept:{t:'onboarding 卡点 = 真实采用率杀手',b:'用户放弃往往不是因为功能差，而是"不知道第一步干什么"。观察 3 个人怎么用，你会发现自己完全没预料到的问题——这些观察是 W10 迭代的输入，也是案例里最真实的素材。'},
+      deliver:'验收：可访问 demo + 使用说明 + 3-5 位用户已 invite + notes/week9.md'}
+  ]
+});
+
+/* ============================ W10 ============================ */
+DATA.weeks.push({
+  w:10, range:'D64–D70', theme:'模拟用户连用两周 + 数据驱动的迭代', color:'#f59e0b',
+  series:'系列 W10：部署与真实使用（本计划用模拟用户替代）',
+  foundation:'埋点与统计脚本',
+  deliver:'前后对比报告（4 指标）+ 项目 v2',
+  days:[
+    {d:64,t:'正式开始：给用户一个明确的两周约定',min:60,
+      steps:['发一条消息：两周内每周用 3 次，每次做 5 条工单','说清这不是测试他们的能力，是测试工具','提供 5 个典型任务清单（含边界案例）','给出反馈渠道：一句话也行，截个图也行','承诺：第 7 天会做一次回访'],
+      concept:{t:'FDE 的真实闭环',b:'系统上线不是终点。找 3-5 个真实用户连续用两周，每隔两三天看四组数据：使用次数、完成时间、人工修改率、放弃位置。这一步是 FDE 与"写完代码就走的开发者"最大的区别。'},
+      quiz:{q:'用户说"挺好的"但数据上没在用，怎么办？',a:'别接受客套，问具体：上次用是什么时候？当时卡在哪？如果他说不清，看埋点——他是在哪一步退出的。礼貌性好评 + 零使用是最常见的假信号，只有数据不说谎。'}},
+
+    {d:65,t:'埋点：把四个指标采下来',min:80,
+      steps:['埋 4 个事件：打开、提交、修改、放弃（含退出位置）','记录每次任务的处理时长（从打开到确认）','记录人工修改前后的值（差就是模型价值）','做一个简单的统计脚本，每天跑一次','把 D61 的审计日志也纳入统计'],
+      concept:{t:'先定义指标再上线',b:'临时补埋点会丢掉前几天的珍贵数据。四个指标对应四个问题：用了吗（次数）、快了吗（时长）、准吗（修改率）、卡在哪（放弃位置）。它们分别对应采用、效率、质量、体验。'},
+      code:{t:'week10/metrics.py',src:`import sqlite3, statistics
+
+con = sqlite3.connect("data/app.db")
+
+def report(since):
+    rows = con.execute("""SELECT action, ts, extra FROM event_log
+                          WHERE ts >= ?""", (since,)).fetchall()
+    submit = [r for r in rows if r[0] == "submit"]
+    edited = [r for r in rows if r[0] == "edit"]
+    drop   = [r for r in rows if r[0] == "drop"]
+
+    return {
+        "使用次数":    len(submit),
+        "平均处理时长": round(statistics.mean([float(r[2]) for r in submit] or [0]), 1),
+        "人工修改率":  round(len(edited) / max(len(submit), 1), 3),
+        "放弃位置TOP": top_n([r[2] for r in drop], 3),
+    }`},
+      quiz:{q:'人工修改率居高不下，是模型问题还是产品问题？',a:'先看修改类型：改分类/内容 → 模型问题；改格式/措辞 → 提示词或模板问题；改完还说"其实它分类没错" → 那就是用户不信任，需要展示依据。不加区分地调模型，是最常见的无效优化。'}},
+
+    {d:66,t:'第 1–3 天：只修致命问题，不优化',min:60,
+      steps:['每天看一次指标，只处理：崩溃、数据丢失、无法完成','把所有用户反馈原样记下来，不要立刻反驳或解释','记录自己想优化但忍住没做的点（清单留到 D69）','给用户回应：你反馈的 X 我们记下了','提醒还没用的用户一次（温和）'],
+      concept:{t:'使用期不要改功能',b:'中途改版会让前后数据不可比，也会打断用户刚建立的习惯。除非是致命问题，否则忍住。这很难，但这是拿到可信前后对比的前提——FDE 的自律体现在这里。'},
+      quiz:{q:'用户报了一个 bug，但只有一个人遇到，修吗？',a:'先看是不是会影响数据正确性或信任。崩溃、错误写回 → 立刻修；界面不顺手、个别分类不准 → 记下来，等观察期结束统一改。一个人遇到的问题，往往代表一类人没说出来。'}},
+
+    {d:67,t:'第 7 天：做一次回访（5 个问题）',min:70,
+      steps:['每人 15 分钟，问 5 个问题（不是"满意吗"）','问：上一次用它是什么时候、为什么不更早用','问：有没有哪次你觉得"还不如我自己做"','问：如果只能改一个地方，你改哪','把回答原话记下来（案例里的金句）','感谢对方，并预告第 14 天会给结果'],
+      concept:{t:'回访问的是行为，不是态度',b:'"满意吗"得到礼貌答案；"上次什么时候用的、为什么当时没用"得到真相。客户协作的核心技能是问出可行动的信息，而不是收集赞美。'},
+      quiz:{q:'用户说"我觉得分类挺准的，但我还是每次都自己看一遍"，怎么理解？',a:'这是信任问题不是准确问题。他每次都检查 = 你的工具没省时间，只是多了个参考。解法不是提高准确率，而是让他不必检查：展示依据来源、给出置信度、对高置信度的明确标绿。这也是一个很好的面试故事。'}},
+
+    {d:68,t:'数据分析：定位最痛的那一个点',min:80,
+      steps:['汇总 7 天数据，画 4 个指标的每日曲线','分析放弃位置：最多人卡在哪一步','对比：提交量高 vs 低的用户，行为差在哪','把"想优化清单"按 影响面 × 实现成本 排序','选出一个本周要改的点（只改一个）'],
+      concept:{t:'一次只改一个变量',b:'同时改三处，你就不知道是哪处起了作用。这也是科学方法论在交付中的体现——FDE 要能用证据定位问题，而不是靠猜测堆功能。改一个，测一个，留下对比。'},
+      quiz:{q:'如果用户根本不用，问题可能在模型之外吗？',a:'大概率在模型之外。常见原因：登录麻烦、入口太深、结果不能写回原系统、责任边界没说清（"我确认了是不是我担责"）。模型准确率很高但没人用，是 AI 项目最典型的失败形态。'}},
+
+    {d:69,t:'一次真迭代：改最痛的那一处',min:90,
+      steps:['实现 D68 选出的那一个改动','跑一遍 eval，确认指标没有回退（用 W7 的门禁）','灰度：先给自己和 1 位用户看，确认没有新问题','全量发布，并在群里说清改了什么、为什么改','更新 README 与架构说明'],
+      concept:{t:'迭代要说清"为什么"',b:'告诉用户"我们改了 X，因为你们中有 3 人在 Y 处放弃了"，比"我们优化了体验"有力得多。这既是对用户的尊重，也把你的工作变成了可展示的证据链。'},
+      quiz:{q:'迭代后指标变好了，怎么证明是改动带来的？',a:'靠前后对比 + 单变量。保留改动前的基线数据、只改一处、观察期长度一致。如果同时有多个变化，就如实说明"无法归因"——诚实标注局限，比夸大结论更可信。'}},
+
+    {d:70,t:'周末大块：前后对比报告 + v2',min:170,
+      steps:['跑第 8-14 天数据，与第 1-7 天对比','写 docs/before-after.md：4 指标前后值 + 改动说明 + 没解决什么','诚实写失败：哪里没改善，为什么，下一步怎么验证','项目打 v2 tag','notes/week10.md 复盘：模拟用户哪些反馈最出乎意料'],
+      concept:{t:'没改善也可以写，但要解释失败在哪',b:'FDE 的可信度不来自"项目永远成功"，而来自你能用证据定位问题。一份诚实说明"退款类仍保持人工处理，因为 X"的报告，比一份全是好消息的报告更专业。'},
+      deliver:'验收：docs/before-after.md（4 指标前后对比）+ 项目 v2 + notes/week10.md'}
+  ]
+});
+
+/* ============================ W11 ============================ */
+DATA.weeks.push({
+  w:11, range:'D71–D77', theme:'客户侧能力：把技术变成别人愿意买单的故事', color:'#ec4899',
+  series:'系列 W11：客户侧能力',
+  foundation:'—',
+  deliver:'作品集四件套：一页案例 / 3 分钟演示 / 脱敏架构图 / 故障复盘',
+  days:[
+    {d:71,t:'一页案例摘要：回答 7 个问题',min:80,
+      steps:['按 7 问写：谁在用 / 原流程什么问题 / 你做了什么取舍 / 怎么控制权限与风险 / 跑了多久 / 数据有什么变化 / 哪些没解决','一页 A4，不超 800 字','每个数字都标来源（"eval 30 条样本" / "5 人 14 天"）','删掉所有形容词，只留名词和数字','找人读一遍，问他能不能复述出价值'],
+      concept:{t:'案例不是产品说明书',b:'不要写"基于大模型搭建智能客服系统"。要写"5 人使用 14 天，单条处理从 180s 降到 55s，人工修改率 46%→18%，退款类仍人工处理"。前者谁都能写，后者只有做过的人写得出。'},
+      code:{t:'docs/case-study.md（骨架）',src:`# 客服工单分类与回复助手
+
+**谁在用**：5 位模拟用户（含 2 名真实客服岗朋友），14 天
+**原流程**：人工阅读 → 判断类别 → 查政策文档 → 手写回复，平均 180 秒/条
+
+**做了什么**
+- 规则前置过滤敏感信息，模型输出结构化分类（类别/优先级/是否转人工）
+- RAG 检索 40 条政策 + 200 条 FAQ，答案带来源编号
+- 低置信度与敏感类强制进人工队列；写回需二次确认且幂等
+
+**关键取舍**
+- 用合成数据（无真实数据权限），已主动加入 30% 噪声样本
+- 选 SQLite 而非向量数据库：数据量 < 1 万条，够用且零运维
+- 放弃自动发送：对外承诺必须人工确认
+
+**数据变化**（14 天，N=142 条）
+| 指标 | 前 | 后 |
+|---|---|---|
+| 平均处理时长 | 180s | 55s |
+| 人工修改率 | 46% | 18% |
+| 转人工准确率 | — | 91% |
+
+**仍未解决**：跨类别工单准确率仅 71%；退款类保持全人工
+**下一步**：扩 golden set 到 100 条，试混合检索`},
+      quiz:{q:'案例里要不要写"没解决的问题"？',a:'必须写，而且是最能加分的一段。它证明你理解系统的边界、没有被自己的 Demo 说服。面试官一定会追问"有什么局限"，主动写出来反而掌握了叙事主动权。'}},
+
+    {d:72,t:'脱敏架构图：一张图讲清系统',min:70,
+      steps:['画端到端：数据入口 → 规则过滤 → 模型 → RAG → 人工确认 → 写回 → 日志','标出三道保护的位置（超时重试 / 人工复核 / 失败回退）','标出权限边界（谁能写什么）','脱敏：去掉所有真实名称、密钥、内网地址','导出 PNG + 保留可编辑源文件'],
+      concept:{t:'架构图要回答"它挂了你先看哪"',b:'不是组件罗列。好的架构图标注了：数据流向、失败点、权限边界、外部依赖。面试官看架构图，看的是你有没有想过这些——有没有"运维意识"。'},
+      quiz:{q:'脱敏要做哪些具体检查？',a:'清单：① 真实公司/客户名、人名；② 内网 IP、域名、数据库连接串；③ 密钥、Token、Webhook；④ 截图里的浏览器标签、路径、用户名；⑤ 日志样本里的真实手机号/订单号。逐项过一遍再发布。'}},
+
+    {d:73,t:'STAR 素材库：把经历变成可讲的故事',min:80,
+      steps:['写 6 个 STAR：技术决策 2 / 失败处理 2 / 客户协作 2','每个结构：情境 → 任务 → 行动 → 结果（必须有数字）','重点准备"我搞砸过什么"的故事','每个故事控制在 90 秒能讲完','朗读一遍，删掉所有技术黑话'],
+      concept:{t:'FDE 面试权重：客户故事 30% > 技术 25% ≈ 沟通 25% > 自主判断 20%',b:'技术只是四分之一。淘汰主因往往是：只讲技术不讲业务、低估干系人、看不出业务上下文。所以 STAR 库里"客户协作"和"失败处理"必须占一半。'},
+      quiz:{q:'"我搞砸过什么"该怎么讲才加分？',a:'结构：发生了什么 → 我怎么发现的 → 我做了什么止损 → 我改了什么机制防止再犯 → 现在指标如何。重点在"发现机制"和"防复发"，而不是错误本身。只讲错误不改进 = 减分。'}},
+
+    {d:74,t:'简历与主页改造：让招聘方能搜到你',min:70,
+      steps:['标题含目标岗位关键词：Forward Deployed Engineer / AI 应用交付 / Agent 工程师','经历描述里嵌入：生产 AI 系统、RAG、Eval、LangGraph、FastAPI、客户交付','每条经历改成"做了什么 + 带来什么变化（数字）"','把 GitHub 主页 README 写成作品集入口（3 个项目的链接 + 一句话价值）','检查：搜"FDE""Agent 交付"等关键词能否找到你'],
+      concept:{t:'招聘方用关键词精确筛选',b:'能力再强，搜不到就等于不存在。把"production AI systems""evals""RAG""客户交付"这些词自然写进经历描述，而不是堆在技能栏。同时准备一页可点开的作品集入口。'},
+      quiz:{q:'没有正式工作经历怎么办？',a:'用项目经历顶上，但写法要像交付而不是作业：写"为 5 位用户交付、运行 14 天、指标变化 X"，而不是"实现了基于 RAG 的问答系统"。前者是 FDE 语言，后者是课程作业语言。'}},
+
+    {d:75,t:'3 分钟演示视频：按叙事弧线剪',min:90,
+      steps:['结构：问题（30s）→ 演示（90s）→ 证据（45s）→ 边界（15s）','演示走真实流程，不要跳剪太多','必须展示一个"它拒绝/转人工"的瞬间','最后一屏放指标对比表','配字幕，静音也能看懂'],
+      concept:{t:'演示要展示判断力，不只是功能',b:'最打动人的一幕不是它答对了，而是它说"这个我不确定，转人工"。那说明你设计的是可交付系统，不是 Demo。这一幕值 30 秒，一定要放。'},
+      quiz:{q:'演示时系统卡住了怎么办？',a:'提前录屏，现场只做讲解；或者准备静态截图兜底。如果必须现场演示：保持 narrate（我现在看到它在等 X，通常这一步 3 秒）——把故障变成展示你对系统理解的时刻。慌乱和沉默才是真正的减分项。'}},
+
+    {d:76,t:'故障复盘稿：一次真实或模拟的故障',min:80,
+      steps:['选一次你真遇到的故障（模型返回垃圾/接口超时/数据写错）','按时间线写：发现 → 定位 → 止损 → 根因 → 改进','写清"怎么发现的"（监控？用户反馈？）','写改进措施，并说明是否已验证','一页，放进作品集'],
+      concept:{t:'复盘稿证明你能运维',b:'任何人都能做出一个跑通的 Demo，只有做过运维的人才写得出复盘。这份文档在面试里往往比项目本身更有说服力——它展示的是"你敢不敢对结果负责"。'},
+      quiz:{q:'没有真故障怎么办？',a:'主动做一次故障演练：断网、改错 key、塞入畸形数据，记录系统表现与你的处置过程。诚实标注"演练"即可。做过演练的人，比没想过故障的人强得多。'}},
+
+    {d:77,t:'周末大块：作品集打包',min:180,
+      steps:['四件套归位：案例摘要 / 演示视频 / 架构图 / 复盘稿','GitHub 仓库整理：README 完整、tag 打上、敏感信息复查','建一个作品集首页（GitHub Pages 或单页 HTML）','发给 2 位朋友看，各提一个问题','notes/week11.md 复盘'],
+      concept:{t:'作品集 = 一次完整的交付演练',b:'打包作品集本身也是一次交付：别人能不能在 5 分钟内看懂你做了什么、为什么有价值。用做产品的标准要求它，而不是"把文件放上去"。'},
+      deliver:'验收：作品集四件套 + GitHub 仓库整理完毕 + 简历初稿 + 作品集首页'}
+  ]
+});
+
+/* ============================ W12 ============================ */
+DATA.weeks.push({
+  w:12, range:'D78–D90', theme:'面试冲刺与投递（13 天）', color:'#ef4444',
+  series:'系列 W12：作品集 + 面试',
+  foundation:'—',
+  deliver:'面试问答库 + ≥1 次模拟录像 + 投递记录表',
+  days:[
+    {d:78,t:'面试地图：FDE 到底考什么',min:60,
+      steps:['五类题型：技术概念 / 系统设计 / 客户场景 / 现场编码 / 行为','按权重分配练习时间：客户场景 30% / 技术 25% / 沟通 25% / 判断 20%','建一个 qa.md，每类先写 5 个题','标出你最弱的一类，本周重点攻它','每天至少答 2 题，出声答'],
+      concept:{t:'面试不是考试，是模拟工作场景',b:'FDE 面试真正想验证的是：需求模糊时你会不会问、系统出错时你找不找得到恢复路径、用户不用时你会不会回到现场。技术只是入场券。'},
+      quiz:{q:'哪类题最容易让有经验的工程师翻车？',a:'客户场景模拟。技术强的人习惯"给一个明确问题求最优解"，但客户场景没有明确问题——你要先问出真问题。练习方法：任何题目先反问 3 个澄清问题再动手。'}},
+
+    {d:79,t:'技术广度串讲：能讲清取舍才算懂',min:80,
+      steps:['准备 8 个对比题：RAG vs 微调 / 多 Agent vs 单 Agent / 向量库 vs SQL / 流式 vs 批量 / 手写 vs 框架 / 大模型 vs 规则 / 云 vs 本地 / 缓存 vs 重算','每题准备：定义、适用场景、反例、成本差异','用大白话讲给非技术朋友听，看能不能懂','录一段 5 分钟串讲，自己回听','把讲不清的标记出来，明天补'],
+      concept:{t:'广度 > 深度',b:'FDE 淘汰的常见原因是"只堆技术深度"。面试官更想听"我为什么不用 X"而不是"X 的内部原理"。每个技术选择都要能说出放弃了什么、什么信号出现会改。'},
+      quiz:{q:'"什么时候不该用 Agent？"怎么答才漂亮？',a:'给具体判据：任务步骤固定且已知 → 用工作流；单次调用能解决 → 直接调 API；对延迟和成本极敏感 → 规则优先；出错代价高且无法回滚 → 人工为主 Agent 为辅。能说出"不用"的场景，比会搭更有信服力。'}},
+
+    {d:80,t:'现场编码① 手写 agent loop（限时 25 分钟）',min:80,
+      steps:['计时手写：循环 + 工具分发 + 步数上限 + 错误处理','边写边讲思路（面试官看的是思考过程）','写完后自己 review：死锁？无限循环？异常吞掉？','再写一遍，目标 15 分钟完成','把最优版本背下来（肌肉记忆）'],
+      concept:{t:'现场编码考的是习惯，不是聪明',b:'限时下写不出精妙方案，但能暴露习惯：会不会设上限、会不会处理异常、变量命名清不清楚。这些习惯正是平时练出来的。'},
+      code:{t:'面试版：25 分钟 agent loop',src:`def run(goal, tools, max_steps=5):
+    msgs = [{"role": "user", "content": goal}]
+    for _ in range(max_steps):                  # 1. 必须有上限
+        msg = llm(msgs, tools=tools).choices[0].message
+        if not msg.tool_calls:                  # 2. 终止条件
+            return msg.content
+        msgs.append(msg)
+        for c in msg.tool_calls:
+            fn = tools[c.function.name]
+            try:
+                out = fn(**json.loads(c.function.arguments))
+            except Exception as e:              # 3. 错误喂回模型，不吞
+                out = "ERROR: %s" % e
+            msgs.append({"role": "tool", "tool_call_id": c.id, "content": str(out)})
+    return "超过步数上限，已转人工"              # 4. 兜底`},
+      quiz:{q:'写完了，面试官问"这段代码线上会出什么问题"，你怎么答？',a:'主动说：① 没有超时控制，单次调用可能挂死；② 没有成本统计，异常输入会烧钱；③ 工具执行没有权限校验；④ 错误信息原样回传可能泄露内部细节；⑤ 没有 trace，出问题无法复盘。主动暴露 + 给出改进方案，是加分项。'}},
+
+    {d:81,t:'现场编码② tool schema + 结构化输出',min:80,
+      steps:['限时写一个工具的 JSON Schema（name/description/parameters/required）','description 要写成给模型看的说明书（什么时候用、什么时候别用）','写结构化输出解析 + 校验 + 失败兜底','思考：参数类型怎么设计模型才不容易传错','写完口述一遍 schema 设计原则'],
+      concept:{t:'schema 是提示词的一部分',b:'description 写得好不好，直接决定模型会不会选对工具、传对参数。它本质上是一段给模型读的提示词。写清楚"仅适用于 X，不要用于 Y"能显著降错。'},
+      quiz:{q:'模型总传错参数，怎么改？',a:'按顺序：① description 加示例和反例；② 用 enum 限定取值范围而不是 string；③ 参数名更具体（用 city_name 而非 q）；④ required 只标真正必填；⑤ 在提示词里给 1 个 few-shot 示例。改 schema 比改提示词更快见效。'}},
+
+    {d:82,t:'客户场景模拟① 需求模糊',min:70,
+      steps:['题目："我们要用 AI 提升客服效率"，你会怎么开场？','练习：先问 5 个澄清问题再谈方案','给出一个"第一周能交付的最小东西"','明确说出不做什么','录音 3 分钟，回听是否问够了问题'],
+      concept:{t:'先问后做，是 FDE 的第一反应',b:'面试官不期待你当场给出方案，期待你先搞清：谁痛、痛在哪、现在怎么做、什么叫好了、谁拍板。答不上方案不扣分，跳过了提问一定扣分。'},
+      quiz:{q:'客户坚持要一个庞大的方案，怎么推回？',a:'不否定，用"阶段"替代"缩减"：先两周做一个最小可用版本（明确范围和指标），拿到数据后再决定下一步。把对抗变成节奏控制——这是 FDE 处理范围蔓延的标准动作。'}},
+
+    {d:83,t:'客户场景模拟② 演示翻车',min:70,
+      steps:['模拟：演示现场模型返回荒谬答案，客户当场质疑','练习回应：承认 → 解释原因 → 说明防护 → 给出时间','准备"我们如何防止这种情况"的三层答案','练习把翻车转成展示专业度的机会','录音回听，语气是否稳'],
+      concept:{t:'翻车不可怕，失态才可怕',b:'AI 系统一定会出错，面试官知道。他们看的是：你会不会慌、会不会甩锅给模型、有没有防护机制、能不能给出下一步。沉着 + 有机制 = 通过。'},
+      quiz:{q:'客户问"它会不会乱说话"，怎么答？',a:'给机制不给承诺：① 答案必须引用来源，无来源则拒绝回答；② 敏感类别强制转人工；③ 低置信度自动进人工队列；④ 所有输出有 trace 可回溯。然后给数据：当前转人工准确率 91%，人工修改率 18%。'}},
+
+    {d:84,t:'客户场景模拟③ 范围蔓延与期望管理',min:70,
+      steps:['题目：客户用了一周后要求"顺便把退款也自动处理了"','练习：肯定需求 → 指出风险 → 给出分级方案','学会说"可以做，但需要 X 条件"','练习用数据谈优先级（工作量 vs 影响面）','录音回听'],
+      concept:{t:'期望管理 = 持续的、小剂量的诚实',b:'不是一次性说清，是每次变更都重新对齐范围与指标。FDE 的项目失控，几乎都始于某次"这个顺手加上吧"。'},
+      quiz:{q:'客户说"这个很简单吧，加一下"，你如何判断？',a:'先问三件事：出错代价（不可逆吗）、数据来源（有吗、准吗）、验收标准（怎么算对）。任何一个答不上来，就不是"简单加一下"。用问题代替估算，既专业又避免承诺陷阱。'}},
+
+    {d:85,t:'STAR 演练：出声讲，录音自评',min:70,
+      steps:['把 D73 的 6 个 STAR 逐个出声讲，每个 90 秒','录音，回听三件事：有没有数字、有没有"我"、有没有结果','删掉所有"我们团队"里的含糊表述，明确你做了什么','挑 2 个故事练到不看稿','找一个朋友当听众，让他复述你讲了什么'],
+      concept:{t:'能讲清楚 = 真的做过',b:'讲不顺的故事，通常是自己没想清楚。录音自评是最快暴露问题的方式——你会发现大量口头禅、无意义的技术细节、和缺失的结果。'},
+      quiz:{q:'故事里技术细节讲多深合适？',a:'一笔带过技术名词，重点讲"为什么这么选"和"结果如何"。面试官若要深挖会追问——那才是展示深度的时机。主动堆技术细节，容易被贴上"只懂技术"的标签。'}},
+
+    {d:86,t:'系统设计① 客服机器人规模化',min:80,
+      steps:['题目：日活 10 万的客服机器人，怎么设计','练习结构：需求澄清 → 容量估算 → 架构 → 瓶颈 → 降级','必须谈到：缓存、限流、队列、成本、人工兜底','画出架构并口述','限时 30 分钟'],
+      concept:{t:'系统设计考的是取舍而非标准答案',b:'面试官看你能不能有结构地展开：先问清规模和约束，再估算，再画架构，主动指出瓶颈和降级方案。能自己发现"这里会成为瓶颈"比给出完美架构更重要。'},
+      quiz:{q:'系统设计题开场应该做什么？',a:'先澄清：日活还是日请求量？峰值倍数？可接受的延迟？数据敏感度？准确率要求？——至少问 4 个。跳过澄清直接画图是最常见的失分点，哪怕图画得再漂亮。'}},
+
+    {d:87,t:'系统设计② 百万页文档问答',min:80,
+      steps:['题目：为一百万页企业文档做问答','练习：切分策略、向量库选型、混合检索、重排、更新机制','必须谈到：权限过滤（谁能看哪份文档）','必须谈到成本：首次索引多少钱、每次查询多少钱','口述完整方案，限时 30 分钟'],
+      concept:{t:'文档问答的真正难点是权限与更新',b:'技术上的 RAG 大家都懂，企业级难在：文档有权限等级（HR 文件不是谁都能问）、文档会更新（版本管理）、答案要可溯源。答出这三点，才算有交付经验。'},
+      quiz:{q:'权限过滤应该在检索前还是检索后？',a:'检索前（pre-filter），按用户权限缩小候选集。检索后过滤会导致"召回 10 条里 8 条无权访问"，实际可用结果只剩 2 条，准确率暴跌。同时要在生成层再兜一道，防止模型从上下文里读出越权内容。'}},
+
+    {d:88,t:'全流程模拟面试（录像 45 分钟）',min:100,
+      steps:['找人扮演面试官，或用计时自问自答','覆盖五类题型各 1 题','全程录像，事后回看','自评表：清晰度 / 结构 / 数字 / 冷静度 / 时间控制','挑出 3 个最需改的点，明天针对性练'],
+      concept:{t:'模拟面试的收益来自回看，不来自演练',b:'当场感觉良好没意义。录像能暴露你自己察觉不到的问题：语速过快、抢话、答案没有结论、遇到不会的题就沉默。看一遍录像，胜过练三遍。'},
+      quiz:{q:'遇到完全不会的题，最好的应对是什么？',a:'诚实说"这块我没实践过"→ 说出你会怎么在 1 小时内搞懂（查什么、问谁、做什么最小实验）→ 尝试基于已知原理给一个合理推测并标注"这是我的推测"。不懂装懂是唯一真正的减分项。'}},
+
+    {d:89,t:'投递与记录：把找工作也当项目管理',min:80,
+      steps:['列 20 个目标岗位（FDE / Applied AI Engineer / AI 应用交付 / Solutions Engineer / Agent 工程师）','每份投递记录：公司 / 岗位 / 日期 / 渠道 / 反馈','针对每个岗位改 3 处关键词（不是全量重写）','主动找 5 个内推/社群渠道','设立每周投递目标并跟踪'],
+      concept:{t:'岗位名称比你想的重要',b:'除了 FDE，还要搜：Forward Deployed AI Engineer、Applied AI Engineer、AI Deployment Engineer、Solutions Engineer、AI Solutions Architect、AI 应用交付工程师、Agent 工程师。看到岗位后问四个问题：是否写生产代码 / 是否对采用率负责 / 现场反馈能否进产品 / 项目结束是否沉淀复用——四个都模糊的，大概率是驻场实施换了个名字。'},
+      quiz:{q:'怎么判断这个 FDE 岗位值不值得去？',a:'四问：① 写不写生产代码（还是只做配置）；② 对不对采用率负责（还是交付即结束）；③ 现场反馈能不能进产品；④ 项目结束沉淀不沉淀复用能力。四问都答不清 = 驻场实施换皮，成长有限。'}},
+
+    {d:90,t:'收官：90 天复盘与下一段路',min:120,
+      steps:['写 notes/retro-90.md：做成了什么、没做成什么、最意外的事','把 12 周的笔记扫一遍，提炼成一篇博客/公众号文章','公开发布（哪怕只有 20 个阅读）——这是你的第 0 个影响力资产','定下一个 30 天目标（换真实用户？补一个 MCP？做第二个项目？）','感谢一路上给你反馈的人'],
+      concept:{t:'公开发布是复利的开始',b:'把你 90 天的真实过程写出来（包括踩的坑），它同时是：作品集的补充、面试的谈资、以及让别人找到你的渠道。FDE 这个岗位本身就很看重沟通与影响力——写，就是练。'},
+      deliver:'验收：90 天复盘 + 一篇公开发布 + 下一个 30 天计划'}
+  ]
+});
+
+/* ============================ 练习题库 36 ============================ */
+DATA.exercises = [
+/* W1 */
+{id:'W1-1',w:1,lvl:'L1',kind:'py',t:'CSV 校验器',
+ d:'写一个 validate_csv(path)：读取 CSV，校验必需列（id/text/category）是否存在、类型是否正确；坏行不中断程序，写入 error.log 并统计数量，最后返回 (好行数, 坏行数)。',
+ p:'文件 IO / 异常处理 / 日志 / 不因单行错误崩溃',
+ h:'用 csv.DictReader 逐行处理，每行 try-except；logging 写 error.log；不要用 pandas（先练基本功）。',
+ a:'核心：逐行 try-except + 计数器 + logging。\n\nimport csv, logging\nlogging.basicConfig(filename="error.log", level=logging.ERROR)\n\ndef validate_csv(path):\n    ok = bad = 0\n    with open(path, encoding="utf-8") as f:\n        for i, row in enumerate(csv.DictReader(f), 2):\n            try:\n                assert row.get("id"), "缺 id"\n                assert row.get("text"), "缺 text"\n                int(row["id"])\n                ok += 1\n            except Exception as e:\n                bad += 1\n                logging.error("第 %d 行: %s", i, e)\n    return ok, bad\n\n加分：支持传入 required 列清单；坏行写入单独的 bad_rows.csv 便于人工复核。'},
+{id:'W1-2',w:1,lvl:'L1',kind:'py',t:'Token 成本累加器',
+ d:'写一个 CostTracker 类：维护一张模型单价表（输入/输出 每千 token 价格），提供 add(usage, model) 累加，total() 返回总费用与明细；要求支持多次调用累加，并能导出 JSON。',
+ p:'类封装 / 累加器 / 数据建模 / 浮点精度',
+ h:'价格存成 dict；注意 usage 里可能有 reasoning_tokens，也要计费。',
+ a:'class CostTracker:\n    PRICE = {"deepseek-chat": (0.001, 0.002), "gpt-4o": (0.005, 0.015)}  # 每 1K token\n\n    def __init__(self): self.items = []\n\n    def add(self, usage, model):\n        pin, pout = self.PRICE.get(model, (0, 0))\n        cost = usage.prompt_tokens / 1000 * pin + usage.completion_tokens / 1000 * pout\n        self.items.append({"model": model, "cost": round(cost, 6)})\n        return cost\n\n    def total(self): return round(sum(i["cost"] for i in self.items), 6)\n\n坑：浮点累加误差用 round 控制展示位数，内部保留原始值；推理模型的 reasoning_tokens 别漏算。'},
+{id:'W1-3',w:1,lvl:'L3',kind:'agent',t:'设计一个"查订单"工具的 Schema',
+ d:'为 get_order(order_id) 写一份 OpenAI function calling 的 tool schema，要求：description 写清什么时候用、什么时候别用；参数用 enum/pattern 约束；标注 required。再写一段话说明你为什么这么写。',
+ p:'工具即提示词 / schema 约束 / 描述质量决定调用准确率',
+ h:'想想模型最容易传错什么：订单号格式？是否要带用户身份？',
+ a:'{\n  "type": "function",\n  "function": {\n    "name": "get_order",\n    "description": "按订单号查询单个订单的状态、金额与物流信息。仅当用户提供了 10 位数字订单号时使用；不要用订单号以外的信息（如手机号）查询，查不到时不要反复重试。",\n    "parameters": {\n      "type": "object",\n      "properties": {\n        "order_id": {"type": "string", "pattern": "^[0-9]{10}$",\n                     "description": "10 位数字订单号"}\n      },\n      "required": ["order_id"]\n    }\n  }\n}\n\n为什么：description 里的"何时不用"和"失败怎么办"比"这个工具做什么"更影响模型行为；pattern 能把格式错误挡在调用之前。'},
+/* W2 */
+{id:'W2-1',w:2,lvl:'L3',kind:'agent',t:'ReAct trace 手推',
+ d:'给定工具 [search(query), calculator(expr)]，手推"2024 年中国新能源汽车销量同比增长多少"的 ReAct 循环：写出至少 3 轮 Thought / Action / Action Input / Observation，最后给出 Final Answer。',
+ p:'ReAct 循环 / 分步推理 / 工具选择逻辑',
+ h:'注意第一轮搜索拿不到增速，需要第二轮搜索去年数据，再用 calculator。',
+ a:'Thought 1: 需要今年销量和去年销量才能算增速，先查今年的。\nAction 1: search("2024 中国新能源汽车销量")\nObservation 1: 2024 年约 1286 万辆。\n\nThought 2: 还缺 2023 年数据，再查一次。\nAction 2: search("2023 中国新能源汽车销量")\nObservation 2: 2023 年约 949 万辆。\n\nThought 3: 有了两个数，用计算器算增长率。\nAction 3: calculator("(1286-949)/949")\nObservation 3: 0.355\n\nFinal Answer: 同比增长约 35.5%。\n\n考点延伸：如果第一轮搜索什么都没返回，模型应该换关键词重试还是直接放弃？——正确行为是换一次关键词，再失败就说明"查不到"而不是编数字。'},
+{id:'W2-2',w:2,lvl:'L1',kind:'py',t:'CLI 骨架与日志',
+ d:'用 argparse 写一个 CLI：支持 --query（必填）、--max-steps（默认 5）、--verbose；日志同时输出到控制台和 logs/app.log；main() 可被调用也可命令行执行。',
+ p:'CLI 设计 / logging 双输出 / if __name__ 惯用法',
+ h:'logging 用 FileHandler + StreamHandler，verbose 控制 level。',
+ a:'import argparse, logging, sys\n\ndef build_logger(verbose):\n    lg = logging.getLogger("app")\n    lg.setLevel(logging.DEBUG if verbose else logging.INFO)\n    fmt = logging.Formatter("%(asctime)s %(levelname)s %(message)s")\n    fh = logging.FileHandler("logs/app.log", encoding="utf-8"); fh.setFormatter(fmt)\n    sh = logging.StreamHandler(sys.stdout); sh.setFormatter(fmt)\n    lg.addHandler(fh); lg.addHandler(sh)\n    return lg\n\ndef main(argv=None):\n    ap = argparse.ArgumentParser(description="研究 Agent")\n    ap.add_argument("--query", required=True)\n    ap.add_argument("--max-steps", type=int, default=5)\n    ap.add_argument("--verbose", action="store_true")\n    args = ap.parse_args(argv)\n    log = build_logger(args.verbose)\n    log.info("query=%s steps=%d", args.query, args.max_steps)\n\nif __name__ == "__main__":\n    main()\n\n加分：main(argv=None) 让它可以被 pytest 直接调用测试。'},
+{id:'W2-3',w:2,lvl:'L1',kind:'py',t:'为 CSV 校验器写 pytest',
+ d:'为 W1-1 的 validate_csv 写 4 条测试：正常文件、缺列、类型错误、空文件。要求用 tmp_path fixture 造临时文件，不污染仓库。',
+ p:'pytest / fixture / 边界用例 / 测试隔离',
+ h:'pytest 的 tmp_path 会自动给临时目录；断言返回元组而不是打印。',
+ a:'import pytest\nfrom validator import validate_csv\n\ndef write(tmp_path, content, name="t.csv"):\n    p = tmp_path / name\n    p.write_text(content, encoding="utf-8")\n    return str(p)\n\ndef test_ok(tmp_path):\n    f = write(tmp_path, "id,text,category\\n1,hello,A\\n")\n    assert validate_csv(f) == (1, 0)\n\ndef test_missing_column(tmp_path):\n    f = write(tmp_path, "id,category\\n1,A\\n")\n    ok, bad = validate_csv(f)\n    assert ok == 0 and bad == 1\n\ndef test_bad_type(tmp_path):\n    f = write(tmp_path, "id,text,category\\nabc,hello,A\\n")\n    assert validate_csv(f)[1] == 1\n\ndef test_empty(tmp_path):\n    assert validate_csv(write(tmp_path, "")) == (0, 0)\n\n坑：空文件的 DictReader 没有 fieldnames，要单独处理，否则会抛异常而不是返回 (0,0)。'},
+/* W3 */
+{id:'W3-1',w:3,lvl:'L3',kind:'agent',t:'手写最小 Agent Loop',
+ d:'不借助任何框架，写 60 行以内的 run(goal, tools, max_steps=5)：循环调用模型、分发工具、把工具结果塞回 messages，直到不再有 tool_calls 或超过步数上限。',
+ p:'Agent 循环本质 / 工具分发 / 终止条件 / 异常兜底',
+ h:'关键：错误也要作为 Observation 回传给模型，不要吞掉。',
+ a:'def run(goal, tools, max_steps=5):\n    msgs = [{"role": "user", "content": goal}]\n    for _ in range(max_steps):\n        msg = llm(msgs, tools=tools).choices[0].message\n        if not msg.tool_calls:\n            return msg.content\n        msgs.append(msg)\n        for c in msg.tool_calls:\n            fn = tools[c.function.name]\n            try:\n                out = fn(**json.loads(c.function.arguments))\n            except Exception as e:\n                out = "ERROR: %s" % e        # 错误回传，让模型自己换招\n            msgs.append({"role": "tool", "tool_call_id": c.id, "content": str(out)})\n    return "超过步数上限，已转人工"\n\n四个不能省：max_steps、tool_call_id 对应、错误回传、超限兜底。'},
+{id:'W3-2',w:3,lvl:'L1',kind:'py',t:'对话 checkpoint 持久化',
+ d:'实现 save_checkpoint(messages, path) 与 load_checkpoint(path)：把对话历史存成 JSON，程序重启后能继续；要求处理文件不存在、JSON 损坏两种情况。',
+ p:'序列化 / 文件异常处理 / 状态恢复',
+ h:'JSON 损坏时是删掉重建还是报错？思考哪种更安全。',
+ a:'import json, os, logging\n\ndef save_checkpoint(messages, path):\n    tmp = path + ".tmp"\n    with open(tmp, "w", encoding="utf-8") as f:\n        json.dump(messages, f, ensure_ascii=False, indent=2)\n    os.replace(tmp, path)          # 原子写，避免写一半崩溃导致损坏\n\ndef load_checkpoint(path):\n    if not os.path.exists(path):\n        return []\n    try:\n        with open(path, encoding="utf-8") as f:\n            return json.load(f)\n    except json.JSONDecodeError:\n        logging.error("checkpoint 损坏，已备份并重建: %s", path)\n        os.replace(path, path + ".broken")\n        return []\n\n要点：先写临时文件再 os.replace，是防止"写一半断电"的标准做法；损坏文件不要直接删，先备份。'},
+{id:'W3-3',w:3,lvl:'L3',kind:'agent',t:'Chunking 策略对比器',
+ d:'实现固定长度切分与递归分隔符切分两种策略，对同一批文档按 size ∈ {200, 500, 1000}、overlap ∈ {0, 0.15} 组合切分，输出每种组合的：块数、平均块长、最大块长，并说明你会选哪个。',
+ p:'切分策略 / 重叠作用 / 用数据支撑选择',
+ h:'观察：size 太小会出现"半句话"块；overlap 能缓解但增加冗余。',
+ a:'def fixed_chunk(text, size, overlap):\n    step = int(size * (1 - overlap))\n    return [text[i:i + size] for i in range(0, len(text), step)]\n\ndef recursive_chunk(text, size, seps=("\\n\\n", "\\n", "。", "，", " ")):\n    if len(text) <= size:\n        return [text]\n    for s in seps:\n        if s in text:\n            parts, out = text.split(s), []\n            for p in parts:\n                out += recursive_chunk(p, size, seps)\n            return [x for x in out if x.strip()]\n    return fixed_chunk(text, size, 0)\n\n判断依据：优先保证"不切断语义"（递归分隔符通常更好），再看平均块长是否落在 300-500 字区间，最后看块数是否过多（影响成本）。'},
+/* W4 */
+{id:'W4-1',w:4,lvl:'L3',kind:'agent',t:'Embedding 批处理与去重',
+ d:'写一个 embed_texts(texts)：批量调用 embedding 接口，按内容哈希去重（相同文本不重复花钱），结果缓存到本地 JSON；再次调用相同文本应命中缓存。',
+ p:'批处理 / 缓存 / 内容哈希 / 成本控制',
+ h:'哈希用 hashlib.sha256(text.encode()).hexdigest()[:16]。',
+ a:'import hashlib, json, os\nCACHE = ".emb_cache.json"\n\ndef _key(t): return hashlib.sha256(t.encode("utf-8")).hexdigest()[:16]\n\ndef embed_texts(texts, client, model):\n    cache = json.load(open(CACHE, encoding="utf-8")) if os.path.exists(CACHE) else {}\n    todo, result = [], {}\n    for t in texts:\n        k = _key(t)\n        if k in cache: result[t] = cache[k]\n        else: todo.append(t)\n\n    for i in range(0, len(todo), 64):                 # 批处理，一次最多 64 条\n        batch = todo[i:i + 64]\n        vecs = client.embeddings.create(model=model, input=batch).data\n        for t, v in zip(batch, vecs):\n            cache[_key(t)] = v.embedding\n            result[t] = v.embedding\n\n    json.dump(cache, open(CACHE, "w", encoding="utf-8"))\n    return [result[t] for t in texts]\n\n延伸：文档更新时如何失效缓存？——按内容哈希即天然失效（内容变了 key 就变）。'},
+{id:'W4-2',w:4,lvl:'L3',kind:'agent',t:'召回评估：Hit@K 与 MRR',
+ d:'给定 20 条 (问题, 正确 chunk_id) 和你的检索结果（每次返回排序后的 id 列表），实现 hit_rate(gold, ranked, k) 与 mrr(gold, ranked)，并输出 K=1/3/5 三档对比。',
+ p:'检索指标 / 排序质量 / 评估思维',
+ h:'Hit@K 看"找没找到"，MRR 看"排多前"，两者含义不同。',
+ a:'def hit_rate(gold, ranked, k=3):\n    return sum(1 for g, r in zip(gold, ranked) if g in r[:k]) / len(gold)\n\ndef mrr(gold, ranked):\n    s = 0.0\n    for g, r in zip(gold, ranked):\n        if g in r:\n            s += 1.0 / (r.index(g) + 1)\n    return s / len(gold)\n\nfor k in (1, 3, 5):\n    print("Hit@%d" % k, round(hit_rate(gold, ranked, k), 3))\nprint("MRR", round(mrr(gold, ranked), 3))\n\n解读：Hit@1 低但 Hit@5 高 → 能找到但排得靠后 → 该加重排（Rerank），而不是换 embedding 模型。Hit@5 也低 → 切分或嵌入有问题。'},
+{id:'W4-3',w:4,lvl:'L1',kind:'py',t:'SQLite 入库与聚合查询',
+ d:'把工单 CSV 导入 SQLite（参数化插入），再实现：按类别统计数量、按优先级统计数量、查询某时间之后的高优先级工单；要求所有查询参数化。',
+ p:'SQL 基础 / 参数化防注入 / 聚合查询 / 上下文管理器',
+ h:'务必用 ? 占位符；用 with 管理连接。',
+ a:'import sqlite3, csv\n\ncon = sqlite3.connect("data/app.db")\ncon.execute("""CREATE TABLE IF NOT EXISTS tickets(\n    id INTEGER PRIMARY KEY, text TEXT NOT NULL, category TEXT,\n    priority TEXT, created_at TEXT)""")\n\nwith open("tickets.csv", encoding="utf-8") as f:\n    rows = [(int(r["id"]), r["text"], r["category"], r["priority"], r["created_at"])\n            for r in csv.DictReader(f)]\ncon.executemany("INSERT OR REPLACE INTO tickets VALUES(?,?,?,?,?)", rows)\ncon.commit()\n\nprint(con.execute("SELECT category, COUNT(*) FROM tickets GROUP BY category").fetchall())\nprint(con.execute("SELECT * FROM tickets WHERE priority=? AND created_at>=?",\n                  ("high", "2026-01-01")).fetchall())\n\n红线：永不拼接 SQL 字符串。executemany 比循环 execute 快得多。'},
+/* W5 */
+{id:'W5-1',w:5,lvl:'L3',kind:'agent',t:'DAG 任务图建模与校验',
+ d:'定义 Task 结构（id/name/worker/deps/parallel），实现 validate(tasks)：检查依赖指向存在的任务、检测是否存在环、输出可并行执行的批次分组。',
+ p:'有向无环图 / 拓扑排序 / 环检测 / 并行分组',
+ h:'每轮挑出"所有依赖已完成"的任务作为一批，它们可以并行。',
+ a:'def topo_batches(tasks):\n    done, batches = set(), []\n    remaining = list(tasks)\n    while remaining:\n        batch = [t for t in remaining if set(t.deps) <= done]\n        if not batch:\n            raise ValueError("存在循环依赖: %s" % [t.id for t in remaining])\n        batches.append(batch)\n        done |= {t.id for t in batch}\n        remaining = [t for t in remaining if t.id not in done]\n    return batches\n\ndef validate(tasks):\n    ids = {t.id for t in tasks}\n    for t in tasks:\n        missing = set(t.deps) - ids\n        if missing: raise ValueError("%s 依赖不存在的任务 %s" % (t.id, missing))\n    return topo_batches(tasks)          # 能跑通即无环\n\n应用：编排者按 batches 顺序执行，批内并发，批间等待。'},
+{id:'W5-2',w:5,lvl:'L2',kind:'py',t:'并发限流调用器',
+ d:'写一个并发执行器：用 ThreadPoolExecutor 并发跑任务，但同时对 LLM 调用限速（每秒最多 N 次），支持单任务超时，失败任务返回错误而不是让整体崩溃。',
+ p:'并发 / 限流 / 超时 / 异常隔离',
+ h:'用 threading.Semaphore + 时间间隔控制；future.result(timeout=) 处理超时。',
+ a:'from concurrent.futures import ThreadPoolExecutor, as_completed\nimport threading, time\n\nclass RateLimiter:\n    def __init__(self, rps):\n        self.min_gap = 1.0 / rps\n        self._lock = threading.Lock()\n        self._last = 0.0\n    def acquire(self):\n        with self._lock:\n            gap = time.time() - self._last\n            if gap < self.min_gap: time.sleep(self.min_gap - gap)\n            self._last = time.time()\n\nlimiter = RateLimiter(rps=5)\n\ndef run_all(items, fn, workers=4, timeout=30):\n    out = {}\n    with ThreadPoolExecutor(max_workers=workers) as ex:\n        futs = {ex.submit(fn, i): i for i in items}\n        for f in as_completed(futs):\n            i = futs[f]\n            try:\n                out[i] = f.result(timeout=timeout)\n            except Exception as e:\n                out[i] = {"error": str(e)}      # 单个失败不影响整体\n    return out\n\n注意：并发数 × 单请求耗时决定实际 QPS，限流器要真正生效需要它成为唯一出口。'},
+{id:'W5-3',w:5,lvl:'L4',kind:'agent',t:'三 Agent 协作系统（综合）',
+ d:'实现 retriever / writer / editor 三个 Agent：retriever 检索资料，writer 基于资料起草，editor 校对并要求引用来源。用 W5-1 的任务图驱动，输出最终稿 + 每步 trace。',
+ p:'多 Agent 编排 / 状态传递 / trace / 端到端整合',
+ h:'先跑通串行版，再考虑并行；每步结果都存入黑板和 trace。',
+ a:'结构建议：\n\nstate = {"goal": ..., "chunks": [], "draft": "", "final": "", "trace": []}\n\ndef retriever(s):\n    s["chunks"] = search(s["goal"], k=3); log(s, "retriever", s["chunks"]); return s\ndef writer(s):\n    s["draft"] = llm(WRITE_PROMPT.format(goal=s["goal"], ctx=s["chunks"])); log(s, "writer"); return s\ndef editor(s):\n    s["final"] = llm(EDIT_PROMPT.format(draft=s["draft"], sources=s["chunks"])); log(s, "editor"); return s\n\n验收三问：① 某个 Agent 失败会怎样？② 能不能只重跑其中一个？③ trace 能不能还原全过程？\n这三个问题答不上来，说明系统还不可运维。'},
+/* W6 */
+{id:'W6-1',w:6,lvl:'L2',kind:'py',t:'幂等写回',
+ d:'实现 write_back(ticket_id, result)：用 (ticket_id, action) 作为幂等键，先查已执行表；若已执行过则直接返回上次结果，不重复写；记录执行时间。',
+ p:'幂等设计 / 去重表 / 并发安全',
+ h:'思考两个线程同时调用同一个幂等键会怎样——需要数据库唯一约束。',
+ a:'con.execute("""CREATE TABLE IF NOT EXISTS idempotency(\n    key TEXT PRIMARY KEY, result TEXT, created_at TEXT)""")\n\ndef write_back(ticket_id, result, action="write_back"):\n    key = "%s:%s" % (ticket_id, action)\n    row = con.execute("SELECT result FROM idempotency WHERE key=?", (key,)).fetchone()\n    if row:                                   # 已执行 → 直接返回，不重复写\n        return json.loads(row[0])\n    try:\n        con.execute("INSERT INTO idempotency VALUES(?,?,?)",\n                    (key, json.dumps(result), now()))\n        con.commit()\n    except sqlite3.IntegrityError:            # 并发下另一个线程抢先了\n        return json.loads(con.execute(\n            "SELECT result FROM idempotency WHERE key=?", (key,)).fetchone()[0])\n    do_real_write(ticket_id, result)\n    return result\n\n关键：唯一约束（PRIMARY KEY）才是真正的幂等保障，应用层的 SELECT 检查有竞态窗口。'},
+{id:'W6-2',w:6,lvl:'L2',kind:'py',t:'合成数据生成器',
+ d:'写一个脚本生成 500 条工单、40 条政策、200 条 FAQ；工单要含 30% 噪声（错别字、口语、多问题混合），并留出 10% 的"难样本"标记用于评估。',
+ p:'数据合成 / 随机可控（seed）/ 噪声注入 / 可复现',
+ h:'用 random.Random(42) 固定种子，保证每次生成一致（可复现很重要）。',
+ a:'import random, json\n\nTEMPLATES = {"退款问题": [...], "物流问题": [...], "质量问题": [...]}\nNOISE = ["", "？？？", "急急急", "客服在吗", "（图片）"]\n\ndef make(n=500, seed=42):\n    rnd = random.Random(seed)          # 固定种子 = 可复现\n    rows = []\n    for i in range(n):\n        cat = rnd.choice(list(TEMPLATES))\n        text = rnd.choice(TEMPLATES[cat]).format(...)\n        if rnd.random() < 0.3:\n            text += rnd.choice(NOISE)\n        rows.append({"id": i + 1, "text": text, "category": cat,\n                     "hard": rnd.random() < 0.10})\n    return rows\n\n要点：种子固定（可复现）、噪声比例可控（可调分布）、hard 标记（用于分层评估）。'},
+{id:'W6-3',w:6,lvl:'L3',kind:'agent',t:'失败回退策略设计',
+ d:'为你的主线项目设计三层降级：模型降级（换便宜模型）、功能降级（只给分类不给草稿）、人工降级（全部转人工）。写出触发条件、实现方式、以及每种降级用户看到什么。',
+ p:'降级设计 / 熔断 / 用户体验连续性',
+ h:'触发条件要可量化（如连续 5 次失败、成本超 X、延迟超 Y）。',
+ a:'DEGRADE_RULES = [\n    # (触发条件, 降级动作, 用户可见提示)\n    ("连续 5 次调用失败", "功能降级：只返回分类，不生成草稿",\n     "当前回复生成繁忙，已为您完成分类，可手动撰写回复"),\n    ("单条成本 > 阈值", "模型降级：切换到便宜模型",\n     "（无提示，质量略降）"),\n    ("模型服务不可用 > 3 分钟", "人工降级：全部进人工队列",\n     "AI 辅助暂时不可用，工单已转入人工队列"),\n]\n\n实现要点：\n1. 降级开关集中在配置，改一行即可切换（不要散落 if-else）\n2. 每次降级必须记日志 + 告警（否则静默降级会掩盖故障）\n3. 恢复条件也要写：如"连续 3 次成功后恢复"\n\n面试价值：能说清降级策略 = 有生产意识，这是 FDE 与 Demo 选手的分水岭。'},
+/* W7 */
+{id:'W7-1',w:7,lvl:'L3',kind:'agent',t:'Golden set 与评估脚本',
+ d:'设计 30 条评估样本（高频 15 / 边界 10 / 陷阱 5），写成 JSON；实现 evaluate() 输出准确率、格式合规率、转人工准确率、平均耗时、单条成本。',
+ p:'评估集设计 / 分层覆盖 / 多维度指标',
+ h:'陷阱类样本要包含"应该拒绝/转人工"的，否则系统会被调得越来越激进。',
+ a:'样本结构：\n{"id": 1, "input": "我买了三天想退款", "expect_category": "退款问题",\n "expect_review": false, "expect_sources": ["policy_return"], "type": "高频"}\n\ndef evaluate(cases, predict_fn):\n    preds = [predict_fn(c["input"]) for c in cases]\n    n = len(cases)\n    return {\n      "accuracy":      sum(p["category"] == c["expect_category"] for c, p in zip(cases, preds)) / n,\n      "format_ok":     sum(is_valid(p) for p in preds) / n,\n      "escalation_acc":sum(p.get("need_human_review") == c["expect_review"] for c, p in zip(cases, preds)) / n,\n      "avg_latency_ms":mean(p["latency_ms"] for p in preds),\n      "cost_per_case": sum(p["cost"] for p in preds) / n,\n    }\n\n关键：评估要能一键复现（固定 seed、固定样本集、输出可 diff 的结果文件）。'},
+{id:'W7-2',w:7,lvl:'L3',kind:'agent',t:'LLM-as-Judge 评分器',
+ d:'写一个 judge(input, output, rubric) 让模型按 1-5 分给"回复草稿"打分；要求：给明确 rubric、让模型输出评分理由、对同一条打 3 次检验一致性。',
+ p:'模型评分 / rubric 设计 / 一致性检验 / 已知偏差',
+ h:'注意偏差：偏爱长答案、偏爱靠前选项、自恋偏差。',
+ a:'RUBRIC = """你是客服质检员，按以下标准给回复草稿打分：\n5 分：准确解答、语气得体、引用了正确政策、可直接发送\n4 分：准确但有 minor 措辞问题\n3 分：方向正确但缺关键信息\n2 分：有事实错误\n1 分：完全错误或不相关\n只输出 JSON: {"score": 1-5, "reason": "..."}"""\n\ndef judge(text, draft, times=3):\n    scores = []\n    for _ in range(times):                    # 多次打分看一致性\n        r = llm(RUBRIC + "\\n工单：" + text + "\\n回复：" + draft,\n                response_format={"type": "json_object"}, temperature=0)\n        scores.append(json.loads(r)["score"])\n    return {"scores": scores, "mean": mean(scores),\n            "consistent": max(scores) - min(scores) <= 1}\n\n已知偏差与缓解：长答案偏好→rubric 里明确"简洁不加分"；自恋偏差→用更强模型或定期人工校准；顺序偏差→多候选时打乱顺序。'},
+{id:'W7-3',w:7,lvl:'L2',kind:'py',t:'pytest 回归门禁',
+ d:'把 evaluate() 接进 pytest：读取 baseline.json，若 accuracy 比基线低超过 3% 则测试失败；要求测试不调用真实 API（用 mock）。',
+ p:'回归测试 / 基线对比 / mock / CI 思维',
+ h:'用 monkeypatch 替换预测函数，测试的是逻辑不是模型。',
+ a:'import json, pytest\nfrom eval.run import evaluate\n\nBASE = json.load(open("eval/baseline.json"))\n\ndef fake_predict(text):                       # mock 掉真实调用\n    return {"category": "退款问题", "need_human_review": False,\n            "latency_ms": 100, "cost": 0.001}\n\ndef test_accuracy_not_regressed():\n    cases = json.load(open("eval/golden_set.json"))\n    r = evaluate(cases, fake_predict)\n    assert r["accuracy"] >= BASE["accuracy"] - 0.03, \\\n        "准确率回退: %.3f -> %.3f" % (BASE["accuracy"], r["accuracy"])\n\ndef test_schema_always_valid():\n    cases = json.load(open("eval/golden_set.json"))\n    assert evaluate(cases, fake_predict)["format_ok"] == 1.0\n\n要点：mock 让测试免费且稳定；阈值取自然波动的 1.5 倍；基线文件纳入版本管理。'},
+/* W8 */
+{id:'W8-1',w:8,lvl:'L2',kind:'py',t:'Dockerfile 分层优化',
+ d:'为一个 FastAPI + Python 项目写 Dockerfile，要求：利用依赖层缓存（改代码不重装依赖）、镜像体积尽量小、不把 .env 和 data/ 打进镜像、非 root 用户运行。',
+ p:'Docker 分层缓存 / 镜像体积 / 安全基线',
+ h:'先 COPY requirements.txt 再 COPY . ；.dockerignore 是关键。',
+ a:'FROM python:3.11-slim\nWORKDIR /app\nENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1\n\nCOPY requirements.txt .\nRUN pip install --no-cache-dir -r requirements.txt     # 依赖层，可缓存\n\nCOPY . .\nRUN useradd -m appuser && chown -R appuser /app\nUSER appuser                                            # 非 root\nEXPOSE 8000\nCMD ["uvicorn", "app.main:app", "--host", "0.0.0.0"]\n\n# .dockerignore\n# .env\n# data/\n# logs/\n# .git\n# __pycache__/\n\n验证：docker build 两次，第二次应秒级完成；docker images 看体积（目标 < 500MB）。'},
+{id:'W8-2',w:8,lvl:'L2',kind:'py',t:'配置加载与启动校验',
+ d:'写一个 config 模块：从 config.yaml + 环境变量加载，启动时校验必填项（缺失就抛出清晰的中文错误），敏感值只允许来自环境变量，提供 dev/prod 两套配置。',
+ p:'配置管理 / 校验 / 环境隔离 / 密钥隔离',
+ h:'启动时 fail fast，比运行到一半才发现缺配置好得多。',
+ a:'import os, yaml\n\nREQUIRED = ["model", "max_steps", "timeout_sec"]\nSECRETS = ["api_key"]            # 只允许来自环境变量\n\ndef load(env="dev"):\n    cfg = yaml.safe_load(open("config/%s.yaml" % env, encoding="utf-8"))\n    for k in SECRETS:\n        v = os.getenv(k.upper())\n        if not v:\n            raise RuntimeError("缺少环境变量 %s，请在 .env 中配置" % k.upper())\n        cfg[k] = v\n    missing = [k for k in REQUIRED if k not in cfg]\n    if missing:\n        raise RuntimeError("配置缺失: %s（检查 config/%s.yaml）" % (missing, env))\n    return cfg\n\n原则：fail fast（启动即暴露）、密钥不落盘、默认值写在代码里，环境差异写在配置里。'},
+{id:'W8-3',w:8,lvl:'L4',kind:'fde',t:'失败模式清单（FMEA 简化版）',
+ d:'为你的主线项目列一张四列清单：会怎么挂 / 影响多严重（高/中/低）/ 现有防护 / 还缺什么。至少列 12 项，标出 Top 3 高风险并给出本周要补的防护。',
+ p:'风险识别 / 系统化思维 / FDE 的预防性思维',
+ h:'别忘了"静默失败"——不报错但结果是错的，这是最危险的。',
+ a:'示例（至少 12 项，这里给 6 项示范）：\n\n| 失败模式 | 影响 | 现有防护 | 还缺 |\n|---|---|---|---|\n| 模型返回格式正确但内容荒谬 | 高 | 无 | 置信度阈值 + 抽样复核 |\n| 重复写回（重试导致）| 高 | 幂等键 | 并发下的唯一约束已加 ✓ |\n| LLM 调用超时 | 中 | 重试 1 次 | 熔断 |\n| 敏感信息未拦截 | 高 | 规则过滤 | 敏感词库更新机制 |\n| 成本失控 | 中 | 无 | 单条成本上限 + 日报 |\n| 用户从不使用 | 高 | 无 | 埋点 + 每周回访 |\n\nFDE 视角：这份清单本身就是交付物。面试官看到它，就知道你想过"上线之后"的事。'},
+/* W9 */
+{id:'W9-1',w:9,lvl:'L2',kind:'py',t:'FastAPI 最小鉴权中间件',
+ d:'给 FastAPI 加一个简单的 API Key 中间件：受保护路由需要 header 里的 key，公开路由（/health）不需要；实现两个角色（user / admin），admin 才能访问 /admin/*。',
+ p:'中间件 / 依赖注入 / 角色区分 / 最小权限',
+ h:'用 Depends 做依赖注入，比手写 if 更清晰可扩展。',
+ a:'from fastapi import FastAPI, Header, HTTPException, Depends\n\napp = FastAPI()\nUSERS = {"u-key-1": "user", "a-key-1": "admin"}\n\ndef current_role(x_api_key: str = Header(None)):\n    role = USERS.get(x_api_key or "")\n    if not role:\n        raise HTTPException(401, "无效或缺失的 API Key")\n    return role\n\ndef require_admin(role: str = Depends(current_role)):\n    if role != "admin":\n        raise HTTPException(403, "需要管理员权限")\n    return role\n\n@app.get("/health")\ndef health(): return {"ok": True}          # 公开\n\n@app.get("/admin/logs")\ndef logs(role=Depends(require_admin)): return {"logs": []}\n\n要点：401 未认证 vs 403 无权限，别混用；健康检查要公开（供容器 healthcheck 用）。'},
+{id:'W9-2',w:9,lvl:'L2',kind:'py',t:'审计日志表设计',
+ d:'设计并实现 audit_log：每次写回/修改/拒绝都记一笔，字段含 时间/用户/动作/对象id/AI建议/人工最终值/原因；实现按用户与时间筛选，并导出 CSV。',
+ p:'审计设计 / 可追溯 / 数据留存 / 合规思维',
+ h:'AI 建议与人工最终值必须分开存——这个差值就是模型价值的核心数据。',
+ a:'CREATE TABLE audit_log(\n  id INTEGER PRIMARY KEY,\n  ts TEXT NOT NULL,\n  user_id TEXT NOT NULL,\n  action TEXT NOT NULL,          -- classify / edit / approve / reject / write_back\n  object_id TEXT NOT NULL,\n  ai_value TEXT,                 -- AI 给的建议\n  human_value TEXT,              -- 人工最终值\n  reason TEXT,                   -- 修改/拒绝原因\n  trace_id TEXT                  -- 串联同一次任务\n);\n\ndef log_action(user_id, action, object_id, ai_value=None, human_value=None,\n               reason=None, trace_id=None):\n    con.execute("INSERT INTO audit_log VALUES(NULL,?,?,?,?,?,?,?,?)",\n                (now(), user_id, action, object_id,\n                 json.dumps(ai_value, ensure_ascii=False) if ai_value else None,\n                 json.dumps(human_value, ensure_ascii=False) if human_value else None,\n                 reason, trace_id))\n    con.commit()\n\n价值：ai_value vs human_value 的差 = 人工修改率 = 你最核心的指标，也是 W10 报告的数据来源。'},
+{id:'W9-3',w:9,lvl:'L4',kind:'fde',t:'界面三态设计与 onboarding',
+ d:'为你的 demo 设计五种状态：加载/成功/失败/空/超时，写出每种状态用户看到什么、能做什么；再写一份 200 字使用说明，找一位非技术朋友照着做，记录他卡在哪。',
+ p:'用户体验 / 状态完整性 / onboarding / FDE 的采用率意识',
+ h:'失败提示要说三件事：出了什么问题、是不是你的错、接下来怎么办。',
+ a:'五态清单：\n\n| 状态 | 用户看到 | 能做什么 |\n|---|---|---|\n| 加载 | 流式出字 + "正在检索政策…" | 等待/取消 |\n| 成功 | 分类+优先级+草稿+引用来源 | 同意/修改/拒绝 |\n| 失败 | "AI 服务暂时不可用，已完成分类" + 重试按钮 | 重试/手动 |\n| 空 | "还没处理任何工单，粘贴一条试试" | 引导示例 |\n| 超时 | "超过 30 秒仍未返回，已转入后台" | 稍后查看 |\n\nonboarding 观察重点：他第一个点的按钮是不是你预期的？他在哪里停顿超过 5 秒？\n\nFDE 洞察：用户放弃往往不是因为功能差，而是"不知道第一步干什么"。观察 3 个真实用户 > 自己的任何假设。'},
+/* W10 */
+{id:'W10-1',w:10,lvl:'L2',kind:'py',t:'埋点与指标统计脚本',
+ d:'实现埋点（打开/提交/修改/放弃+退出位置），写 report(since) 输出：使用次数、平均处理时长、人工修改率、放弃位置 TOP3。要求每天能一键跑。',
+ p:'埋点设计 / 指标口径 / 统计脚本 / 数据驱动',
+ h:'口径先定死：处理时长从哪个事件算到哪个事件？',
+ a:'-- 事件表\nCREATE TABLE event_log(id INTEGER PRIMARY KEY, ts TEXT, user_id TEXT,\n                       action TEXT, extra TEXT);\n-- action: open / submit / edit / drop\n-- extra: 时长(ms) 或 退出位置 或 修改前后值\n\ndef report(since):\n    rows = con.execute("SELECT action, extra FROM event_log WHERE ts>=?", (since,))\n    submit = [float(r[1]) for r in rows if r[0] == "submit"]\n    edited = [r for r in rows if r[0] == "edit"]\n    drop   = [r[1] for r in rows if r[0] == "drop"]\n    return {\n      "使用次数": len(submit),\n      "平均处理时长(s)": round(mean(submit) / 1000, 1) if submit else 0,\n      "人工修改率": round(len(edited) / max(len(submit), 1), 3),\n      "放弃位置TOP3": Counter(drop).most_common(3),\n    }\n\n口径必须写进文档：处理时长 = submit 事件里从 open 到 confirm 的毫秒数。口径变了，前后对比就失效。'},
+{id:'W10-2',w:10,lvl:'L4',kind:'fde',t:'前后对比报告',
+ d:'写 docs/before-after.md：4 个指标的前后值、你做的唯一改动、没改善的地方及原因、下一步验证方案。要求诚实，包括失败。',
+ p:'数据叙事 / 因果归因 / 诚实报告 / FDE 的可信度',
+ h:'单变量改动 + 等长观察期 = 可信归因。做不到就如实说明"无法归因"。',
+ a:'## 观察设计\n- 前 7 天：基线（v1）  |  后 7 天：改动后（v2）\n- 期间只改一处：在结果区增加"依据来源"展示\n- 样本：5 位用户，共 142 条工单\n\n## 结果\n| 指标 | 前 7 天 | 后 7 天 | 变化 |\n|---|---|---|---|\n| 使用次数 | 63 | 79 | +25% |\n| 平均处理时长 | 78s | 55s | -29% |\n| 人工修改率 | 46% | 18% | -28pt |\n| 放弃位置 TOP1 | 结果页 | 确认页 | 后移 |\n\n## 没解决的\n- 跨类别工单准确率仍只有 71%，已全部转人工\n- 2 位用户第 2 周未再使用，回访原因：与实际工作系统不一致\n\n## 下一步\n扩 golden set 至 100 条 + 试混合检索，两周后复测。\n\n要点：能解释失败在哪，比全是好消息更专业。'},
+{id:'W10-3',w:10,lvl:'L3',kind:'fde',t:'用户放弃路径分析',
+ d:'基于埋点数据，分析：用户最多在第几步放弃？放弃的人与留存的人行为差在哪？写出 3 条可执行的产品改进建议，并预测每条的影响。',
+ p:'行为分析 / 漏斗 / 假设驱动 / 优先级排序',
+ h:'对比"用过 1 次就走"和"用过 5 次以上"的用户，看第一次体验的差别。',
+ a:'分析框架：\n1. 漏斗：open → submit → confirm → write_back，算每步转化率\n2. 分组：留存组（≥5 次）vs 流失组（1 次），对比首次任务耗时、是否修改、是否遇到错误\n3. 定性：结合 D67 回访原话，给每个数字配一句用户的话\n\n产出示例：\n- 发现：首次任务平均 142 秒，其中 90 秒花在"阅读结果页"\n- 假设：结果页信息过载，用户不确定该看哪\n- 建议：把"AI 分类 + 置信度"提到顶部，草稿折叠\n- 预测：首次任务时长降到 90 秒内，次日留存 +20%\n\nFDE 视角：数字 + 用户原话，才是最有说服力的组合。'},
+/* W11 */
+{id:'W11-1',w:11,lvl:'L4',kind:'fde',t:'一页案例摘要',
+ d:'按 7 问写一页案例：谁在用 / 原流程什么问题 / 你做了什么取舍 / 怎么控权限与风险 / 跑了多久 / 数据变化 / 哪些没解决。要求 800 字内，删光形容词。',
+ p:'案例叙事 / 量化表达 / 取舍说明 / FDE 作品集核心',
+ h:'每个数字标来源；"仍未解决"一段必须有。',
+ a:'自检清单（写完逐条核对）：\n□ 第一句就能看出"谁 + 痛在哪"\n□ 所有数字都有来源标注（N=? 观察几天）\n□ 至少有 1 个"我放弃了什么"的取舍说明\n□ 有明确的权限/风险控制措施（不是"我们很重视安全"）\n□ 有一段"仍未解决"\n□ 没有"赋能""助力""一站式"这类空词\n□ 非技术的朋友读完能复述出价值\n\n反面：\n  "基于大模型搭建智能客服系统，实现降本增效" —— 谁都能写\n正面：\n  "5 人使用 14 天，单条处理 180s→55s，人工修改率 46%→18%，退款类仍全人工" —— 只有做过的人写得出'},
+{id:'W11-2',w:11,lvl:'L2',kind:'py',t:'脱敏检查脚本',
+ d:'写一个脚本扫描项目目录与文档，检测：疑似密钥（sk- 开头、长 hex）、内网 IP、手机号、邮箱、真实公司名（词典匹配），输出风险清单。',
+ p:'正则 / 静态扫描 / 合规意识 / 发布前检查',
+ h:'宁可误报也不要漏报；误报人工确认即可。',
+ a:'import re, pathlib\n\nPATTERNS = {\n    "API密钥": r"sk-[A-Za-z0-9]{16,}",\n    "内网IP":  r"\\b10\\.\\d+\\.\\d+\\.\\d+|\\b192\\.168\\.\\d+\\.\\d+",\n    "手机号":  r"\\b1[3-9]\\d{9}\\b",\n    "邮箱":    r"[\\w.]+@[\\w.]+\\.\\w+",\n    "Webhook": r"https?://\\S*webhook\\S*",\n}\n\ndef scan(root, exts=(".py", ".md", ".yml", ".json", ".txt")):\n    hits = []\n    for p in pathlib.Path(root).rglob("*"):\n        if p.suffix in exts and p.is_file():\n            try:\n                text = p.read_text(encoding="utf-8", errors="ignore")\n            except Exception:\n                continue\n            for name, pat in PATTERNS.items():\n                for m in re.finditer(pat, text):\n                    hits.append((str(p), name, m.group()[:20]))\n    return hits\n\n发布前必跑。另外别忘了人工检查：截图里的浏览器标签、路径、用户名。'},
+{id:'W11-3',w:11,lvl:'L4',kind:'fde',t:'STAR 素材库（6 个故事）',
+ d:'写 6 个 STAR：技术决策 2 / 失败处理 2 / 客户协作 2。每个 90 秒能讲完，必须有数字，必须明确"我"做了什么。',
+ p:'行为面试 / 叙事结构 / 量化结果 / 自我认知',
+ h:'"我搞砸过什么"的故事最有价值——重点在发现机制和防复发。',
+ a:'结构模板：\n  S 情境：一句话交代背景（不超过 2 句）\n  T 任务：我当时要解决的**具体问题**是什么\n  A 行动：我**个人**做了什么（不是"我们团队"）\n  R 结果：**数字** + 后续影响\n\n示例（失败处理类）：\n  S：项目第 6 周，模拟用户反馈分类结果偶尔荒谬。\n  T：我需要在不停机的情况下定位并止血。\n  A：我翻了审计日志，发现问题集中在跨类别工单；我加了置信度阈值，把低于阈值的强制转人工，并写了 10 条该类样本进 golden set。\n  R：3 天内错误输出从 12% 降到 2%，同时多出 10 条评估样本；人工修改率从 46% 降到 30%。\n\n自检：听完能复述出"他做了什么、结果多少"，才算合格。'},
+/* W12 */
+{id:'W12-1',w:12,lvl:'L4',kind:'agent',t:'限时手写 Agent Loop（25 分钟）',
+ d:'限时 25 分钟，手写完整 agent loop：循环 + 工具分发 + 步数上限 + 错误处理 + 兜底返回。要求边写边口述思路。',
+ p:'现场编码 / 肌肉记忆 / 边写边讲 / 工程习惯',
+ h:'写完主动 review：超时？成本？权限？trace？',
+ a:'见 D80 的代码。评分点（自己 review 用）：\n□ 有 max_steps 上限\n□ 工具执行有 try-except，且错误回传给模型\n□ tool_call_id 正确对应\n□ 有超限兜底返回\n□ 变量命名清晰\n□ 边写边讲思路（面试官看的是思考过程）\n\n主动暴露改进的加分话术：\n"这段代码还缺三样：超时控制、成本统计、trace 落盘。生产环境我会…"\n——主动说出缺陷 + 给出方案，比假装完美更专业。'},
+{id:'W12-2',w:12,lvl:'L4',kind:'fde',t:'系统设计口述稿（两题）',
+ d:'准备两道系统设计题的 30 分钟口述稿：① 日活 10 万的客服机器人；② 百万页企业文档问答。要求含：需求澄清 → 容量估算 → 架构 → 瓶颈 → 降级 → 成本。',
+ p:'系统设计 / 结构化表达 / 容量估算 / 取舍说明',
+ h:'开场先问 4 个澄清问题，别急着画图。',
+ a:'通用开场（先澄清，至少 4 问）：\n- 日活还是日请求量？峰值是均值的几倍？\n- 可接受的首字延迟和总延迟？\n- 数据敏感度（能否出境/能否给第三方模型）？\n- 准确率要求？错了谁担责？\n\n① 客服机器人要点\n· 缓存高频问题（命中率常达 30%+，成本直降）\n· 队列削峰 + 并发上限 + 熔断\n· 人工兜底通道（必须有）\n· 成本估算：日请求 × 单条成本 = 日费用\n\n② 百万文档问答要点（难点不在 RAG，在这三条）\n· 权限过滤必须 pre-filter（检索前按权限缩小候选集）\n· 文档更新与版本管理\n· 答案可溯源（chunk 带 source + page）\n· 成本：首次索引 + 每次查询，两个数字都要给'},
+{id:'W12-3',w:12,lvl:'L4',kind:'fde',t:'故障复盘稿',
+ d:'写一份一页故障复盘：时间线（发现→定位→止损→根因→改进）+ 改进措施是否已验证 + 下次如何更早发现。可基于真实故障或主动演练。',
+ p:'复盘方法 / 时间线叙事 / 改进闭环 / 运维意识',
+ h:'重点是"怎么发现的"和"怎么防复发"，不是错误本身。',
+ a:'# 故障复盘：分类结果静默错误（演练）\n\n## 时间线\n- 10:12 用户反馈"分类结果偶尔离谱"\n- 10:20 查审计日志，定位到 12% 的跨类别工单\n- 10:35 止血：置信度低于 0.6 强制转人工\n- 11:00 根因：提示词里类别定义有重叠，且无置信度阈值\n- 14:00 改进：拆分重叠类别 + 加阈值 + 补 10 条样本进 golden set\n\n## 怎么发现的\n用户反馈，不是监控。——这是本次最大问题。\n\n## 改进（已验证）\n1. 加异常分布监控：某类别占比单日波动 >20% 即告警 ✅ 已上线\n2. 每日抽样 5% 人工复核 ✅ 已上线\n3. golden set 扩充至 40 条 ✅ 已验证\n\n## 下次如何更早发现\n依赖监控而非用户。\n\n价值：这份文档在面试里往往比项目本身更有说服力——它证明你敢对结果负责。'}
+];
+
+/* ============================ 概念词典 ============================ */
+DATA.glossary = [
+{t:'Token',en:'token',c:'LLM',d:'模型处理文本的最小单位。1 个 token ≈ 0.5–1 个中文字 ≈ 4 个英文字母。输入输出都按 token 计费，所以"这段提示词多少 token"直接等于多少钱。'},
+{t:'Temperature',en:'temperature',c:'LLM',d:'控制输出随机性，0 最确定、1 最发散。查事实和生成代码用 0–0.3；头脑风暴用 0.7–1。面试常问：效果不稳定先降 temperature 排除随机性，再改提示词。'},
+{t:'finish_reason',en:'finish_reason',c:'LLM',d:'本次生成的结束原因。stop=正常结束；length=被 max_tokens 截断；tool_calls=模型要调工具；content_filter=被安全策略拦截。排查"回答不完整"先看它。'},
+{t:'System Prompt',en:'system prompt',c:'LLM',d:'放在 messages 第一条的人设与总指令，相当于"先立规矩再干活"。应独立成文件（prompts/*.txt）纳入版本管理，而不是散落在代码字符串里。'},
+{t:'上下文窗口',en:'context window',c:'LLM',d:'模型一次能看到的全部内容上限。超出会被截断或报错。这决定了 RAG 为什么必要——资料太多装不下，只能检索出相关的几段放进来。'},
+{t:'幻觉',en:'hallucination',c:'LLM',d:'模型不知道也不承认，顺着上下文编一个像模像样的答案。RAG 的核心价值不是答对，而是让模型在被问到盲区时承认"资料里没有"。'},
+{t:'推理模型与 reasoning_tokens',en:'reasoning model',c:'LLM',d:'回答前先"思考"几轮的模型。注意：思考部分的 reasoning_tokens 也要计费，做成本核算时最容易被漏掉的一项。'},
+{t:'结构化输出',en:'JSON mode / structured output',c:'LLM',d:'强制模型输出符合 schema 的 JSON。它是程序与模型之间的契约——下游是代码不是人，输出必须能被稳定解析。三保险：schema 约束 + 失败重试 + 仍失败转人工。'},
+{t:'Embedding',en:'embedding',c:'RAG',d:'把文本变成向量，让意思相近的句子在数学上距离更近。解决"智能体"搜不到"Agent"这类字面不匹配问题，是检索这一步的地基。'},
+{t:'提示词注入',en:'prompt injection',c:'LLM',d:'外部内容里藏着指令，诱导模型改变行为（如检索到的文档里写"忽略之前的指令"）。防护：外部内容做标记与隔离、关键动作不依赖模型判断、输出做校验。'},
+{t:'Agent',en:'agent',c:'Agent',d:'模型 + 循环 + 工具 + 记忆。判断标准：能不能根据上一步结果自主决定下一步。硬编码顺序调 3 次 API 只是工作流，不是 Agent。'},
+{t:'Function Calling',en:'function calling / tool use',c:'Agent',d:'模型不会执行代码，只输出"我想调用 X，参数是 Y"的结构化请求，真正执行的是你的程序。这是模型与外部世界的接口契约。'},
+{t:'Tool Schema',en:'tool schema',c:'Agent',d:'工具说明书，本质是一段给模型读的提示词。description 里写清"什么时候用、什么时候别用、失败怎么办"，比 name 更能决定调用准确率。'},
+{t:'Agent Loop',en:'agent loop',c:'Agent',d:'循环：调模型 → 有 tool_calls 就执行 → 结果塞回 messages → 再调。四个不能省：步数上限、tool_call_id 对应、错误回传给模型、超限兜底。'},
+{t:'ReAct',en:'ReAct',c:'Agent',d:'边想边做：Thought → Action → Observation 循环。适合路径不确定的探索任务（查资料、排查问题）；缺点是步数不可控、容易绕圈。'},
+{t:'Plan-and-Execute',en:'plan and execute',c:'Agent',d:'先出完整步骤清单再逐步执行。适合步骤相对固定的任务（报告生成、批处理），能并行、能控成本、能给用户看进度。'},
+{t:'编排者',en:'orchestrator',c:'Agent',d:'多 Agent 系统里负责派活与收活的角色。核心能力不是"派出去"，而是"收得回来"：失败重试、能力不足降级、需要判断时上报人工。'},
+{t:'记忆：短期 / 长期 / 情景',en:'memory',c:'Agent',d:'短期=本轮对话上下文（会被截断）；长期=跨会话持久化的事实；情景=某次任务的完整轨迹。企业场景至少要有情景记忆，出事才能回放。'},
+{t:'Checkpoint',en:'checkpoint',c:'Agent',d:'把 Agent 运行状态存下来，中断后能接着跑。长任务和需要人工确认的流程必备。写入时先写临时文件再原子替换，防止写一半崩溃。'},
+{t:'Decomposer 与 DAG',en:'decomposer / DAG',c:'Agent',d:'把一句自然语言目标拆成"任务图"：子任务列表 + 依赖边 + 并行标注。粒度卡在"一个角色能独立干完"和"不碎到没意义"之间。必须有最大深度，防止无限递归。'},
+{t:'Human-in-the-loop',en:'HITL',c:'Agent',d:'在不可逆动作前插入人工确认。判断标准只有一句：这个动作做错了能不能撤回？发消息、写回、退款、改权限——都要拦。'},
+{t:'护栏 / 三道保护',en:'guardrail',c:'Agent',d:'超时重试（瞬时故障）、人工复核（不确定时）、失败回退（能力不足时）。三层决定了系统在异常时有多体面——客户能接受功能变弱，不能接受页面转圈后报错。'},
+{t:'MCP',en:'Model Context Protocol',c:'Agent',d:'模型与外部工具/数据的统一连接标准，被称为"AI 的 USB-C"。它提升可发现性与可组合性，但本身不等于安全——仍需最小权限、审批与日志。'},
+{t:'LangGraph',en:'LangGraph',c:'Agent',d:'用状态图（State / Node / Edge）表达 Agent 流程。图比链强在允许条件分支与回退，但代价是更容易写出死循环——每条回环边都必须配终止条件。'},
+{t:'RAG',en:'Retrieval-Augmented Generation',c:'RAG',d:'检索增强生成＝开卷考试：先翻书（检索）→ 摊桌上（增强）→ 照着写（生成）。知识放你自己的库，模型只负责看着资料组织答案。口诀：资料多到贴不下 + 必须基于资料 + 资料会更新 → 用 RAG。'},
+{t:'Chunking',en:'chunking',c:'RAG',d:'把文档切成片段。切分决定召回上限——正确那段被切成两半就永远召回不到。经验起点 300–500 字 + 10–20% 重叠，且每块必须带来源元数据以支持溯源。'},
+{t:'向量库',en:'vector database',c:'RAG',d:'存向量并做相似度检索的库（Chroma / FAISS / Pinecone 等）。数据量小于一万条时，内存列表 + 余弦相似度就够，先跑通再换库。'},
+{t:'混合检索与重排',en:'hybrid search / rerank',c:'RAG',d:'关键词 + 向量双路召回，再用重排模型把最相关的顶到前面。适用信号：Hit@1 低但 Hit@5 高 → 能找到但排得靠后，该加重排而不是换 embedding。'},
+{t:'RAG vs 微调',en:'RAG vs fine-tuning',c:'RAG',d:'RAG 给模型"查得到的事实"，微调教模型"说话的风格与格式"。资料会更新、答案要溯源 → RAG；要学特定文风或稳定格式 → 微调。两者可叠加。'},
+{t:'幂等',en:'idempotency',c:'工程',d:'同一请求执行多次与执行一次效果相同。只要系统里有重试，就必须有幂等：用 (业务id + 动作) 作幂等键，靠数据库唯一约束兜底，应用层 SELECT 检查有竞态窗口。'},
+{t:'指数退避',en:'exponential backoff',c:'工程',d:'重试间隔按 2^n 递增。立刻重试会放大下游压力造成雪崩；加随机抖动可避免多请求同时重试形成尖峰。4xx 不重试，429 按 Retry-After 等待。'},
+{t:'熔断',en:'circuit breaker',c:'工程',d:'连续失败达到阈值后暂停调用一段时间，再半开试探恢复。只重试不熔断会把下游彻底打垮；两者必须串联协调。'},
+{t:'降级',en:'fallback / degrade',c:'工程',d:'出问题时用较弱但可用的方案顶上：模型降级（换便宜模型）、功能降级（只给分类不给草稿）、人工降级（全转人工）。关键是提前设计 + 一行开关 + 每次降级都记日志告警。'},
+{t:'审计日志',en:'audit log',c:'工程',d:'记录谁、何时、对什么、做了什么、AI 建议 vs 人工最终值。同时服务三件事：事故追溯、模型改进（人工修改即标注）、合规证明。'},
+{t:'最小权限',en:'least privilege',c:'工程',d:'每个角色只拥有完成工作所必需的最小权限。企业客户第一个问的就是"谁能看到什么、谁能改什么"——没有身份概念的系统在甲方眼里就是玩具。'},
+{t:'ADR',en:'Architecture Decision Record',c:'工程',d:'架构决策记录：当时为什么这么选、放弃了什么、什么信号出现就该改。它把技术选型从个人口味变成可讨论的事实，是作品集里最能体现工程成熟度的单页文档。'},
+{t:'Golden Set',en:'golden dataset',c:'Eval',d:'人工标注的评估样本集。30 条精心设计的（高频 15 / 边界 10 / 陷阱 5）胜过 3000 条随便抓的。陷阱类必须含"应该拒绝"的样本，否则系统会越调越激进。'},
+{t:'Hit@K 与 MRR',en:'hit rate / MRR',c:'Eval',d:'检索指标。Hit@K = 正确结果是否在前 K 个（找没找到）；MRR = 正确结果排名的倒数均值（排得多前）。前者低→切分或嵌入问题；后者低→该加重排。'},
+{t:'LLM-as-Judge',en:'LLM-as-Judge',c:'Eval',d:'用模型给模型输出打分。已知偏差：偏爱长答案、偏爱靠前选项、自恋偏差。缓解：明确 rubric + 打乱顺序 + 多次取平均 + 定期人工校准。'},
+{t:'回归测试',en:'regression test',c:'Eval',d:'改动后自动跑评估集，指标低于基线阈值就失败。阈值取自然波动的 1.5 倍；设太紧大家会忽略测试，设太松等于没有。'},
+{t:'Trace 与可观测',en:'trace / observability',c:'Eval',d:'一次任务的全部输入输出、工具调用、耗时、成本、身份。Agent 系统的黑匣子——没有它，出事时你回答不了"它为什么这么干"。'},
+{t:'FDE',en:'Forward Deployed Engineer',c:'FDE',d:'前向部署工程师：把模型能力变成生产环境里跑得起来、有人真的在用的系统的人。源自 Palantir，2026 年因 AI 从"卷模型"转向"卷落地"而爆发。'},
+{t:'FDE 三支柱',en:'engineering × business × customer',c:'FDE',d:'工程交付 ∩ 业务理解 ∩ 客户协作。快速自测：能独立写 API 吗？能向非技术人员问清需求吗？能定义"上线后怎样算成功"吗？最虚的那一项就是你该先补的短板。'},
+{t:'一页交付说明',en:'delivery spec',c:'FDE',d:'目标 / 范围 / 权限 / 异常 / 指标 五项一页纸。它把"AI 项目"变成可以验收的合同——明确写清"不做什么"，是防止范围蔓延最有效的手段。'},
+{t:'人工修改率',en:'edit rate',c:'FDE',d:'用户改掉了多少比例的建议。它同时衡量模型质量和产品体验：改得多说明模型不行，或者界面让人不放心。每一次人工修改都是一条免费标注数据。'},
+{t:'采用率',en:'adoption',c:'FDE',d:'真实用户持续使用的程度。AI 项目最典型的失败是"准确率很高但没人用"——原因常在模型之外：登录麻烦、入口太深、结果不能写回、责任边界没说清。'},
+{t:'需求访谈五件事',en:'discovery',c:'FDE',d:'输入从哪来 / 现在什么步骤 / 谁有决定权 / 最怕什么错 / 最后怎么验收。方法：让对方演示最近一次真实操作，而不是问"你想要什么 AI 功能"。'},
+{t:'STAR',en:'Situation Task Action Result',c:'FDE',d:'行为面试叙事结构。FDE 面试权重：客户故事 30% > 技术广度 25% ≈ 沟通 25% > 自主判断 20%。六个故事里，"失败处理"和"客户协作"要占一半。'}
+];
+
+/* ============================ FDE 非技术任务清单 ============================ */
+DATA.checklist = [
+  {g:'每周必须交出（12 个验收物）', auto:true, items:[]},
+  {g:'FDE 专属 · 非技术任务', items:[
+    {t:'需求访谈提纲（10 个问题）',s:'D39 · 围绕五件事，让对方演示而不是提需求'},
+    {t:'一页交付说明',s:'D40 · 目标/范围/权限/异常/指标，明确写清不做什么'},
+    {t:'招募 3–5 位模拟用户',s:'D63–D64 · 发使用说明 + 5 个典型任务'},
+    {t:'第 7 天用户回访（5 问）',s:'D67 · 问行为不问态度，记下原话'},
+    {t:'前后对比报告',s:'D70 · 4 指标前后值 + 没解决什么 + 下一步'},
+    {t:'一页案例摘要',s:'D71 · 7 问 + 数字标来源 + 必须有"仍未解决"'},
+    {t:'脱敏架构图',s:'D72 · 标出数据流向、失败点、权限边界'},
+    {t:'STAR 素材库 6 个故事',s:'D73 · 技术决策 2 / 失败处理 2 / 客户协作 2'},
+    {t:'简历与主页关键词改造',s:'D74 · FDE / RAG / Eval / LangGraph / FastAPI / 客户交付'},
+    {t:'3 分钟演示视频',s:'D75 · 必须展示一次"它拒绝/转人工"的瞬间'},
+    {t:'一次故障复盘稿',s:'D76 · 时间线 + 怎么发现的 + 怎么防复发'},
+    {t:'公开发布你的 90 天',s:'D90 · 博客/公众号，影响力的第 0 笔资产'}
+  ]},
+  {g:'上线前安全检查（W8–W9 必做）', items:[
+    {t:'密钥全部走环境变量，从未进 Git',s:'git log 里搜一遍你的 key 前缀'},
+    {t:'写操作全部幂等',s:'D51 · 有重试就必须有幂等键 + 唯一约束'},
+    {t:'不可逆动作前有人工确认',s:'D37 · 发消息/写回/退款/改权限'},
+    {t:'最小权限与角色区分',s:'D60 · 使用者不能碰管理员接口'},
+    {t:'审计日志覆盖所有写操作',s:'D61 · 含 AI 建议与人工最终值'},
+    {t:'失败态有人话提示 + 重试入口',s:'D59 · 不是 500 Internal Server Error'},
+    {t:'成本有上限与日报',s:'D48 · 超阈值自动降级'},
+    {t:'发布前跑一遍脱敏扫描',s:'D72 · W11-2 的脚本'}
+  ]}
+];
+</script>
+
+<script>
+/* ============================================================
+   状态与渲染
+   ============================================================ */
+const KEY = 'fde90plan.v1';
+const S = load();
+
+function load(){
+  try { return Object.assign({day:{},ex:{},ck:{},start:''}, JSON.parse(localStorage.getItem(KEY) || '{}')); }
+  catch(e){ return {day:{},ex:{},ck:{},start:''}; }
+}
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
+
+const $  = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+function h(tag, cls, txt){ const e = document.createElement(tag); if(cls) e.className = cls; if(txt != null) e.textContent = txt; return e; }
+function days(){ return DATA.weeks.reduce((n,w) => n + w.days.length, 0); }
+
+/* ---------- 阶段 ---------- */
+function renderPhases(){
+  const box = $('#phases'); box.innerHTML = '';
+  DATA.phases.forEach(p => {
+    const d = h('div','phase');
+    d.style.borderLeft = '4px solid ' + p.c;
+    d.appendChild(h('span','w', p.w));
+    d.appendChild(h('h4',null, p.h));
+    d.appendChild(h('p',null, p.p));
+    box.appendChild(d);
+  });
+}
+
+/* ---------- 时间轴 ---------- */
+function renderTimeline(){
+  const lg = $('#tlLegend'); lg.innerHTML = '';
+  DATA.weeks.forEach(w => {
+    const s = h('span',null, 'W' + w.w + ' ' + w.theme);
+    s.style.background = w.color; lg.appendChild(s);
+  });
+  const g = $('#tlGrid'); g.innerHTML = '';
+  DATA.weeks.forEach(w => {
+    const c = h('span',null,'W' + w.w);
+    c.style.background = 'transparent'; c.style.color = w.color;
+    c.style.width = '100%'; c.style.gridColumn = '1 / -1';
+    c.style.fontWeight = '700'; c.style.fontSize = '12px';
+    c.style.marginTop = '6px';
+    g.appendChild(c);
+    w.days.forEach(day => {
+      const cell = h('div','tl-cell', 'D' + day.d);
+      cell.style.background = w.color;
+      if (S.day['d' + day.d]) cell.classList.add('done');
+      cell.title = 'D' + day.d + ' · ' + day.t + '（约 ' + day.min + ' 分钟）';
+      cell.appendChild(h('span','t', day.min + 'm'));
+      cell.onclick = () => { openWeek(w.w); focusDay(day.d); };
+      g.appendChild(cell);
+    });
+  });
+}
+
+/* ---------- 周卡片 ---------- */
+function renderWeeks(){
+  const box = $('#weeks'); box.innerHTML = '';
+  DATA.weeks.forEach(w => {
+    const card = h('div','card week'); card.id = 'week-' + w.w;
+
+    const head = h('div','week-head');
+    const chip = h('div','wk-chip'); chip.style.background = w.color;
+    chip.appendChild(h('span',null,'W' + w.w));
+    chip.appendChild(h('small',null, w.range.replace('D','').replace('–','-')));
+    head.appendChild(chip);
+
+    const meta = h('div','meta');
+    meta.appendChild(h('h3',null, w.theme));
+    meta.appendChild(h('div',null, ''));
+    const tags = h('div','tags');
+    if (w.series)      tags.appendChild(h('span','tag s', w.series));
+    if (w.foundation && w.foundation !== '—') tags.appendChild(h('span','tag f', '地基：' + w.foundation));
+    tags.appendChild(h('span','tag d', '🎯 ' + w.deliver));
+    meta.appendChild(tags);
+    head.appendChild(meta);
+
+    const prog = h('div','wk-prog');
+    const done = w.days.filter(d => S.day['d' + d.d]).length;
+    prog.appendChild(h('div','p', done + '/' + w.days.length));
+    const bar = h('div','bar'); const i = h('i');
+    i.style.width = (done / w.days.length * 100) + '%';
+    i.style.background = w.color; bar.appendChild(i); prog.appendChild(bar);
+    head.appendChild(prog);
+    head.appendChild(h('span','caret','▼'));
+    head.onclick = () => card.classList.toggle('open');
+    card.appendChild(head);
+
+    const body = h('div','wk-body');
+    w.days.forEach(d => body.appendChild(renderDay(d, w)));
+    const dv = h('div','box deliver');
+    dv.appendChild(h('div','bt','🎯 本周验收物'));
+    dv.appendChild(h('div',null, w.deliver));
+    body.appendChild(dv);
+    card.appendChild(body);
+    box.appendChild(card);
+  });
+}
+
+function renderDay(d, w){
+  const wrap = h('div','day'); wrap.id = 'day-' + d.d;
+  if (S.day['d' + d.d]) wrap.classList.add('done');
+
+  const head = h('div','day-head');
+  const cb = h('div','cbox' + (S.day['d' + d.d] ? ' on' : ''), S.day['d' + d.d] ? '✓' : '');
+  cb.onclick = e => {
+    e.stopPropagation();
+    const k = 'd' + d.d;
+    S.day[k] = !S.day[k]; save();
+    cb.classList.toggle('on', S.day[k]);
+    cb.textContent = S.day[k] ? '✓' : '';
+    wrap.classList.toggle('done', S.day[k]);
+    refreshStats(); renderTimeline(); updateWeekProg(w.w);
+  };
+  head.appendChild(cb);
+  head.appendChild(h('div','dn','D' + d.d));
+  head.appendChild(h('div','dt', d.t));
+  head.appendChild(h('div','dm', d.min + ' min'));
+  head.appendChild(h('span','caret','▼'));
+  head.onclick = () => wrap.classList.toggle('open');
+  wrap.appendChild(head);
+
+  const body = h('div','day-body');
+  if (d.steps && d.steps.length){
+    const ul = h('ul','steps');
+    d.steps.forEach(s => ul.appendChild(h('li',null, s)));
+    body.appendChild(ul);
+  }
+  if (d.concept){
+    const b = h('div','box concept');
+    b.appendChild(h('div','bt','💡 概念 · ' + d.concept.t));
+    b.appendChild(h('div',null, d.concept.b));
+    body.appendChild(b);
+  }
+  if (d.code) body.appendChild(codeBox(d.code));
+  if (d.quiz){
+    const b = h('div','box quiz');
+    b.appendChild(h('div','bt','❓ 自测'));
+    b.appendChild(h('div',null, d.quiz.q));
+    const det = h('details','ans');
+    det.appendChild(h('summary',null,'查看答案'));
+    det.appendChild(h('div','ansbody', d.quiz.a));
+    b.appendChild(det);
+    body.appendChild(b);
+  }
+  if (d.deliver){
+    const b = h('div','box deliver');
+    b.appendChild(h('div','bt','🎯 今天要交出的'));
+    b.appendChild(h('div',null, d.deliver));
+    body.appendChild(b);
+  }
+  wrap.appendChild(body);
+  return wrap;
+}
+
+function codeBox(c){
+  const b = h('div','box code');
+  const bar = h('div','bt');
+  bar.appendChild(h('span',null,'🐍 ' + c.t));
+  const btn = h('button','cp','复制');
+  btn.onclick = () => {
+    navigator.clipboard.writeText(c.src).then(() => {
+      btn.textContent = '已复制'; setTimeout(() => btn.textContent = '复制', 1200);
+    }).catch(() => { btn.textContent = '复制失败'; });
+  };
+  bar.appendChild(btn);
+  b.appendChild(bar);
+  const pre = h('pre'); const code = h('code');
+  code.textContent = c.src;                      // textContent 避免转义问题
+  pre.appendChild(code); b.appendChild(pre);
+  return b;
+}
+
+function updateWeekProg(w){
+  const wk = DATA.weeks.find(x => x.w === w);
+  const card = $('#week-' + w); if (!card || !wk) return;
+  const done = wk.days.filter(d => S.day['d' + d.d]).length;
+  card.querySelector('.wk-prog .p').textContent = done + '/' + wk.days.length;
+  card.querySelector('.wk-prog .bar i').style.width = (done / wk.days.length * 100) + '%';
+}
+
+/* ---------- 练习题 ---------- */
+function renderExercises(){
+  const box = $('#exList'); box.innerHTML = '';
+  const kw = ($('#exSearch').value || '').toLowerCase();
+  const lvl = $('#exLvl').value, kind = $('#exKind').value, hide = $('#exHideDone').checked;
+  const list = DATA.exercises.filter(e =>
+    (!lvl || e.lvl === lvl) && (!kind || e.kind === kind) &&
+    (!hide || !S.ex[e.id]) &&
+    (!kw || (e.t + e.d + e.p + e.id).toLowerCase().includes(kw))
+  );
+  if (!list.length){ box.appendChild(h('div','card','没有匹配的题目')); box.firstChild.style.padding = '20px'; return; }
+  list.forEach(e => {
+    const c = h('div','card ex' + (S.ex[e.id] ? ' done' : ''));
+    const head = h('div','ex-head');
+    const cb = h('div','cbox' + (S.ex[e.id] ? ' on' : ''), S.ex[e.id] ? '✓' : '');
+    cb.onclick = ev => {
+      ev.stopPropagation();
+      S.ex[e.id] = !S.ex[e.id]; save();
+      cb.classList.toggle('on', S.ex[e.id]);
+      cb.textContent = S.ex[e.id] ? '✓' : '';
+      c.style.borderColor = S.ex[e.id] ? 'var(--ok)' : '';
+      refreshStats();
+    };
+    head.appendChild(cb);
+    head.appendChild(h('div','ex-id', e.id));
+    const mid = h('div'); mid.style.flex = '1';
+    const line = h('div'); line.style.display = 'flex'; line.style.gap = '7px'; line.style.alignItems = 'center'; line.style.flexWrap = 'wrap';
+    const lv = h('span','lvl ' + e.lvl, e.lvl);
+    const kd = h('span','kind ' + e.kind, {py:'Python 工程', agent:'Agent 概念', fde:'FDE 交付'}[e.kind]);
+    line.append(lv, kd, h('strong',null, e.t));
+    mid.appendChild(line);
+    mid.appendChild(h('div',null, e.d)).style.cssText = 'font-size:13px;color:var(--ink-2);margin-top:4px';
+    head.appendChild(mid);
+    head.appendChild(h('span','caret','▼'));
+    head.onclick = () => c.classList.toggle('open');
+    c.appendChild(head);
+
+    const body = h('div','ex-body');
+    const p1 = h('div','box note'); p1.appendChild(h('div','bt','🎯 考察点')); p1.appendChild(h('div',null, e.p)); body.appendChild(p1);
+    if (e.h){ const p2 = h('div','box concept'); p2.appendChild(h('div','bt','💡 提示')); p2.appendChild(h('div',null, e.h)); body.appendChild(p2); }
+    const det = h('details','ans');
+    det.appendChild(h('summary',null,'查看参考答案 / 思路'));
+    const ab = h('div','ansbody');
+    if (e.a.includes('```') || /\n    |\ndef |\nclass |\{$/.test(e.a)){
+      const pre = h('pre'); pre.textContent = e.a; ab.appendChild(pre);
+    } else { ab.textContent = e.a; }
+    det.appendChild(ab); body.appendChild(det);
+    c.appendChild(body);
+    box.appendChild(c);
+  });
+}
+
+/* ---------- 词典 ---------- */
+function renderGlossary(){
+  const box = $('#glList'); box.innerHTML = '';
+  const kw = ($('#glSearch').value || '').toLowerCase();
+  DATA.glossary.filter(g => !kw || (g.t + g.en + g.d + g.c).toLowerCase().includes(kw)).forEach(g => {
+    const c = h('div','gl');
+    const t = h('h4'); t.appendChild(h('span',null, g.t));
+    t.appendChild(h('span','en', g.en));
+    t.appendChild(h('span','cat', g.c));
+    c.appendChild(t);
+    c.appendChild(h('p',null, g.d));
+    box.appendChild(c);
+  });
+}
+
+/* ---------- 验收清单 ---------- */
+function renderChecklist(){
+  const box = $('#ckList'); box.innerHTML = '';
+  DATA.checklist.forEach((grp, gi) => {
+    const g = h('div','ck-group');
+    g.appendChild(h('h4',null, grp.g));
+    let items = grp.items || [];
+    if (grp.auto) items = DATA.weeks.map(w => ({t:'W' + w.w + ' · ' + w.theme, s:w.deliver, id:'w' + w.w}));
+    items.forEach((it, i) => {
+      const id = it.id || ('c' + gi + '-' + i);
+      const row = h('div','ck' + (S.ck[id] ? ' done' : ''));
+      const cb = h('div','cbox' + (S.ck[id] ? ' on' : ''), S.ck[id] ? '✓' : '');
+      cb.onclick = () => {
+        S.ck[id] = !S.ck[id]; save();
+        cb.classList.toggle('on', S.ck[id]);
+        cb.textContent = S.ck[id] ? '✓' : '';
+        row.classList.toggle('done', S.ck[id]);
+        refreshStats();
+      };
+      row.appendChild(cb);
+      const tx = h('div','txt'); tx.appendChild(h('div',null, it.t));
+      if (it.s) tx.appendChild(h('small',null, it.s));
+      row.appendChild(tx);
+      g.appendChild(row);
+    });
+    box.appendChild(g);
+  });
+}
+
+/* ---------- 用法说明 ---------- */
+function renderAbout(){
+  const box = $('#aboutBody');
+  const t = document.createElement('table'); t.className = 't';
+  t.innerHTML =
+    '<tr><th style="width:120px">怎么用</th><td>' +
+    '<b>每天 3 步</b>：① 打开「12 周任务」找到今天 → ② 按 steps 做，做完勾选 → ③ 有疑问先看「概念词典」。<br>' +
+    '遇到卡住的一天，<b>不要停</b>：先跳过做下一天，周末大块时间回来补。90 天里允许有 10 天落后，不允许有 1 周停滞。</td></tr>' +
+    '<tr><th>代码块</th><td>点右上角「复制」粘贴到你的项目里跑。所有示例都是核心片段，不是完整可跑文件——补全 import 与配置本身就是练习的一部分。</td></tr>' +
+    '<tr><th>练习题</th><td>36 道，每周 3 道。建议顺序：先自己写 → 卡住看「提示」→ 再看「参考答案」。不要一上来就看答案，那样等于没做。</td></tr>' +
+    '<tr><th>进度</th><td>存在本机浏览器，关掉不丢。换电脑前点「导出进度」，在新电脑点「导入进度」。清浏览器缓存会清空进度，请定期导出。</td></tr>' +
+    '<tr><th>与参考系列的关系</th><td>D1–D37 对齐公众号《90天，我和 WorkBuddy 学 Agent》的 Round 结构；D38–D90 按该系列开篇公布的官方三阶段周计划推演。额外加入的是两块原作者不需要、但你必须补的内容：<b>工程地基</b>（Git/SQL/HTTP/FastAPI/Docker）和 <b>FDE 交付证据</b>（合成数据、模拟用户、指标、案例、STAR）。</td></tr>' +
+    '<tr><th>为什么不是"学完再找工作"</th><td>FDE 招聘看的是"你交付过什么"。所以计划从第 6 周就启动主线项目，第 10 周就有真实使用数据，第 11 周就能拿出案例。技术学习永远没有"学完"的那天，交付闭环才有。</td></tr>' +
+    '<tr><th>主线项目</th><td>客服工单分类与回复助手（合成数据 + 模拟用户）。它一条链路覆盖：结构化输出 + RAG + 工具调用 + 人工确认 + 权限边界 + 写回 + 指标采集——正是 FDE 面试要的证据链。</td></tr>';
+  box.appendChild(t);
+}
+
+/* ---------- 统计 ---------- */
+function refreshStats(){
+  const total = days();
+  const d = Object.values(S.day).filter(Boolean).length;
+  const ex = Object.values(S.ex).filter(Boolean).length;
+  const ck = Object.values(S.ck).filter(Boolean).length;
+  const pct = Math.round(d / total * 100);
+
+  $('#sDays').innerHTML = d + '<span style="font-size:12px;color:var(--ink-3)">/' + total + '</span>';
+  $('#sEx').innerHTML   = ex + '<span style="font-size:12px;color:var(--ink-3)">/' + DATA.exercises.length + '</span>';
+  $('#sCk').textContent = ck;
+  $('#ringPct').textContent = pct + '%';
+  $('#ringArc').style.strokeDashoffset = String(238.76 * (1 - pct / 100));
+
+  // 最长连续完成天数
+  let best = 0, cur = 0;
+  for (let i = 1; i <= total; i++){
+    if (S.day['d' + i]) { cur++; best = Math.max(best, cur); } else cur = 0;
+  }
+  $('#sStreak').textContent = best;
+}
+
+/* ---------- 交互 ---------- */
+function openWeek(w, scroll){
+  $$('nav.tabs button').forEach(b => b.classList.toggle('on', b.dataset.v === 'weeks'));
+  $$('section.view').forEach(s => s.classList.toggle('on', s.id === 'view-weeks'));
+  $$('.week').forEach(c => c.classList.remove('open'));
+  const card = $('#week-' + w);
+  if (card){
+    card.classList.add('open');
+    if (scroll && card.scrollIntoView) card.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+}
+function focusDay(d){
+  setTimeout(() => {
+    const el = $('#day-' + d);
+    if (!el) return;
+    el.classList.add('open');
+    el.style.outline = '2px solid var(--brand)';
+    if (el.scrollIntoView) el.scrollIntoView({behavior:'smooth', block:'center'});
+    setTimeout(() => el.style.outline = '', 2000);
+  }, 80);
+}
+function todayIndex(){
+  if (!S.start){ S.start = new Date().toISOString().slice(0,10); save(); }
+  const diff = Math.floor((new Date(new Date().toISOString().slice(0,10)) - new Date(S.start)) / 86400000);
+  return Math.min(Math.max(diff + 1, 1), days());
+}
+
+$$('nav.tabs button').forEach(b => {
+  b.onclick = () => {
+    $$('nav.tabs button').forEach(x => x.classList.remove('on'));
+    b.classList.add('on');
+    $$('section.view').forEach(s => s.classList.toggle('on', s.id === 'view-' + b.dataset.v));
+    if (window.scrollTo) window.scrollTo({top:0, behavior:'smooth'});
+  };
+});
+
+$('#btnToday').onclick = () => {
+  const d = todayIndex();
+  let w = DATA.weeks.find(wk => wk.days.some(x => x.d === d));
+  openWeek(w.w, true); focusDay(d);
+};
+$('#btnExpand').onclick = () => {
+  const d = todayIndex();
+  const w = DATA.weeks.find(wk => wk.days.some(x => x.d === d));
+  openWeek(w.w, true);
+};
+$('#btnPrint').onclick = () => window.print();
+$('#btnExport').onclick = () => {
+  const blob = new Blob([JSON.stringify(S, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'fde90-progress-' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+};
+$('#fileImport').onchange = ev => {
+  const f = ev.target.files[0]; if (!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const o = JSON.parse(r.result);
+      S.day = o.day || {}; S.ex = o.ex || {}; S.ck = o.ck || {}; S.start = o.start || '';
+      save(); boot(); alert('导入成功');
+    } catch(e){ alert('文件格式不对'); }
+  };
+  r.readAsText(f);
+};
+$('#btnReset').onclick = () => {
+  if (!confirm('确定要清空所有进度吗？此操作不可恢复，建议先导出备份。')) return;
+  S.day = {}; S.ex = {}; S.ck = {}; save(); boot();
+};
+$('#exSearch').oninput = renderExercises;
+$('#exLvl').onchange = renderExercises;
+$('#exKind').onchange = renderExercises;
+$('#exHideDone').onchange = renderExercises;
+$('#glSearch').oninput = renderGlossary;
+
+/* ---------- 启动 ---------- */
+function boot(){
+  renderPhases(); renderTimeline(); renderWeeks();
+  renderExercises(); renderGlossary(); renderChecklist(); renderAbout();
+  refreshStats();
+}
+boot();
+</script>
