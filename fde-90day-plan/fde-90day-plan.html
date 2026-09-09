@@ -142,6 +142,8 @@ section.view.on{display:block;animation:fade .25s ease}
 .cp{font-size:11px;background:#263050;border:none;color:#c6d3f5;padding:3px 9px;border-radius:6px;cursor:pointer;font-family:inherit}
 .cp:hover{background:#33406b}
 .box.quiz{background:#fff8ec;border:1px solid #f6dfae}
+.box.practice{background:#eef6ff;border:1px solid #c7dffb}
+.box.practice .bt{color:#1c62c4}
 .box.quiz .bt{color:#97650a}
 .box.note{background:#eff8ff;border:1px solid #cbe4fb}
 .box.note .bt{color:#1471b8}
@@ -325,55 +327,63 @@ DATA.phases = [
 DATA.weeks.push({
   w:1, range:'D1–D7', theme:'LLM API 精熟', color:'#6d5efc',
   series:'对齐系列 Round 1（Day 1–7）',
-  foundation:'工程地基：Git 初始化 / .env 密钥 / 目录规范',
-  deliver:'minillm.py（chat / stream / tool / cost 四个函数）+ 第一个 GitHub 提交',
+  foundation:'工程地基：.env 密钥 / 目录规范 / Git 初始化',
+  deliver:'本周 7 天脚本 + 6 个练习文件 + notes/day01–07.md + common/minillm.py + 第一个 GitHub 提交',
   days:[
-    {d:1,t:'第一次跑通 LLM 调用：四个参数掰开看',min:90,
-      steps:['git init 建仓库，按 week1/ week2/ … 分目录，notes/ 放笔记','根目录建 .env：OPENAI_API_KEY / OPENAI_BASE_URL / OPENAI_MODEL，用 python-dotenv 读','写 common/config.py 统一拿配置，换模型只改 .env，代码不动','写 week1/day1_basic.py，发一次请求，打印 回复 / finish_reason / usage','把 temperature 从 0 调到 1，同一问题问两次，观察差异'],
-      concept:{t:'四个核心参数',b:'model 决定用哪个模型（能力/价格差异大）；messages 是模型唯一能看到的上下文，system 放第一条立规矩；temperature 0 最确定、1 最发散，代码与事实类用 0～0.3；max_tokens 既省钱又防截断，配合 finish_reason=length 判断是否被砍。'},
-      code:{t:'week1/day1_basic.py',src:`import os
+    {d:1,t:'第一次跑通 LLM 调用：四个参数 + 看账单',min:90,
+      steps:['复制 .env.example 为 .env，填入 OPENAI_API_KEY / OPENAI_BASE_URL / OPENAI_MODEL',
+             '跑 week1/day1_basic.py（42 行平铺脚本，零自定义函数），看清输出的 5 行',
+             '对照 notes/day01.md 填表：模型回答 / finish_reason / 输入token / 输出token',
+             '做练习 1（temperature 0 vs 1）与练习 2（max_tokens=20 看 finish_reason=length）',
+             '做练习 3（system 放第一条 vs 放最后）与练习 4（短问题 vs 长问题的 token 差多少）'],
+      concept:{t:'四个参数 + 三个返回字段',b:'model 决定用哪个模型；messages 是模型唯一能看到的东西，system 放第一条立规矩；temperature 0 最确定、1 最发散；max_tokens 既是预算也是护栏。返回盯三个字段：content（回答）、finish_reason（stop 正常 / length 被截断 / tool_calls 要调工具）、usage（输入+输出=账单，推理模型还要算 reasoning_tokens）。'},
+      code:{t:'week1/day1_basic.py（平铺版，零自定义函数）',src:`import os
 from openai import OpenAI
 from dotenv import load_dotenv, find_dotenv
 
-load_dotenv(find_dotenv())          # 向上递归找 .env
+load_dotenv(find_dotenv())          # 自动向上找到项目根目录的 .env
+
 client = OpenAI(
     api_key=os.getenv("OPENAI_API_KEY"),
     base_url=os.getenv("OPENAI_BASE_URL"),
 )
 
+MODEL = os.getenv("OPENAI_MODEL", "deepseek-chat")
+QUESTION = "用一句话解释什么是大语言模型。"   # 想问别的，改这一行
+TEMPERATURE = 0.7                            # 0=最确定（事实/代码） 1=最发散（创意）
+MAX_TOKENS = 200                             # 输出上限，既省钱又防超长
+
 resp = client.chat.completions.create(
-    model=os.getenv("OPENAI_MODEL", "deepseek-chat"),
-    messages=[
-        {"role": "system", "content": "你是一个说话简洁的助手。"},
-        {"role": "user", "content": "用一句话解释什么是大语言模型。"},
+    model=MODEL,                             # 用哪个模型：改 .env 里的 OPENAI_MODEL 就行
+    messages=[                               # 模型唯一能看到的东西，全在这
+        {"role": "system", "content": "你是一个说话简洁的助手。"},   # 人设，放第一条效果最好
+        {"role": "user", "content": QUESTION},
     ],
-    temperature=0.7,
-    max_tokens=200,
+    temperature=TEMPERATURE,
+    max_tokens=MAX_TOKENS,
 )
 
-print("回答:", resp.choices[0].message.content)
-print("结束原因:", resp.choices[0].finish_reason)   # stop / length / tool_calls
-print("用量:", resp.usage.prompt_tokens, "+", resp.usage.completion_tokens)`},
+print("模型回答:", resp.choices[0].message.content)
+print("结束原因:", resp.choices[0].finish_reason)   # stop=正常  length=被截断  tool_calls=要调工具
+print("输入token:", resp.usage.prompt_tokens)
+print("输出token:", resp.usage.completion_tokens)
+print("合计token:", resp.usage.total_tokens)`},
+      practice:['练习1 temperature 对比','练习2 max_tokens 与 finish_reason','练习3 system 消息的位置','练习4 token 账单','练习5 messages 就是记忆','练习6 长对话与滑动窗口'],
       quiz:{q:'为什么 system 消息要放在 messages 第一条？',a:'模型会看到全部消息，人设与总指令放最前面 = 先立规矩再干活，后续 user 内容对它的影响才可控。放中间或末尾，指令权重会被最近的内容稀释。'}},
 
-    {d:2,t:'usage 与 finish_reason：把账看清楚',min:80,
-      steps:['打印完整 response.usage，逐字段对应到钱','把 max_tokens 改成 20，让回答被截断，观察 finish_reason=length','对比 temperature=0 与 1，同一问题各跑 3 次，记录答案稳定性','查 DeepSeek 等推理模型的 reasoning_tokens 字段，算清隐形成本','把结论写进 notes/day02.md'],
-      concept:{t:'finish_reason 与 token 账单',b:'stop=正常结束；length=被 max_tokens 截断；tool_calls=模型要调工具；content_filter=被安全策略拦。账单 = prompt_tokens（输入）+ completion_tokens（输出），推理模型还要加 reasoning_tokens——做 Agent 成本核算时最容易漏的就是这块。'},
-      quiz:{q:'回答被截断了，第一反应应该做什么？',a:'先看 finish_reason 是不是 length。是→加大 max_tokens 或改成分段生成；不是→问题在别处（内容过滤、工具调用未处理）。不要一上来就加大 max_tokens 乱试。'}},
-
-    {d:3,t:'工程地基① Git + 目录规范 + 密钥管理',min:60,
-      steps:['.gitignore 加 .env、__pycache__/、*.log、venv/','确认 git status 里看不到 .env；若已提交过，立刻轮换 key','把本周脚本移到 week1/，笔记放 notes/','首次 commit，建 GitHub 私有/公开仓库并 push','README 写一句话：这个项目是干什么的、怎么跑起来'],
-      concept:{t:'FDE 为什么必须会 Git',b:'FDE 常年进客户现场改代码：能回滚、能开分支做实验、能看 diff 解释"我改了什么"，是基本职业素养。密钥进 Git 是最常见的事故——面试问到"你踩过什么坑"，这是一个真实且加分的答案。'},
-      quiz:{q:'不小心把 .env 提交并 push 了，正确的三步是什么？',a:'1) 立刻到平台轮换/作废该 key；2) 把 .env 加入 .gitignore 并从版本库移除（git rm --cached .env）；3) 提交并 push 修正。注意：仅删除文件不够，历史里的 key 已被爬虫盯上，必须轮换。'}},
-
-    {d:4,t:'Function Calling：给模型装上手',min:90,
-      steps:['定义一个 get_weather(city) 工具，写清 name / description / parameters','把 tools 传进请求，问"北京天气怎么样"','打印返回的 tool_calls，看模型选了哪个函数、传了什么参数','本地用字典模拟执行函数，把结果以 role=tool 塞回 messages','再发一次请求，让模型基于工具结果给最终答案'],
-      concept:{t:'工具调用的本质',b:'模型不会真的执行任何代码。它只是输出一段结构化 JSON："我想调用 get_weather，参数是北京"。真正执行的是你的程序。这个"接口契约"是没有它模型就只是聊天机器人的分水岭。'},
-      code:{t:'week1/day4_tool.py（核心片段）',src:`tools = [{
+    {d:2,t:'Function Calling：给模型装上手',min:90,
+      steps:['先读不跑：通读 week1/day2_tools.py，标出 5 个位置：tools 声明 / get_weather 实现 / 第1次调用 / for 循环执行 / 第2次调用',
+             '跑 day2_tools.py（假数据），看「模型决定调用 N 个工具」这行输出',
+             '跑 day2_tools_live.py：自己敲问题，q 退出、clear 清历史，接的是真实 Open-Meteo 天气',
+             '做练习 1（看清 tool_calls 三个字段）与练习 4（一次调多个工具）',
+             '做练习 2、3 故意踩坑（漏 assistant 消息 / tool_call_id 写错），把报错长相记下来'],
+      concept:{t:'工具调用的本质 + 三个坑',b:'模型不执行任何代码，它只输出「我想调哪个函数、传什么参数」的 JSON，真正执行的是你的程序。闭环 = 第1次调用（模型决定）→ 你执行 → 结果以 role=tool 塞回 → 第2次调用（模型总结）。三个坑：① 返回 tool_calls 的那条 assistant 消息必须 append 回 messages，否则模型失忆；② tool_call_id 必须等于 call.id；③ tool_calls 是列表，可能一次要调多个，不能只取 [0]。'},
+      code:{t:'week1/day2_tools.py（核心片段）',src:`tools = [{
     "type": "function",
     "function": {
         "name": "get_weather",
-        "description": "查询指定城市的当前天气，仅在中国境内城市可用",
+        # description 是模型做决策的唯一依据，写得越具体它判断越准
+        "description": "查询指定城市的当前天气，返回气温、天气状况和风力。只在用户问天气时使用。",
         "parameters": {
             "type": "object",
             "properties": {"city": {"type": "string", "description": "城市名，如 北京"}},
@@ -382,29 +392,28 @@ print("用量:", resp.usage.prompt_tokens, "+", resp.usage.completion_tokens)`},
     },
 }]
 
-resp = client.chat.completions.create(
-    model=MODEL,
-    messages=[{"role": "user", "content": "北京今天天气怎么样？"}],
-    tools=tools,
-)
-call = resp.choices[0].message.tool_calls[0]        # 模型只是"请求"调用
-args = json.loads(call.function.arguments)
+resp = client.chat.completions.create(model=MODEL, messages=messages, tools=tools)
+msg = resp.choices[0].message
+messages.append(msg)          # 坑①：assistant 消息必须加回历史
 
-def get_weather(city):                               # 真正执行的是你的代码
-    return {"北京": "晴，26℃", "上海": "多云，28℃"}.get(city, "暂无数据")
-
-messages.append({"role": "assistant", "tool_calls": resp.choices[0].message.tool_calls})
-messages.append({"role": "tool", "tool_call_id": call.id,
-                 "content": json.dumps(get_weather(args["city"]), ensure_ascii=False)})
+for call in msg.tool_calls:   # 坑③：可能一次要调多个工具，别只取 [0]
+    args = json.loads(call.function.arguments)
+    result = TOOL_MAP[call.function.name](**args)      # 真正执行的是你的代码
+    messages.append({
+        "role": "tool",
+        "tool_call_id": call.id,      # 坑②：id 必须和 call.id 对上
+        "content": result,
+    })
 
 final = client.chat.completions.create(model=MODEL, messages=messages)
 print(final.choices[0].message.content)`},
+      practice:['练习1 看清 tool_calls 结构','练习2 漏掉 assistant 消息会怎样','练习3 tool_call_id 写错会怎样','练习4 一次调多个工具','练习5 工具出错的两种写法'],
       quiz:{q:'模型返回了 tool_calls，此时应该直接给用户答复吗？',a:'不该。必须执行工具、把结果以 role="tool" 和对应的 tool_call_id 塞回 messages，再请求一次，让模型基于真实数据作答。跳过这一步 = 模型只能靠猜，幻觉就来了。'}},
 
-    {d:5,t:'结构化输出：让模型按格式吐 JSON',min:80,
+    {d:3,t:'结构化输出：让模型按格式吐 JSON',min:80,
       steps:['用 response_format={"type":"json_object"} 强制 JSON','让模型把一条客户工单解析成 category / priority / reason / need_human_review','用 json.loads 解析并断言字段齐全','故意在提示词里要求输出第五个不存在的字段，观察模型如何处理','写一个 safe_parse：解析失败时重试一次，仍失败则转人工队列'],
       concept:{t:'结构化输出 = 程序与模型的契约',b:'Agent 的下游是代码，不是人。输出必须能被 json.loads，字段必须稳定。三道保险：schema 约束 + 解析失败重试 + 仍失败转人工。这一步做不牢，后面所有自动化都建在沙子上。'},
-      code:{t:'week1/day5_structured.py（核心片段）',src:`SCHEMA_HINT = """只输出 JSON，字段：
+      code:{t:'week1/day3_structured.py（核心片段）',src:`SCHEMA_HINT = """只输出 JSON，字段：
 {"category": "退款问题|物流问题|质量问题|其他",
  "priority": "high|medium|low",
  "reason": "一句话说明原因",
@@ -426,12 +435,13 @@ def classify(text):
     if set(data) < {"category", "priority", "reason", "need_human_review"}:
         data["need_human_review"] = True          # 字段缺失 → 不放行
     return data`},
+      practice:['练习1 让输出变成 JSON','练习2 字段缺失怎么办','练习3 解析失败重试一次','练习4 枚举值越界时兜底','练习5 批量解析 20 条看失败率'],
       quiz:{q:'为什么结构化输出失败时要转人工而不是重试到成功？',a:'重试到成功会掩盖真实失败率，且模型对同一输入可能持续输出坏格式。转人工队列既保证业务不中断，又给你留下一条真实的失败样本——这批样本正是后面做 eval 的黄金数据。'}},
 
-    {d:6,t:'流式输出 SSE：打字机效果怎么来的',min:80,
+    {d:4,t:'流式输出 SSE：打字机效果怎么来的',min:80,
       steps:['stream=True 发请求，逐 chunk 打印 delta.content','实现打字机效果（flush + 无换行）','记录首字延迟（TTFT）与总耗时，对比非流式','把流式内容累加成完整字符串再解析（流式 + JSON 的坑）','思考：什么场景必须流式，什么场景不需要'],
       concept:{t:'流式改变的是体感，不是能力',b:'模型生成速度没变，但用户从"等 8 秒看到结果"变成"0.5 秒开始出字"。对人参与的界面（客服后台、审核台）几乎是必需；对后台批处理任务反而增加解析复杂度。FDE 要会判断：这个界面需不需要流式。'},
-      code:{t:'week1/day6_stream.py（核心片段）',src:`import time
+      code:{t:'week1/day4_stream.py（核心片段）',src:`import time
 t0 = time.time()
 first = None
 buf = []
@@ -452,11 +462,45 @@ print("\\n---")
 print("首字延迟: %.2fs" % (first or 0))
 print("总耗时:   %.2fs" % (time.time() - t0))
 print("完整内容:", "".join(buf))`},
+      practice:['练习1 打开流式看 chunk','练习2 量首字延迟','练习3 流式 + JSON 的坑','练习4 断流重连怎么办','练习5 什么时候不该用流式'],
       quiz:{q:'流式输出还能用 JSON 解析吗？',a:'能，但要先累加完所有 chunk 再 json.loads，不能边收边解析。中途解析必然失败。更好的做法是让模型边流式边用固定分隔符（如先输出 reason 再输出 JSON 块），或干脆对该请求关闭流式。'}},
 
+    {d:5,t:'上下文与成本：长对话怎么办',min:80,
+      steps:['跑 day1_exercises.py 练习 6：看 5 轮对话的输入 token 从 22 一路涨到 80',
+             '把 KEEP_ROUNDS 改成 1 再跑一次，看模型开始胡编',
+             '动手写滑动窗口：messages = [messages[0]] + messages[-(N*2):]',
+             '对比三种裁剪法的代价：滑动窗口 / 摘要压缩 / token 预算',
+             '把观察写进 notes/day01.md 第 5b 节'],
+      concept:{t:'上下文窗口与三种裁剪法',b:'代码不会因为聊得久就变长（一个 list + 一个循环就够），真正会涨的是 token：每轮都要把整段历史重发一遍，而且上下文窗口有上限，超了直接报错。三种解法：滑动窗口（只留最近 N 轮，最省事但会忘事）、摘要压缩（让模型把旧对话总结成一段再替换，保住要点但多花一次调用）、token 预算裁剪（超预算就从最老的开始丢，精确但代码最啰嗦）。'},
+      code:{t:'多轮循环 + 滑动窗口',src:`messages = [{"role": "system", "content": "你是一个说话简洁的助手。"}]
+
+while True:
+    question = input("你: ")
+    if question in ("q", "退出"):
+        break
+    messages.append({"role": "user", "content": question})
+    resp = client.chat.completions.create(model=MODEL, messages=messages)
+    answer = resp.choices[0].message.content
+    messages.append({"role": "assistant", "content": answer})   # 模型说过的话也要存
+
+    # 只保留 system + 最近 2 轮（每轮 = user + assistant 两条，所以乘 2）
+    messages = [messages[0]] + messages[-(2 * 2):]
+
+    print("助手:", answer)
+    print("本轮输入 token:", resp.usage.prompt_tokens)`},
+      practice:['练习6 长对话与滑动窗口','把 KEEP_ROUNDS 改成 1 复现遗忘','用摘要压缩替换掉最老的 3 轮','统计 20 轮不裁剪要花多少 token'],
+      quiz:{q:'滑动窗口解决了什么问题，又带来什么问题？',a:'解决了 token 无限增长和上下文超限；带来的是「会忘事」——被裁掉的早期内容模型再也看不到了。想要既省钱又不失忆，就用摘要压缩把旧对话浓缩成一段再放回历史。'}},
+
+    {d:6,t:'工程地基① Git + 目录规范 + 密钥管理',min:60,
+      steps:['.gitignore 加 .env、__pycache__/、*.log、venv/','确认 git status 里看不到 .env；若已提交过，立刻轮换 key','确认目录规范：week1…week12/ 放脚本，notes/ 放笔记，common/ 放公共层','首次 commit，建 GitHub 仓库并 push','README 写一句话：这个项目是干什么的、怎么跑起来'],
+      concept:{t:'FDE 为什么必须会 Git',b:'FDE 常年进客户现场改代码：能回滚、能开分支做实验、能看 diff 解释"我改了什么"，是基本职业素养。密钥进 Git 是最常见的事故——面试问到"你踩过什么坑"，这是一个真实且加分的答案。'},
+      practice:['把 week1/ 全部脚本提交一次','故意把 .env 加进暂存区再救回来','用 git diff 看今天改了什么'],
+      quiz:{q:'不小心把 .env 提交并 push 了，正确的三步是什么？',a:'1) 立刻到平台轮换/作废该 key；2) 把 .env 加入 .gitignore 并从版本库移除（git rm --cached .env）；3) 提交并 push 修正。注意：仅删除文件不够，历史里的 key 已被爬虫盯上，必须轮换。'}},
+
     {d:7,t:'周末大块：token 成本账本 + 收敛 minillm.py',min:150,
-      steps:['写 cost.py：输入单价、输出单价，按 model 查表计算费用','把 D1–D6 的代码收敛成 common/minillm.py，对外只暴露 chat / stream / tool / cost 四个函数','所有脚本改成从 minillm import，删除重复代码','README 写清：怎么装依赖、怎么配 .env、怎么跑第一个例子','notes/week1.md 写本周复盘：学会了什么、卡在哪、下周怎么改'],
+      steps:['写 cost.py：输入单价、输出单价，按 model 查表计算费用','把 D1–D6 的代码收敛成 common/minillm.py，对外只暴露 chat / stream / tool / cost 四个函数','所有脚本改成从 minillm import，删除重复代码','把本周 6 个练习文件里没做完的题补完，重跑一遍确认还能跑','README 写清：怎么装依赖、怎么配 .env、怎么跑第一个例子','notes/week1.md 写本周复盘：学会了什么、卡在哪、下周怎么改'],
       concept:{t:'为什么要收敛工具层',b:'FDE 在现场改的是业务逻辑，不是每次重写 API 调用。把模型调用收敛成一个文件后，换模型、加日志、加成本统计都只改一处。这个小动作，是"脚本"和"项目"的分界线。'},
+      practice:['把 day1 到 day6 的练习各重跑一遍','写 common/minillm.py 并替换旧调用','算一遍本周一共花了多少 token'],
       deliver:'验收：minillm.py 四个函数都能跑通 + GitHub 有第一个 commit + notes/week1.md'}
   ]
 });
@@ -1275,7 +1319,7 @@ DATA.weeks.push({
   ]
 });
 
-/* ============================ 练习题库 36 ============================ */
+/* ============================ 练习题库 ============================ */
 DATA.exercises = [
 /* W1 */
 {id:'W1-1',w:1,lvl:'L1',kind:'py',t:'CSV 校验器',
@@ -1293,6 +1337,21 @@ DATA.exercises = [
  p:'工具即提示词 / schema 约束 / 描述质量决定调用准确率',
  h:'想想模型最容易传错什么：订单号格式？是否要带用户身份？',
  a:'{\n  "type": "function",\n  "function": {\n    "name": "get_order",\n    "description": "按订单号查询单个订单的状态、金额与物流信息。仅当用户提供了 10 位数字订单号时使用；不要用订单号以外的信息（如手机号）查询，查不到时不要反复重试。",\n    "parameters": {\n      "type": "object",\n      "properties": {\n        "order_id": {"type": "string", "pattern": "^[0-9]{10}$",\n                     "description": "10 位数字订单号"}\n      },\n      "required": ["order_id"]\n    }\n  }\n}\n\n为什么：description 里的"何时不用"和"失败怎么办"比"这个工具做什么"更影响模型行为；pattern 能把格式错误挡在调用之前。'},
+{id:'W1-4',w:1,lvl:'L2',kind:'agent',t:'一次调用多个工具',
+ d:'写一个 run_tools(messages) 函数：发一次带 tools 的请求，用 for 循环把 msg.tool_calls 里的每一个都执行完，逐个把结果以 role=tool 且 tool_call_id=call.id 塞回 messages，最后再请求一次拿到最终回答。要求：未知工具名要有兜底，不能崩。',
+ p:'tool_calls 是列表 / id 对应 / 并行调用 / 未知函数兜底',
+ h:'tool_calls 可能是 0 个、1 个或多个；未知函数名时返回一句"没有这个工具"比抛 KeyError 好。',
+ a:'for call in msg.tool_calls:                 # 别只取 [0]\n    args = json.loads(call.function.arguments)\n    fn = TOOL_MAP.get(call.function.name)\n    result = fn(**args) if fn else f"没有名为 {call.function.name} 的工具"\n    messages.append({"role": "tool",\n                     "tool_call_id": call.id,   # 必须和 call.id 一致\n                     "content": result})\n\nfinal = client.chat.completions.create(model=MODEL, messages=messages)\n\n坑：忘记 messages.append(msg)（那条 assistant 消息）会让模型失忆或网关直接报错；tool_call_id 写成固定值会让多工具结果互相覆盖。'},
+{id:'W1-5',w:1,lvl:'L2',kind:'py',t:'滑动窗口裁剪器',
+ d:'写 trim_history(messages, keep_rounds=3)：保住第一条 system，只留最近 keep_rounds 轮（每轮 = user + assistant 两条），返回裁剪后的列表。再写一个变体：额外保证最近一条消息一定是 user。',
+ p:'列表切片 / 边界处理 / 对话历史建模',
+ h:'注意 keep_rounds 大于实际轮数时不能报错；assistant 消息可能是 tool 角色，也要一并保留才不会破坏上下文。',
+ a:'def trim_history(messages, keep_rounds=3):\n    head = messages[:1] if messages and messages[0]["role"] == "system" else []\n    rest = messages[len(head):]\n    return head + rest[-(keep_rounds * 2):]\n\n坑：\n1) keep_rounds*2 大于 len(rest) 时切片返回全部，这是正确行为，不要特殊处理。\n2) 如果历史里混有 role="tool" 的消息，按 2 条一轮切会切断「tool_calls ↔ tool 结果」的配对，模型下一轮可能报错——裁剪时要按"调用块"而不是按条切。\n3) 想让最近一条一定是 user，就在切片后从尾部丢弃多余的 assistant。'},
+{id:'W1-6',w:1,lvl:'L3',kind:'agent',t:'工具失败的两种写法对比',
+ d:'有一个会超时失败的 get_weather()。分别用「raise 异常」和「return 错误字符串」两种写法接入工具调用链路，跑一遍并对比：程序是否中断、用户最终有没有拿到回答、模型分别说了什么。把观察写成 5 行结论。',
+ p:'错误契约 / 链路韧性 / 用户体验 / 降级话术',
+ h:'观察点：异常版本崩在哪一行？返回字符串版本里，模型是怎么把失败转述给用户的？',
+ a:'结论要点：\n1) raise：整条链路在第 2 次调用前就断了，用户什么都看不到。\n2) return "查询失败：接口 502"：链路走完，模型会主动说"暂时查不到，请稍后再试"。\n3) 工具失败也是"结果"，只要它是字符串，模型就能处理。\n4) 生产环境还要配：超时时间、重试次数、失败计数熔断。\n5) 错误文案要写给人看——模型会原样或改写后转述给用户。\n\n加分：给工具加一层统一的 try-except 包装器，所有工具共用同一套错误契约。'},
 /* W2 */
 {id:'W2-1',w:2,lvl:'L3',kind:'agent',t:'ReAct trace 手推',
  d:'给定工具 [search(query), calculator(expr)]，手推"2024 年中国新能源汽车销量同比增长多少"的 ReAct 循环：写出至少 3 轮 Thought / Action / Action Input / Observation，最后给出 Final Answer。',
@@ -1473,6 +1532,12 @@ DATA.exercises = [
 
 /* ============================ 概念词典 ============================ */
 DATA.glossary = [
+{t:'Function Calling',en:'function calling / tool use',c:'Agent',d:'模型不执行代码，只输出"我想调哪个函数、传什么参数"的 JSON，由你的程序真正执行。闭环：第1次调用（模型决定）→ 执行工具 → 结果以 role=tool 塞回 → 第2次调用（模型总结）。至少两次 API 调用。'},
+{t:'tool_call_id',en:'tool_call_id',c:'Agent',d:'模型生成的工具调用唯一标识。回传结果时必须原样回填，否则结果与请求关联不上，模型无法处理。看到相关报错第一反应就是检查 id 有没有对上。'},
+{t:'工具函数铁律',en:'tool error contract',c:'Agent',d:'工具出错要 return 错误字符串，不要 raise。抛异常会让整条链路崩在半路；返回字符串等于把失败当成"工具结果"回传，模型能据此告诉用户"查询失败了"。'},
+{t:'滑动窗口',en:'sliding window',c:'Agent',d:'只保留最近 N 轮对话的历史裁剪法：messages = [messages[0]] + messages[-(N*2)]。保住 system 人设，丢掉最老的对话。最省事，代价是模型会忘掉早期内容。'},
+{t:'摘要压缩',en:'summarization',c:'Agent',d:'历史太长时让模型把旧对话总结成一段再替换掉原文。比滑动窗口保真，代价是多花一次调用。适合"既要省钱又不能失忆"的场景。'},
+{t:'Open-Meteo',en:'open-meteo',c:'工程',d:'免费、无需注册、不用 API Key 的气象接口，标准库 urllib 就能调。返回 WMO 天气码（0=晴、61=小雨、95=雷阵雨）是纯数字，必须翻译成中文再喂给模型。对部分中文城市名查不到经纬度，兜底分支不能省。'},
 {t:'Token',en:'token',c:'LLM',d:'模型处理文本的最小单位。1 个 token ≈ 0.5–1 个中文字 ≈ 4 个英文字母。输入输出都按 token 计费，所以"这段提示词多少 token"直接等于多少钱。'},
 {t:'Temperature',en:'temperature',c:'LLM',d:'控制输出随机性，0 最确定、1 最发散。查事实和生成代码用 0–0.3；头脑风暴用 0.7–1。面试常问：效果不稳定先降 temperature 排除随机性，再改提示词。'},
 {t:'finish_reason',en:'finish_reason',c:'LLM',d:'本次生成的结束原因。stop=正常结束；length=被 max_tokens 截断；tool_calls=模型要调工具；content_filter=被安全策略拦截。排查"回答不完整"先看它。'},
@@ -1484,7 +1549,7 @@ DATA.glossary = [
 {t:'Embedding',en:'embedding',c:'RAG',d:'把文本变成向量，让意思相近的句子在数学上距离更近。解决"智能体"搜不到"Agent"这类字面不匹配问题，是检索这一步的地基。'},
 {t:'提示词注入',en:'prompt injection',c:'LLM',d:'外部内容里藏着指令，诱导模型改变行为（如检索到的文档里写"忽略之前的指令"）。防护：外部内容做标记与隔离、关键动作不依赖模型判断、输出做校验。'},
 {t:'Agent',en:'agent',c:'Agent',d:'模型 + 循环 + 工具 + 记忆。判断标准：能不能根据上一步结果自主决定下一步。硬编码顺序调 3 次 API 只是工作流，不是 Agent。'},
-{t:'Function Calling',en:'function calling / tool use',c:'Agent',d:'模型不会执行代码，只输出"我想调用 X，参数是 Y"的结构化请求，真正执行的是你的程序。这是模型与外部世界的接口契约。'},
+{t:'工具调用的三个坑',en:'tool call pitfalls',c:'Agent',d:'① 返回 tool_calls 的那条 assistant 消息必须 append 回 messages，否则模型失忆或网关报错；② tool_call_id 必须等于 call.id，否则结果与请求关联不上；③ tool_calls 是列表，可能一次要调多个工具，不能只取 [0]。'},
 {t:'Tool Schema',en:'tool schema',c:'Agent',d:'工具说明书，本质是一段给模型读的提示词。description 里写清"什么时候用、什么时候别用、失败怎么办"，比 name 更能决定调用准确率。'},
 {t:'Agent Loop',en:'agent loop',c:'Agent',d:'循环：调模型 → 有 tool_calls 就执行 → 结果塞回 messages → 再调。四个不能省：步数上限、tool_call_id 对应、错误回传给模型、超限兜底。'},
 {t:'ReAct',en:'ReAct',c:'Agent',d:'边想边做：Thought → Action → Observation 循环。适合路径不确定的探索任务（查资料、排查问题）；缺点是步数不可控、容易绕圈。'},
@@ -1691,6 +1756,14 @@ function renderDay(d, w){
     body.appendChild(b);
   }
   if (d.code) body.appendChild(codeBox(d.code));
+  if (d.practice && d.practice.length){
+    const b = h('div','box practice');
+    b.appendChild(h('div','bt','📝 今天要做的练习（在 weekN/dayN_exercises.py 里）'));
+    const ul = h('ul','steps');
+    d.practice.forEach(s => ul.appendChild(h('li',null, s)));
+    b.appendChild(ul);
+    body.appendChild(b);
+  }
   if (d.quiz){
     const b = h('div','box quiz');
     b.appendChild(h('div','bt','❓ 自测'));
@@ -1838,13 +1911,18 @@ function renderAbout(){
   const box = $('#aboutBody');
   const t = document.createElement('table'); t.className = 't';
   t.innerHTML =
-    '<tr><th style="width:120px">怎么用</th><td>' +
-    '<b>每天 3 步</b>：① 打开「12 周任务」找到今天 → ② 按 steps 做，做完勾选 → ③ 有疑问先看「概念词典」。<br>' +
+    '<tr><th style="width:120px">每天两个文件</th><td>' +
+    '每个学习日配套 <b>两份代码</b>：<br>' +
+    '① <b>主脚本</b> <code>weekN/dayN_主题.py</code> —— 平铺、零自定义函数、中文行内注释，改顶部常量就能重跑，先把当天知识点跑通；<br>' +
+    '② <b>练习课程</b> <code>weekN/dayN_exercises.py</code> —— 5 个 <code>exercise_N_xxx()</code> 函数，每个带 TODO 和提示，<code>main()</code> 里全部注释掉，你取消哪个注释就跑哪个。<br>' +
+    '笔记在 <code>notes/dayNN.md</code>，跑完直接往里填。</td></tr>' +
+    '<tr><th>怎么用</th><td>' +
+    '<b>每天 4 步</b>：① 打开「12 周任务」找到今天 → ② 先读主脚本（不跑），标出关键位置 → ③ 跑通主脚本 → ④ 做「📝 今天要做的练习」，做完勾选。<br>' +
     '遇到卡住的一天，<b>不要停</b>：先跳过做下一天，周末大块时间回来补。90 天里允许有 10 天落后，不允许有 1 周停滞。</td></tr>' +
-    '<tr><th>代码块</th><td>点右上角「复制」粘贴到你的项目里跑。所有示例都是核心片段，不是完整可跑文件——补全 import 与配置本身就是练习的一部分。</td></tr>' +
-    '<tr><th>练习题</th><td>36 道，每周 3 道。建议顺序：先自己写 → 卡住看「提示」→ 再看「参考答案」。不要一上来就看答案，那样等于没做。</td></tr>' +
+    '<tr><th>代码块</th><td>点右上角「复制」粘贴到你的项目里跑。页面里的示例是核心片段；项目里的主脚本是完整可跑文件——先看页面片段懂原理，再打开项目文件跑通。</td></tr>' +
+    '<tr><th>练习题</th><td>按难度与类型筛选。建议顺序：先自己写 → 卡住看「提示」→ 再看「参考答案」。不要一上来就看答案，那样等于没做。</td></tr>' +
     '<tr><th>进度</th><td>存在本机浏览器，关掉不丢。换电脑前点「导出进度」，在新电脑点「导入进度」。清浏览器缓存会清空进度，请定期导出。</td></tr>' +
-    '<tr><th>与参考系列的关系</th><td>D1–D37 对齐公众号《90天，我和 WorkBuddy 学 Agent》的 Round 结构；D38–D90 按该系列开篇公布的官方三阶段周计划推演。额外加入的是两块原作者不需要、但你必须补的内容：<b>工程地基</b>（Git/SQL/HTTP/FastAPI/Docker）和 <b>FDE 交付证据</b>（合成数据、模拟用户、指标、案例、STAR）。</td></tr>' +
+    '<tr><th>与参考系列的关系</th><td>W1 的 D1–D6 已按公众号《90天，我和 WorkBuddy 学 Agent》的实际发文顺序重排（D1 四参数 → D2 Function Calling → D3 结构化输出 → D4 流式 → D5 上下文与成本 → D6 Git 地基）；D7–D90 仍按该系列开篇公布的官方三阶段周计划推演。额外加入的是两块原作者不需要、但你必须补的内容：<b>工程地基</b>（Git/SQL/HTTP/FastAPI/Docker）和 <b>FDE 交付证据</b>（合成数据、模拟用户、指标、案例、STAR）。</td></tr>' +
     '<tr><th>为什么不是"学完再找工作"</th><td>FDE 招聘看的是"你交付过什么"。所以计划从第 6 周就启动主线项目，第 10 周就有真实使用数据，第 11 周就能拿出案例。技术学习永远没有"学完"的那天，交付闭环才有。</td></tr>' +
     '<tr><th>主线项目</th><td>客服工单分类与回复助手（合成数据 + 模拟用户）。它一条链路覆盖：结构化输出 + RAG + 工具调用 + 人工确认 + 权限边界 + 写回 + 指标采集——正是 FDE 面试要的证据链。</td></tr>';
   box.appendChild(t);

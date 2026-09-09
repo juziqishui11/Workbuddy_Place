@@ -49,6 +49,26 @@ agent-90days/
 └─ eval/            # golden set 与基线
 ```
 
+## Python 工程（按天创建）
+
+每天一个脚本，命名 `weekN/dayN_主题.py`，笔记在 `notes/dayNN.md`。
+
+```
+week1/day1_basic.py  # Day 1 ✅ 30 多行，从上往下平铺，零自定义函数
+notes/day01.md       # Day 1 笔记（填运行结果 + 自测题）
+common/config.py     # 配置统一入口（Day 3 起复用）
+common/mock.py       # 可选：离线演示用的假响应
+```
+
+跑 Day 1（先复制 `.env.example` 为 `.env` 并填 key）：
+
+```bash
+.venv\Scripts\activate
+python week1/day1_basic.py
+```
+
+写法人：每天一个**平铺脚本**（像公众号原文那样，不包函数、不用命令行参数），想改问题或温度就改脚本顶部的常量后重跑。
+
 ## 用法
 
 1. 打开 `fde-90day-plan.html`，点「12 周任务」找到今天。

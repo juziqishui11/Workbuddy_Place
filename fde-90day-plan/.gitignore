@@ -1,0 +1,22 @@
+# 密钥：绝不能进版本库
+.env
+*.env
+!.env
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+
+# 运行产物
+data/
+logs/
+*.log
+.emb_cache.json
+
+# 编辑器 / 系统
+.vscode/
+.idea/
+.DS_Store
