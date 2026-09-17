@@ -1878,10 +1878,11 @@ function seedWorks() {
     /* —— 案例（偏落地的场景）—— */
     /* 案例5(MBTI)/案例6(2048)/案例7(FDE) 各有独立 Cloud Studio 部署链接（W.mbti/W.game2048/W.fde）；
        其余案例不挂主站链接，留空由用户手动填「在线版」。github 仅填真实独立的仓库/文件夹，
-       主站模块类案例的 github 留空（不挂主仓库深链）。 */
+       主站模块类案例的 github 留空（不挂主仓库深链）—— 唯独「个人工作任务台（本站）」本身就是主站，
+       故 online=W.workbench、github=主仓库 Workbench 文件夹（特例）。 */
     { id: uid(), name: '公众号「我与AI的那些事」', type: '公众号', cat: '案例', status: '运营中', url: '', github: '', online: '', desc: '以云崽为主角，记录 AI 实践与 WorkBuddy 用法。', tags: ['内容', 'AI'], createdAt: iso, updatedAt: iso },
     { id: uid(), name: '云崽微信表情包', type: '表情包', cat: '案例', status: '进行中', url: '', github: '', online: '', desc: '办公族主题 · 泡泡玛特潮玩风，用即梦 4.0 出图（多批次+风格定型）。', tags: ['IP', '即梦'], createdAt: iso, updatedAt: iso },
-    { id: uid(), name: '个人工作任务台（本站）', type: 'WB案例', cat: '案例', status: '进行中', url: '', github: '', online: '', desc: '9 大分区的单文件工作台：任务、项目、知识、学习、技能、文档、工具、复盘、方向。', tags: ['WorkBuddy', '工作台'], createdAt: iso, updatedAt: iso },
+    { id: uid(), name: '个人工作任务台（本站）', type: 'WB案例', cat: '案例', status: '进行中', url: '', github: R + '/Workbench', online: W.workbench, desc: '9 大分区的单文件工作台：任务、项目、知识、学习、技能、文档、工具、复盘、方向。', tags: ['WorkBuddy', '工作台'], createdAt: iso, updatedAt: iso },
     { id: uid(), name: '知识库集成（IMA+Obsidian）', type: 'WB案例', cat: '案例', status: '进行中', url: 'https://ima.qq.com', github: '', online: '', desc: '目录树+知识图谱；V4.8 重扫 63 文件、FR 布局根治崩坏。', tags: ['Obsidian', '图谱'], createdAt: iso, updatedAt: iso },
     { id: uid(), name: 'MBTI 人格测评站', type: 'WB案例', cat: '案例', status: '已上线', url: 'https://github.com/juziqishui11/Workbuddy_Place', github: R + '/mbti-assessment', online: W.mbti, desc: '44 题 / 16 型 / 4 维度，单文件 index.html 交付。', tags: ['MBTI', '单文件'], createdAt: iso, updatedAt: iso },
     { id: uid(), name: '2048 小游戏', type: 'WB案例', cat: '案例', status: '已上线', url: 'https://github.com/juziqishui11/Workbuddy_Place', github: R + '/2048', online: W.game2048, desc: '纯前端小游戏，含动画与最高分记录。', tags: ['游戏'], createdAt: iso, updatedAt: iso },
