@@ -1,0 +1,5 @@
+appId: wbapp_9qlMT4hEXnEXkjMJLBO0s7
+name: Token消耗看板
+localDir: D:\workBuddy_place\dashboards\token
+appType: web
+entryHtml: token-dashboard.html

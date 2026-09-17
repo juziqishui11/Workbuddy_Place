@@ -1,0 +1,5 @@
+appId: wbapp_LoOVwSBsP88v4E8Rr2QrbX
+name: 个人工作台
+localDir: D:\workBuddy_place\Workbench\dist-site
+appType: web
+entryHtml: index.html
