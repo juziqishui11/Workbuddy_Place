@@ -22,22 +22,27 @@ function seedWorks() {
   var W = WB_DEPLOY_LINKS;
   return [
     /* —— 案例（偏落地的场景）—— */
-    { id: uid(), name: '公众号「我与AI的那些事」', type: '公众号', cat: '案例', status: '运营中', url: '', github: R + '/Workbench', online: W.workbench, desc: '以云崽为主角，记录 AI 实践与 WorkBuddy 用法。', tags: ['内容', 'AI'], createdAt: iso, updatedAt: iso },
-    { id: uid(), name: '云崽微信表情包', type: '表情包', cat: '案例', status: '进行中', url: '', github: R + '/Workbench', online: W.workbench, desc: '办公族主题 · 泡泡玛特潮玩风，用即梦 4.0 出图（多批次+风格定型）。', tags: ['IP', '即梦'], createdAt: iso, updatedAt: iso },
-    { id: uid(), name: '个人工作任务台（本站）', type: 'WB案例', cat: '案例', status: '进行中', url: '', github: R + '/Workbench', online: W.workbench, desc: '9 大分区的单文件工作台：任务、项目、知识、学习、技能、文档、工具、复盘、方向。', tags: ['WorkBuddy', '工作台'], createdAt: iso, updatedAt: iso },
-    { id: uid(), name: '知识库集成（IMA+Obsidian）', type: 'WB案例', cat: '案例', status: '进行中', url: 'https://ima.qq.com', github: R + '/Workbench', online: W.workbench, desc: '目录树+知识图谱；V4.8 重扫 63 文件、FR 布局根治崩坏。', tags: ['Obsidian', '图谱'], createdAt: iso, updatedAt: iso },
+    /* 主站 Cloud Studio 链接（W.workbench）只回填给案例5(MBTI)；其余案例不挂主站链接，
+       各自有独立部署或留空由用户手动填「在线版」。github 同理：仅填真实独立的仓库/文件夹，
+       主站模块类案例的 github 留空（不挂主仓库深链）。 */
+    { id: uid(), name: '公众号「我与AI的那些事」', type: '公众号', cat: '案例', status: '运营中', url: '', github: '', online: '', desc: '以云崽为主角，记录 AI 实践与 WorkBuddy 用法。', tags: ['内容', 'AI'], createdAt: iso, updatedAt: iso },
+    { id: uid(), name: '云崽微信表情包', type: '表情包', cat: '案例', status: '进行中', url: '', github: '', online: '', desc: '办公族主题 · 泡泡玛特潮玩风，用即梦 4.0 出图（多批次+风格定型）。', tags: ['IP', '即梦'], createdAt: iso, updatedAt: iso },
+    { id: uid(), name: '个人工作任务台（本站）', type: 'WB案例', cat: '案例', status: '进行中', url: '', github: '', online: '', desc: '9 大分区的单文件工作台：任务、项目、知识、学习、技能、文档、工具、复盘、方向。', tags: ['WorkBuddy', '工作台'], createdAt: iso, updatedAt: iso },
+    { id: uid(), name: '知识库集成（IMA+Obsidian）', type: 'WB案例', cat: '案例', status: '进行中', url: 'https://ima.qq.com', github: '', online: '', desc: '目录树+知识图谱；V4.8 重扫 63 文件、FR 布局根治崩坏。', tags: ['Obsidian', '图谱'], createdAt: iso, updatedAt: iso },
     { id: uid(), name: 'MBTI 人格测评站', type: 'WB案例', cat: '案例', status: '已上线', url: 'https://github.com/juziqishui11/Workbuddy_Place', github: R + '/mbti-assessment', online: W.workbench, desc: '44 题 / 16 型 / 4 维度，单文件 index.html 交付。', tags: ['MBTI', '单文件'], createdAt: iso, updatedAt: iso },
-    { id: uid(), name: '2048 小游戏', type: 'WB案例', cat: '案例', status: '已上线', url: 'https://github.com/juziqishui11/Workbuddy_Place', github: R + '/2048', online: W.workbench, desc: '纯前端小游戏，含动画与最高分记录。', tags: ['游戏'], createdAt: iso, updatedAt: iso },
-    { id: uid(), name: 'FDE 90天学习网站', type: 'WB案例', cat: '案例', status: '进行中', url: '', github: R + '/Workbench', online: W.workbench, desc: '12 周 / 90 天 / 45 练习 / 54 词条 单文件站（本站内置模块）。', tags: ['学习', 'FDE'], createdAt: iso, updatedAt: iso },
-    { id: uid(), name: 'WB案例库', type: 'WB案例', cat: '案例', status: '已上线', url: '', github: R + '/Workbench', online: W.workbench, desc: '站点内置 WB 案例快照模块：团队 / 个人案例沉淀与复用。', tags: ['案例库', 'WB'], createdAt: iso, updatedAt: iso },
+    { id: uid(), name: '2048 小游戏', type: 'WB案例', cat: '案例', status: '已上线', url: 'https://github.com/juziqishui11/Workbuddy_Place', github: R + '/2048', online: '', desc: '纯前端小游戏，含动画与最高分记录。', tags: ['游戏'], createdAt: iso, updatedAt: iso },
+    { id: uid(), name: 'FDE 90天学习网站', type: 'WB案例', cat: '案例', status: '进行中', url: '', github: '', online: '', desc: '12 周 / 90 天 / 45 练习 / 54 词条 单文件站（本站内置模块）。', tags: ['学习', 'FDE'], createdAt: iso, updatedAt: iso },
+    { id: uid(), name: 'WB案例库', type: 'WB案例', cat: '案例', status: '已上线', url: '', github: '', online: '', desc: '站点内置 WB 案例快照模块：团队 / 个人案例沉淀与复用。', tags: ['案例库', 'WB'], createdAt: iso, updatedAt: iso },
+    { id: uid(), name: '豆包下载无水印图片插件', type: '插件', cat: '案例', status: '已上线', url: '', github: '', online: '', desc: '豆包（Doubao）浏览器插件：一键下载无水印原图。', tags: ['豆包', '插件', '图片'], createdAt: iso, updatedAt: iso },
     /* —— 工具（偏功能性，可点击打开 / 使用）—— */
-    { id: uid(), name: '技能推荐', type: '自研工具', cat: '工具', group: '技能', status: '已上线', url: '', github: '', online: W.workbench, desc: '站点「技能」模块：SkillHub 每日推荐 + 已安装技能清单。', tags: ['技能', '推荐'], prompt: '在「技能」模块浏览 SkillHub 每日推荐，或说「帮我找/安装一个 XXX 技能」即可让助手检索并安装。', createdAt: iso, updatedAt: iso },
-    { id: uid(), name: 'pushplus-wechat 等自研技能', type: '自研工具', cat: '工具', group: '推送', status: '已上线', url: '', github: R + '/Workbench', online: W.workbench, desc: 'WorkBuddy skill 开发（微信推送等）。', tags: ['skill', '推送'], prompt: '说「推送到微信」即可把任务结果摘要推到微信（pushplus-wechat 技能）。', createdAt: iso, updatedAt: iso },
+    /* 非看板工具不挂主站 Cloud Studio 链接；看板类（token / 资源）单独部署，保留各自链接。 */
+    { id: uid(), name: '技能推荐', type: '自研工具', cat: '工具', group: '技能', status: '已上线', url: '', github: '', online: '', desc: '站点「技能」模块：SkillHub 每日推荐 + 已安装技能清单。', tags: ['技能', '推荐'], prompt: '在「技能」模块浏览 SkillHub 每日推荐，或说「帮我找/安装一个 XXX 技能」即可让助手检索并安装。', createdAt: iso, updatedAt: iso },
+    { id: uid(), name: 'pushplus-wechat 等自研技能', type: '自研工具', cat: '工具', group: '推送', status: '已上线', url: '', github: '', online: '', desc: 'WorkBuddy skill 开发（微信推送等）。', tags: ['skill', '推送'], prompt: '说「推送到微信」即可把任务结果摘要推到微信（pushplus-wechat 技能）。', createdAt: iso, updatedAt: iso },
     { id: uid(), name: '模型 TOKEN 消耗看板', type: '自研工具', cat: '工具', group: '看板', status: '已上线', url: '', github: R + '/tools', online: W.token, desc: 'token-dashboard skill：KPI/日历热力图/模型分布/三级下钻。', tags: ['token', '看板'], prompt: '说「看看我的 token 用量」运行 token-dashboard 技能，生成离线看板 HTML。', createdAt: iso, updatedAt: iso },
     { id: uid(), name: '本机资源监控看板（CPU/内存/FPS）', type: '自研工具', cat: '工具', group: '监控', status: '待构建', url: '', github: R + '/tools', online: W.resource, desc: '本地采整机指标→离线看板，可定时刷新。', tags: ['监控', '系统'], prompt: '说「生成本机监控看板」运行 sys-resource-dashboard 技能，采 CPU/内存/磁盘/网络/进程并生成离线 HTML（含页内 FPS）。', createdAt: iso, updatedAt: iso },
-    { id: uid(), name: '聊天记录→摘要→知识库', type: '自研工具', cat: '工具', group: '知识库', status: '待验证', url: '', github: R + '/Workbench', online: W.workbench, desc: '群聊摘要(baoyu-wechat-summary)+IMA导入(ima-kb)，链路可行未跑通。', tags: ['群聊', '知识库'], prompt: '先把聊天记录交给 baoyu-wechat-summary 提炼为 .md 摘要，再用 ima-kb 把文件导入 IMA 知识库。', createdAt: iso, updatedAt: iso },
-    { id: uid(), name: '本地 MySQL 8.0 安装与配置', type: '自研工具', cat: '工具', group: '数据库', status: '已上线', url: '', github: '', online: W.workbench, desc: 'mysql-local skill 托管，端口 3306 开机自启。', tags: ['MySQL', '数据库'], prompt: '用 mysql-local 技能管理本地 MySQL：说「启动/停止 MySQL 服务」「列出数据库 / 查表结构」。', createdAt: iso, updatedAt: iso },
-    { id: uid(), name: 'AI日报/资讯 搜集与生成', type: '自研工具', cat: '工具', group: '资讯', status: '已上线', url: '', github: R + '/Workbench', online: W.workbench, desc: 'aihot 抓热点 + 站点资讯/公众号推送。', tags: ['资讯', '日报'], prompt: '说「今天 AI 圈有什么」或访问「AI资讯」模块；aihot 拉取热点，可一键生成公众号日报。', createdAt: iso, updatedAt: iso }
+    { id: uid(), name: '聊天记录→摘要→知识库', type: '自研工具', cat: '工具', group: '知识库', status: '待验证', url: '', github: '', online: '', desc: '群聊摘要(baoyu-wechat-summary)+IMA导入(ima-kb)，链路可行未跑通。', tags: ['群聊', '知识库'], prompt: '先把聊天记录交给 baoyu-wechat-summary 提炼为 .md 摘要，再用 ima-kb 把文件导入 IMA 知识库。', createdAt: iso, updatedAt: iso },
+    { id: uid(), name: '本地 MySQL 8.0 安装与配置', type: '自研工具', cat: '工具', group: '数据库', status: '已上线', url: '', github: '', online: '', desc: 'mysql-local skill 托管，端口 3306 开机自启。', tags: ['MySQL', '数据库'], prompt: '用 mysql-local 技能管理本地 MySQL：说「启动/停止 MySQL 服务」「列出数据库 / 查表结构」。', createdAt: iso, updatedAt: iso },
+    { id: uid(), name: 'AI日报/资讯 搜集与生成', type: '自研工具', cat: '工具', group: '资讯', status: '已上线', url: '', github: '', online: '', desc: 'aihot 抓热点 + 站点资讯/公众号推送。', tags: ['资讯', '日报'], prompt: '说「今天 AI 圈有什么」或访问「AI资讯」模块；aihot 拉取热点，可一键生成公众号日报。', createdAt: iso, updatedAt: iso }
   ];
 }
 
@@ -182,6 +187,14 @@ function migrate(raw) {
         if (w.online && !cur.online) cur.online = w.online;
         if (w.prompt && !cur.prompt) cur.prompt = w.prompt;
         if (w.status && !cur.status) cur.status = w.status;
+        /* 2026-09-17 修正：上一轮误把主站 Cloud Studio 链接(WB_DEPLOY_LINKS.workbench)
+           与主仓库深链回填到不该挂主站的案例/工具。仅当“当前值正好等于主站链接、而种子
+           并未要求该值”时才清除：用户手动填的真实链接(≠主站链接) 不会被误伤；案例5(MBTI)
+           的 online 在种子中显式等于 W.workbench，故保留。 */
+        var __mainRepo = 'https://github.com/juziqishui11/Workbuddy_Place/tree/main/Workbench';
+        var __mainSite = WB_DEPLOY_LINKS.workbench;
+        if (cur.online === __mainSite && !w.online) cur.online = '';
+        if (cur.github === __mainRepo && !w.github) cur.github = '';
       }
     });
   })();
@@ -462,7 +475,7 @@ function seedDemo() {
   /* ---- 工具 ----（seedTools：手动快捷入口 + 提示词，真实工具不打 demo） */
   S.tools = seedTools();
 
-  /* ---- 我的作品 / 案例 ----（seedWorks：8 案例 + 9 工具，真实数据不打 demo，清空示例不误删） */
+  /* ---- 我的作品 / 案例 ----（seedWorks：9 案例 + 7 工具(含 2 看板)，真实数据不打 demo，清空示例不误删） */
   S.works = seedWorks();
 
   /* ---- 工作台方向 ---- */
