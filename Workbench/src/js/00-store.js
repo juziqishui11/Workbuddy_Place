@@ -10,24 +10,25 @@ var SCHEMA_VERSION = 2;
    抽成函数，供 seedDemo（新用户）与 migrate（老用户幂等补录/同步）两处复用。 */
 function seedWorks() {
   var iso = new Date().toISOString();
+  var R = 'https://github.com/juziqishui11/Workbuddy_Place/tree/main';
   return [
     /* —— 案例（偏落地的场景）—— */
-    { id: uid(), name: '公众号「我与AI的那些事」', type: '公众号', cat: '案例', status: '运营中', url: '', desc: '以云崽为主角，记录 AI 实践与 WorkBuddy 用法。', tags: ['内容', 'AI'], createdAt: iso, updatedAt: iso },
-    { id: uid(), name: '云崽微信表情包', type: '表情包', cat: '案例', status: '进行中', url: '', desc: '办公族主题 · 泡泡玛特潮玩风，用即梦 4.0 出图（多批次+风格定型）。', tags: ['IP', '即梦'], createdAt: iso, updatedAt: iso },
-    { id: uid(), name: '个人工作任务台（本站）', type: 'WB案例', cat: '案例', status: '进行中', url: '', desc: '9 大分区的单文件工作台：任务、项目、知识、学习、技能、文档、工具、复盘、方向。', tags: ['WorkBuddy', '工作台'], createdAt: iso, updatedAt: iso },
-    { id: uid(), name: '知识库集成（IMA+Obsidian）', type: 'WB案例', cat: '案例', status: '进行中', url: 'https://ima.qq.com', desc: '目录树+知识图谱；V4.8 重扫 63 文件、FR 布局根治崩坏。', tags: ['Obsidian', '图谱'], createdAt: iso, updatedAt: iso },
-    { id: uid(), name: 'MBTI 人格测评站', type: 'WB案例', cat: '案例', status: '已上线', url: 'https://github.com/juziqishui11/Workbuddy_Place', desc: '44 题 / 16 型 / 4 维度，单文件 index.html 交付。', tags: ['MBTI', '单文件'], createdAt: iso, updatedAt: iso },
-    { id: uid(), name: '2048 小游戏', type: 'WB案例', cat: '案例', status: '已上线', url: 'https://github.com/juziqishui11/Workbuddy_Place', desc: '纯前端小游戏，含动画与最高分记录。', tags: ['游戏'], createdAt: iso, updatedAt: iso },
-    { id: uid(), name: 'FDE 90天学习网站', type: 'WB案例', cat: '案例', status: '进行中', url: '', desc: '12 周 / 90 天 / 45 练习 / 54 词条 单文件站（本站内置模块）。', tags: ['学习', 'FDE'], createdAt: iso, updatedAt: iso },
-    { id: uid(), name: 'WB案例库', type: 'WB案例', cat: '案例', status: '已上线', url: '', desc: '站点内置 WB 案例快照模块：团队 / 个人案例沉淀与复用。', tags: ['案例库', 'WB'], createdAt: iso, updatedAt: iso },
+    { id: uid(), name: '公众号「我与AI的那些事」', type: '公众号', cat: '案例', status: '运营中', url: '', github: R + '/Workbench', online: '', desc: '以云崽为主角，记录 AI 实践与 WorkBuddy 用法。', tags: ['内容', 'AI'], createdAt: iso, updatedAt: iso },
+    { id: uid(), name: '云崽微信表情包', type: '表情包', cat: '案例', status: '进行中', url: '', github: R + '/Workbench', online: '', desc: '办公族主题 · 泡泡玛特潮玩风，用即梦 4.0 出图（多批次+风格定型）。', tags: ['IP', '即梦'], createdAt: iso, updatedAt: iso },
+    { id: uid(), name: '个人工作任务台（本站）', type: 'WB案例', cat: '案例', status: '进行中', url: '', github: R + '/Workbench', online: '', desc: '9 大分区的单文件工作台：任务、项目、知识、学习、技能、文档、工具、复盘、方向。', tags: ['WorkBuddy', '工作台'], createdAt: iso, updatedAt: iso },
+    { id: uid(), name: '知识库集成（IMA+Obsidian）', type: 'WB案例', cat: '案例', status: '进行中', url: 'https://ima.qq.com', github: R + '/Workbench', online: '', desc: '目录树+知识图谱；V4.8 重扫 63 文件、FR 布局根治崩坏。', tags: ['Obsidian', '图谱'], createdAt: iso, updatedAt: iso },
+    { id: uid(), name: 'MBTI 人格测评站', type: 'WB案例', cat: '案例', status: '已上线', url: 'https://github.com/juziqishui11/Workbuddy_Place', github: R + '/mbti-assessment', online: '', desc: '44 题 / 16 型 / 4 维度，单文件 index.html 交付。', tags: ['MBTI', '单文件'], createdAt: iso, updatedAt: iso },
+    { id: uid(), name: '2048 小游戏', type: 'WB案例', cat: '案例', status: '已上线', url: 'https://github.com/juziqishui11/Workbuddy_Place', github: R + '/2048', online: '', desc: '纯前端小游戏，含动画与最高分记录。', tags: ['游戏'], createdAt: iso, updatedAt: iso },
+    { id: uid(), name: 'FDE 90天学习网站', type: 'WB案例', cat: '案例', status: '进行中', url: '', github: R + '/Workbench', online: '', desc: '12 周 / 90 天 / 45 练习 / 54 词条 单文件站（本站内置模块）。', tags: ['学习', 'FDE'], createdAt: iso, updatedAt: iso },
+    { id: uid(), name: 'WB案例库', type: 'WB案例', cat: '案例', status: '已上线', url: '', github: R + '/Workbench', online: '', desc: '站点内置 WB 案例快照模块：团队 / 个人案例沉淀与复用。', tags: ['案例库', 'WB'], createdAt: iso, updatedAt: iso },
     /* —— 工具（偏功能性，可点击打开 / 使用）—— */
-    { id: uid(), name: '技能推荐', type: '自研工具', cat: '工具', group: '技能', status: '已上线', url: '', desc: '站点「技能」模块：SkillHub 每日推荐 + 已安装技能清单。', tags: ['技能', '推荐'], prompt: '在「技能」模块浏览 SkillHub 每日推荐，或说「帮我找/安装一个 XXX 技能」即可让助手检索并安装。', createdAt: iso, updatedAt: iso },
-    { id: uid(), name: 'pushplus-wechat 等自研技能', type: '自研工具', cat: '工具', group: '推送', status: '已上线', url: '', desc: 'WorkBuddy skill 开发（微信推送等）。', tags: ['skill', '推送'], prompt: '说「推送到微信」即可把任务结果摘要推到微信（pushplus-wechat 技能）。', createdAt: iso, updatedAt: iso },
-    { id: uid(), name: '模型 TOKEN 消耗看板', type: '自研工具', cat: '工具', group: '看板', status: '已上线', url: '', desc: 'token-dashboard skill：KPI/日历热力图/模型分布/三级下钻。', tags: ['token', '看板'], prompt: '说「看看我的 token 用量」运行 token-dashboard 技能，生成离线看板 HTML。', createdAt: iso, updatedAt: iso },
-    { id: uid(), name: '本机资源监控看板（CPU/内存/FPS）', type: '自研工具', cat: '工具', group: '监控', status: '待构建', url: '', desc: '本地采整机指标→离线看板，可定时刷新。', tags: ['监控', '系统'], prompt: '说「生成本机监控看板」运行 sys-resource-dashboard 技能，采 CPU/内存/磁盘/网络/进程并生成离线 HTML（含页内 FPS）。', createdAt: iso, updatedAt: iso },
-    { id: uid(), name: '聊天记录→摘要→知识库', type: '自研工具', cat: '工具', group: '知识库', status: '待验证', url: '', desc: '群聊摘要(baoyu-wechat-summary)+IMA导入(ima-kb)，链路可行未跑通。', tags: ['群聊', '知识库'], prompt: '先把聊天记录交给 baoyu-wechat-summary 提炼为 .md 摘要，再用 ima-kb 把文件导入 IMA 知识库。', createdAt: iso, updatedAt: iso },
-    { id: uid(), name: '本地 MySQL 8.0 安装与配置', type: '自研工具', cat: '工具', group: '数据库', status: '已上线', url: '', desc: 'mysql-local skill 托管，端口 3306 开机自启。', tags: ['MySQL', '数据库'], prompt: '用 mysql-local 技能管理本地 MySQL：说「启动/停止 MySQL 服务」「列出数据库 / 查表结构」。', createdAt: iso, updatedAt: iso },
-    { id: uid(), name: 'AI日报/资讯 搜集与生成', type: '自研工具', cat: '工具', group: '资讯', status: '已上线', url: '', desc: 'aihot 抓热点 + 站点资讯/公众号推送。', tags: ['资讯', '日报'], prompt: '说「今天 AI 圈有什么」或访问「AI资讯」模块；aihot 拉取热点，可一键生成公众号日报。', createdAt: iso, updatedAt: iso }
+    { id: uid(), name: '技能推荐', type: '自研工具', cat: '工具', group: '技能', status: '已上线', url: '', github: '', online: '', desc: '站点「技能」模块：SkillHub 每日推荐 + 已安装技能清单。', tags: ['技能', '推荐'], prompt: '在「技能」模块浏览 SkillHub 每日推荐，或说「帮我找/安装一个 XXX 技能」即可让助手检索并安装。', createdAt: iso, updatedAt: iso },
+    { id: uid(), name: 'pushplus-wechat 等自研技能', type: '自研工具', cat: '工具', group: '推送', status: '已上线', url: '', github: R + '/Workbench', online: '', desc: 'WorkBuddy skill 开发（微信推送等）。', tags: ['skill', '推送'], prompt: '说「推送到微信」即可把任务结果摘要推到微信（pushplus-wechat 技能）。', createdAt: iso, updatedAt: iso },
+    { id: uid(), name: '模型 TOKEN 消耗看板', type: '自研工具', cat: '工具', group: '看板', status: '已上线', url: '', github: R + '/tools', online: '', desc: 'token-dashboard skill：KPI/日历热力图/模型分布/三级下钻。', tags: ['token', '看板'], prompt: '说「看看我的 token 用量」运行 token-dashboard 技能，生成离线看板 HTML。', createdAt: iso, updatedAt: iso },
+    { id: uid(), name: '本机资源监控看板（CPU/内存/FPS）', type: '自研工具', cat: '工具', group: '监控', status: '待构建', url: '', github: R + '/tools', online: '', desc: '本地采整机指标→离线看板，可定时刷新。', tags: ['监控', '系统'], prompt: '说「生成本机监控看板」运行 sys-resource-dashboard 技能，采 CPU/内存/磁盘/网络/进程并生成离线 HTML（含页内 FPS）。', createdAt: iso, updatedAt: iso },
+    { id: uid(), name: '聊天记录→摘要→知识库', type: '自研工具', cat: '工具', group: '知识库', status: '待验证', url: '', github: R + '/Workbench', online: '', desc: '群聊摘要(baoyu-wechat-summary)+IMA导入(ima-kb)，链路可行未跑通。', tags: ['群聊', '知识库'], prompt: '先把聊天记录交给 baoyu-wechat-summary 提炼为 .md 摘要，再用 ima-kb 把文件导入 IMA 知识库。', createdAt: iso, updatedAt: iso },
+    { id: uid(), name: '本地 MySQL 8.0 安装与配置', type: '自研工具', cat: '工具', group: '数据库', status: '已上线', url: '', github: '', online: '', desc: 'mysql-local skill 托管，端口 3306 开机自启。', tags: ['MySQL', '数据库'], prompt: '用 mysql-local 技能管理本地 MySQL：说「启动/停止 MySQL 服务」「列出数据库 / 查表结构」。', createdAt: iso, updatedAt: iso },
+    { id: uid(), name: 'AI日报/资讯 搜集与生成', type: '自研工具', cat: '工具', group: '资讯', status: '已上线', url: '', github: R + '/Workbench', online: '', desc: 'aihot 抓热点 + 站点资讯/公众号推送。', tags: ['资讯', '日报'], prompt: '说「今天 AI 圈有什么」或访问「AI资讯」模块；aihot 拉取热点，可一键生成公众号日报。', createdAt: iso, updatedAt: iso }
   ];
 }
 
@@ -35,13 +36,14 @@ function seedWorks() {
    不打 demo 标记（与 works 一致），清空示例数据不会误删。 */
 function seedTools() {
   var iso = new Date().toISOString();
+  var repo = 'https://github.com/juziqishui11/Workbuddy_Place';
   return [
-    { id: uid(), name: 'CloudStudio 部署', url: '', icon: '🚀', category: '部署', prompt: '用 cloudstudio-deploy 技能发布项目：说「把这个项目发布上线」即可部署到 Cloud Studio 云沙箱并拿到分享链接。', createdAt: iso },
-    { id: uid(), name: '即梦 AI 出图', url: '', icon: '🎨', category: '创作', prompt: '说「用即梦生成一张 XXX 风格的图」或「生成一段 XXX 主题的视频」，助手调用 jimeng-image-gen / seedance 出图出视频（默认存 Img_Place/即梦4）。', createdAt: iso },
-    { id: uid(), name: 'GitHub 仓库', url: 'https://github.com/juziqishui11/Workbuddy_Place', icon: '🐙', category: '代码', prompt: '访问 monorepo 查看 / 同步各子项目；或用 git 工具提交代码。', createdAt: iso },
-    { id: uid(), name: 'IMA 知识库', url: 'https://ima.qq.com', icon: '📚', category: '知识', prompt: '说「存进 ima」把文件 / 链接 / 网页导入 IMA 知识库（ima-kb 技能）。', createdAt: iso },
-    { id: uid(), name: 'Open-Meteo 天气', url: 'https://open-meteo.com/en/docs', icon: '🌤️', category: '技术', prompt: '天气数据由概览页自动拉取（Open-Meteo 免 key），无需手动操作；可点此查看接口文档。', createdAt: iso },
-    { id: uid(), name: '腾讯会议', url: 'https://meeting.tencent.com', icon: '🎥', category: '会议', prompt: '通过腾讯会议技能：说「帮我预约明天下午3点项目周会，30分钟」或「列出我本周的会议」「导出参会成员 / 查录制与转写」。需腾讯会议账号已授权连接器。', createdAt: iso }
+    { id: uid(), name: 'CloudStudio 部署', url: '', github: '', online: '', icon: '🚀', category: '部署', prompt: '用 cloudstudio-deploy 技能发布项目：说「把这个项目发布上线」即可部署到 Cloud Studio 云沙箱并拿到分享链接。', createdAt: iso },
+    { id: uid(), name: '即梦 AI 出图', url: '', github: '', online: '', icon: '🎨', category: '创作', prompt: '说「用即梦生成一张 XXX 风格的图」或「生成一段 XXX 主题的视频」，助手调用 jimeng-image-gen / seedance 出图出视频（默认存 Img_Place/即梦4）。', createdAt: iso },
+    { id: uid(), name: 'GitHub 仓库', url: repo, github: repo, online: '', icon: '🐙', category: '代码', prompt: '访问 monorepo 查看 / 同步各子项目；或用 git 工具提交代码。', createdAt: iso },
+    { id: uid(), name: 'IMA 知识库', url: 'https://ima.qq.com', github: '', online: '', icon: '📚', category: '知识', prompt: '说「存进 ima」把文件 / 链接 / 网页导入 IMA 知识库（ima-kb 技能）。', createdAt: iso },
+    { id: uid(), name: 'Open-Meteo 天气', url: 'https://open-meteo.com/en/docs', github: '', online: '', icon: '🌤️', category: '技术', prompt: '天气数据由概览页自动拉取（Open-Meteo 免 key），无需手动操作；可点此查看接口文档。', createdAt: iso },
+    { id: uid(), name: '腾讯会议', url: 'https://meeting.tencent.com', github: '', online: '', icon: '🎥', category: '会议', prompt: '通过腾讯会议技能：说「帮我预约明天下午3点项目周会，30分钟」或「列出我本周的会议」「导出参会成员 / 查录制与转写」。需腾讯会议账号已授权连接器。', createdAt: iso }
   ];
 }
 
@@ -167,6 +169,8 @@ function migrate(raw) {
         if (w.group) cur.group = w.group;
         if (w.type) cur.type = w.type;
         if (w.url && !cur.url) cur.url = w.url;
+        if (w.github && !cur.github) cur.github = w.github;
+        if (w.online && !cur.online) cur.online = w.online;
         if (w.prompt && !cur.prompt) cur.prompt = w.prompt;
         if (w.status && !cur.status) cur.status = w.status;
       }
@@ -174,11 +178,19 @@ function migrate(raw) {
   })();
   /* 工具入口幂等补充：新增「腾讯会议」，移除与 works 重复的「本地 MySQL 8.0」（保留 works 版，信息更全） */
   (function mergeToolSeed() {
-    var tnames = {};
-    out.tools.forEach(function (t) { if (t && t.name) tnames[t.name] = true; });
+    var byName = {};
+    out.tools.forEach(function (t) { if (t && t.name) byName[t.name] = t; });
     out.tools = out.tools.filter(function (t) { return t.name !== '本地 MySQL 8.0'; });
     seedTools().forEach(function (t) {
-      if (!tnames[t.name]) out.tools.push(t);
+      var cur = byName[t.name];
+      if (!cur) {
+        out.tools.push(t);
+      } else {
+        /* 幂等同步链接字段（不覆盖用户手动改过的其他字段） */
+        if (t.github && !cur.github) cur.github = t.github;
+        if (t.online && !cur.online) cur.online = t.online;
+        if (t.prompt && !cur.prompt) cur.prompt = t.prompt;
+      }
     });
   })();
   /* 对象型字段：news 有固定形状，其余为普通映射，统一做“是对象且非数组”校正 */

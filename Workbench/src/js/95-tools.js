@@ -26,16 +26,16 @@ function renderToolbox(el) {
   ];
 
   var html = '';
-  html += '<div class="page-note">常用工具入口 + 自己做过的东西 + 数据备份恢复</div>';
+  html += '<div class="page-note">常用工具入口 + 自己做过的东西 + 数据备份恢复。每张卡片带「🔗 GitHub（资源文件夹）」与「🌐 在线版（Cloud Studio 发布链接）」两个按钮，均可编辑。</div>';
 
   /* 我的工具 = S.tools（手动快捷入口）+ 自研功能性工具（works.cat==='工具'），按分类聚合、点开给提示词 */
   var workTools = (S.works || []).filter(function (w) { return w.cat === '工具'; });
   var allTools = [];
   tools.forEach(function (t) {
-    allTools.push({ src: 'tools', id: t.id, name: t.name, icon: t.icon || '🔗', url: t.url || '', catLabel: t.category || '未分类', prompt: t.prompt || '', desc: '' });
+    allTools.push({ src: 'tools', id: t.id, name: t.name, icon: t.icon || '🔗', url: t.url || '', github: t.github || '', online: t.online || '', catLabel: t.category || '未分类', prompt: t.prompt || '', desc: '' });
   });
   workTools.forEach(function (w) {
-    allTools.push({ src: 'works', id: w.id, name: w.name, icon: '🔧', url: w.url || '', catLabel: w.group || '其他', prompt: w.prompt || '', desc: w.desc || '' });
+    allTools.push({ src: 'works', id: w.id, name: w.name, icon: '🔧', url: w.url || '', github: w.github || '', online: w.online || '', catLabel: w.group || '其他', prompt: w.prompt || '', desc: w.desc || '' });
   });
 
   /* 分类 + 计数（仅显示去重后的分类，避免「仓库 / 代码」这类同义重复） */
@@ -58,11 +58,18 @@ function renderToolbox(el) {
   }
   html += toolList.length ? '<div class="tools">' + toolList.map(function (t) {
     var editAct = (t.src === 'works') ? 'work-edit' : 'tool-edit';
+    var ghBtn = t.github
+      ? '<button class="btn xs" data-act="open-url" data-url="' + esc(t.github) + '">🔗 GitHub</button>'
+      : '<span class="tag" style="opacity:.5;font-size:11px">无仓库</span>';
+    var onBtn = t.online
+      ? '<button class="btn xs pri" data-act="open-url" data-url="' + esc(t.online) + '">🌐 在线版</button>'
+      : '<span class="tag" style="opacity:.5;font-size:11px">未发布</span>';
     return '<div class="tool" data-act="tool-prompt" data-id="' + t.id + '" data-src="' + t.src + '" title="点击查看使用提示词">' +
       '<button class="icon-btn" data-act="' + editAct + '" data-id="' + t.id + '" title="编辑" style="position:absolute;top:6px;right:6px;width:26px;height:26px;min-width:26px;font-size:11px;z-index:2">✎</button>' +
       '<div class="ti">' + esc(t.icon || '🔗') + '</div>' +
       '<div class="tn">' + esc(t.name) + '</div>' +
       '<div class="tc">' + esc(t.catLabel || '未分类') + '</div>' +
+      '<div class="tlinks">' + ghBtn + onBtn + '</div>' +
     '</div>';
   }).join('') + '</div>' : emptyBox('⚙', '还没有工具入口', '点「＋ 新增」添加常用的网站或命令');
   html += '</div>';
@@ -138,16 +145,21 @@ function renderToolbox(el) {
 function workCard(w, idx) {
   var st = WORK_STATUS[w.status] || WORK_STATUS['规划中'];
   var num = idx ? ('<span class="wn">' + idx + '</span>') : '';
-  var link = w.url
-    ? '<button class="btn sm pri" data-act="open-url" data-url="' + esc(w.url) + '">🔗 浏览</button>'
-    : '<span class="tag" style="opacity:.55">暂无链接</span>';
+  var gh = w.github || '';
+  var on = w.online || '';
+  var ghBtn = gh
+    ? '<button class="btn sm" data-act="open-url" data-url="' + esc(gh) + '">🔗 GitHub</button>'
+    : '<span class="tag" style="opacity:.5">无仓库</span>';
+  var onBtn = on
+    ? '<button class="btn sm pri" data-act="open-url" data-url="' + esc(on) + '">🌐 在线版</button>'
+    : '<span class="tag" style="opacity:.5">未发布</span>';
   return '<div class="proj">' +
     '<div class="ph">' + num + '<div class="pn">' + esc(w.name) + '</div>' +
       '<span class="tag brand">' + esc(w.type || '其他') + '</span>' +
       '<span class="tag ' + st.c + '">' + st.t + '</span></div>' +
     (w.desc ? '<div class="pd">' + esc(w.desc) + '</div>' : '') +
     ((w.tags && w.tags.length) ? '<div style="display:flex;gap:5px;flex-wrap:wrap">' + w.tags.map(function (t) { return '<span class="tag">' + esc(t) + '</span>'; }).join('') + '</div>' : '') +
-    '<div class="pf">' + link +
+    '<div class="pf">' + ghBtn + onBtn +
       '<button class="btn sm" data-act="work-status" data-id="' + w.id + '">改状态</button>' +
       '<button class="btn sm" data-act="work-edit" data-id="' + w.id + '">编辑</button>' +
       '<button class="btn sm ghost" data-act="work-del" data-id="' + w.id + '">删除</button>' +
@@ -157,20 +169,27 @@ function workCard(w, idx) {
 /* 点击工具 → 弹出使用提示词（可直接复制发给 AI 助手调用） */
 function toolPromptDialog(tool, src) {
   var prompt = tool.prompt || '（该工具暂未配置提示词）';
+  var gh = tool.github || '';
+  var on = tool.online || '';
   var url = tool.url || '';
+  var openLink = on || gh || url || '';
+  var linkHtml = '';
+  if (gh) linkHtml += '<div style="margin-top:8px;font-size:13px">🔗 GitHub：<a href="' + esc(gh) + '" target="_blank" rel="noopener">' + esc(gh) + '</a></div>';
+  if (on) linkHtml += '<div style="margin-top:6px;font-size:13px">🌐 在线版：<a href="' + esc(on) + '" target="_blank" rel="noopener">' + esc(on) + '</a></div>';
+  if (url && url !== gh && url !== on) linkHtml += '<div style="margin-top:6px;font-size:13px">🔗 链接：<a href="' + esc(url) + '" target="_blank" rel="noopener">' + esc(url) + '</a></div>';
   var body =
     (tool.desc ? '<div style="margin-bottom:10px;font-size:13px;color:var(--ink-2);line-height:1.6">' + esc(tool.desc) + '</div>' : '') +
     '<div class="tip" style="font-size:12.5px;color:var(--ink-3);margin-bottom:8px">点击复制下面的提示词，直接发给 AI 助手即可调用这个工具：</div>' +
     '<div style="background:var(--bg-soft);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:13.5px;line-height:1.7;color:var(--ink);white-space:pre-wrap;word-break:break-word">' + esc(prompt) + '</div>' +
-    (url ? '<div style="margin-top:10px;font-size:12.5px;color:var(--ink-3)">链接：<a href="' + esc(url) + '" target="_blank" rel="noopener">' + esc(url) + '</a></div>' : '');
+    (linkHtml || '');
   var footer = '<button class="btn" data-copy="1">📋 复制提示词</button>' +
-    (url ? '<button class="btn pri" data-open="1">🔗 打开链接</button>' : '') +
+    (openLink ? '<button class="btn pri" data-open="1">🔗 打开链接</button>' : '') +
     '<button class="btn" data-no="1">关闭</button>';
   var wrap = openModal({ title: '使用提示词 · ' + tool.name, body: body, footer: footer });
   wrap.querySelector('[data-copy]').onclick = function () {
     copyText(prompt).then(function (ok) { toast(ok ? '提示词已复制，粘到对话框即可用' : '复制失败，请手动选中复制', ok ? 'ok' : 'error'); });
   };
-  if (url) wrap.querySelector('[data-open]').onclick = function () { closeModal(wrap); handleOpenUrl(url); };
+  if (openLink) wrap.querySelector('[data-open]').onclick = function () { closeModal(wrap); handleOpenUrl(openLink); };
   wrap.querySelector('[data-no]').onclick = function () { closeModal(wrap); };
 }
 
@@ -186,7 +205,8 @@ function workForm(w) {
       '<div class="field"><label>状态</label><select id="w-st">' +
       Object.keys(WORK_STATUS).map(function (k) { return '<option value="' + k + '"' + (o.status === k ? ' selected' : '') + '>' + k + '</option>'; }).join('') +
       '</select></div></div>' +
-    '<div class="field"><label>链接（可空）</label><input type="url" id="w-u" value="' + esc(o.url || '') + '" placeholder="https://..."></div>' +
+    '<div class="field"><label>GitHub 文件夹链接（可空）</label><input type="url" id="w-gh" value="' + esc(o.github || '') + '" placeholder="https://github.com/.../tree/main/..."></div>' +
+    '<div class="field"><label>Cloud Studio 在线版链接（可空）</label><input type="url" id="w-on" value="' + esc(o.online || '') + '" placeholder="https://xxxx.app.workbuddy.link"></div>' +
     '<div class="field"><label>一句话介绍</label><textarea id="w-d" style="min-height:70px">' + esc(o.desc || '') + '</textarea></div>' +
     '<div class="field"><label>标签（逗号分隔）</label><input type="text" id="w-tg" value="' + esc((o.tags || []).join(',')) + '"></div>';
   var wrap = openModal({
@@ -206,7 +226,8 @@ function workForm(w) {
     if (!n) { toast('名称必填', 'warn'); return; }
     var obj = {
       name: n, type: wrap.querySelector('#w-ty').value, status: wrap.querySelector('#w-st').value,
-      url: wrap.querySelector('#w-u').value.trim(), desc: wrap.querySelector('#w-d').value.trim(),
+      github: wrap.querySelector('#w-gh').value.trim(), online: wrap.querySelector('#w-on').value.trim(),
+      url: o.url || '', desc: wrap.querySelector('#w-d').value.trim(),
       tags: wrap.querySelector('#w-tg').value.split(/[,，]/).map(function (s) { return s.trim(); }).filter(Boolean)
     };
     obj.cat = isNew ? '案例' : (o.cat || '案例');
@@ -251,7 +272,8 @@ function toolForm(t) {
   var emojis = ['🔗', '🚀', '🎨', '🗄️', '🐙', '📚', '🌤️', '✦', '⚙', '📝', '🧠', '💡'];
   var body =
     '<div class="field"><label>名称<span class="req">*</span></label><input type="text" id="t-n" value="' + esc(o.name) + '"></div>' +
-    '<div class="field"><label>链接</label><input type="text" id="t-u" value="' + esc(o.url || '') + '" placeholder="https://..."></div>' +
+    '<div class="field"><label>GitHub 链接（可空）</label><input type="text" id="t-gh" value="' + esc(o.github || '') + '" placeholder="https://github.com/..."></div>' +
+    '<div class="field"><label>Cloud Studio 在线版链接（可空）</label><input type="text" id="t-on" value="' + esc(o.online || '') + '" placeholder="https://xxxx.app.workbuddy.link"></div>' +
     '<div class="f-row"><div class="field"><label>图标</label><select id="t-i">' +
       emojis.map(function (e) { return '<option value="' + e + '"' + (o.icon === e ? ' selected' : '') + '>' + e + '</option>'; }).join('') +
       '</select></div>' +
@@ -273,7 +295,8 @@ function toolForm(t) {
     var n = wrap.querySelector('#t-n').value.trim();
     if (!n) { toast('名称必填', 'warn'); return; }
     var obj = {
-      name: n, url: wrap.querySelector('#t-u').value.trim(),
+      name: n, github: wrap.querySelector('#t-gh').value.trim(), online: wrap.querySelector('#t-on').value.trim(),
+      url: o.url || '',
       icon: wrap.querySelector('#t-i').value, category: wrap.querySelector('#t-c').value.trim() || '常用',
       prompt: wrap.querySelector('#t-p').value.trim()
     };
@@ -381,7 +404,6 @@ function setZodiacDialog() {
     toast('个人资料已更新', 'ok');
   };
 }
-
 function clearAllData() {
   confirmDialog({
     title: '清空全部数据',
