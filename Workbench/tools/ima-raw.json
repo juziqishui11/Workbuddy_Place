@@ -1,0 +1,173 @@
+{
+  "_note": "IMA 知识库结构原始快照。由 AI 助手通过 ima-mcp 采集后写入；node 脚本无法调 MCP，所以这一步必须由助手完成。运行 node tools/ima-snapshot.mjs 可重新生成 src/js/83-ima-data.js。",
+  "fetchedAt": "2026-09-14 14:30",
+  "source": "ima-mcp：get_addable_knowledge_base_list + get_knowledge_list（递归文件夹）",
+  "kbs": [
+    { "id": "001aa354fc407023", "name": "枫城的知识库", "note": "个人主力库" },
+    { "id": "7502640824983879", "name": "团队的知识库", "note": "公司项目 · OB-HIVE" }
+  ],
+  "listings": [
+    {
+      "kbId": "001aa354fc407023",
+      "folderId": "",
+      "folderName": "",
+      "items": [
+        {
+          "media_id": "pdf_69c630793843b76d9389ab2295e33149_8cec14e2e36659af11b2d2500f63de13001aa354fc407023",
+          "media_type": 1,
+          "media_type_name": "PDF",
+          "title": "ima 知识库使用指南.pdf",
+          "file_size": "12295500",
+          "time_wording": "8/25",
+          "can_fetch_content": true,
+          "can_preview": true,
+          "intro": "# ima 知识库使用指南\\nima 知识库是你的专属知识空间，包括个人知识库与共享知识库，支持增添、管理、检索知识资源，加入共享知识库，还可以获得多来源的知识与经验。基于知识库问问 ima，聚焦知识库，得到更个性化的回答。从此开始，搭建一个越用越懂你的第二大脑。目前支持 PC ima.copilot 客户端，也支持 ima 知识库微信小程序中使用。"
+        }
+      ]
+    },
+    {
+      "kbId": "7502640824983879",
+      "folderId": "",
+      "folderName": "",
+      "items": [
+        {
+          "media_id": "folder_7504454630798423",
+          "media_type": 99,
+          "media_type_name": "文件夹",
+          "title": "公司工作-相关文档",
+          "file_size": "0",
+          "time_wording": "16:30更新",
+          "can_fetch_content": false,
+          "can_preview": false,
+          "folder_id": "folder_7504454630798423",
+          "file_number": "3",
+          "folder_number": "3",
+          "intro": ""
+        },
+        {
+          "media_id": "pdf_69c630793843b76d9389ab2295e33149_92c3c5c2eae3d5d7e30749ee20bea01b7502640824983879",
+          "media_type": 1,
+          "media_type_name": "PDF",
+          "title": "WorkBuddy 迈向自适应制造制造业智能体实践白皮书 20260910(1).pdf",
+          "file_size": "12074335",
+          "time_wording": "16:22",
+          "can_fetch_content": true,
+          "can_preview": true,
+          "intro": "腾讯研究院 / 腾讯云 WorkBuddy：《迈向自适应制造 —— 制造业智能体实践白皮书》。前言：中国制造有一个少有人谈起的矛盾。一方面，它已是全球第一制造大国，增加值连续 16 年居世界首位；另一方面，支撑这些产品的工业软件，收入只占制造业增加值不到 1%。工程师对着几个版本的物料清单逐行找差，采购员反复打电话确认哪批料真的缺，老师傅退休时带走了一肚子没人接得住的手艺。"
+        },
+        {
+          "media_id": "pdf_69c630793843b76d9389ab2295e33149_672c878712eeb7ba17ac3ab6f90a533c7502640824983879",
+          "media_type": 1,
+          "media_type_name": "PDF",
+          "title": "Datawhale FDE案例100.pdf",
+          "file_size": "11707011",
+          "time_wording": "16:22",
+          "can_fetch_content": true,
+          "can_preview": true,
+          "intro": "FORWARD DEPLOYED ENGINEER · FDE 案例 100 —— 真实企业 AI 落地案例集。第一期首批案例集，真实案例来自企业一线实践，深度访谈还原落地全过程，沉淀可复用的方法与洞察，助力更多企业与人才。"
+        }
+      ]
+    },
+    {
+      "kbId": "7502640824983879",
+      "folderId": "folder_7504454630798423",
+      "folderName": "公司工作-相关文档",
+      "items": [
+        {
+          "media_id": "folder_7504456388211028",
+          "media_type": 99,
+          "media_type_name": "文件夹",
+          "title": "项目备案文档",
+          "file_size": "0",
+          "time_wording": "16:30创建",
+          "can_fetch_content": false,
+          "can_preview": false,
+          "folder_id": "folder_7504456388211028",
+          "file_number": "0",
+          "folder_number": "0",
+          "intro": ""
+        },
+        {
+          "media_id": "folder_7504454467201603",
+          "media_type": 99,
+          "media_type_name": "文件夹",
+          "title": "FOF持仓分析文档",
+          "file_size": "0",
+          "time_wording": "16:22创建",
+          "can_fetch_content": false,
+          "can_preview": false,
+          "folder_id": "folder_7504454467201603",
+          "file_number": "0",
+          "folder_number": "0",
+          "intro": ""
+        },
+        {
+          "media_id": "folder_7502971600403417",
+          "media_type": 99,
+          "media_type_name": "文件夹",
+          "title": "基协表结构项目",
+          "file_size": "0",
+          "time_wording": "9/8更新",
+          "can_fetch_content": false,
+          "can_preview": false,
+          "folder_id": "folder_7502971600403417",
+          "file_number": "3",
+          "folder_number": "0",
+          "intro": ""
+        }
+      ]
+    },
+    {
+      "kbId": "7502640824983879",
+      "folderId": "folder_7504456388211028",
+      "folderName": "项目备案文档",
+      "items": []
+    },
+    {
+      "kbId": "7502640824983879",
+      "folderId": "folder_7504454467201603",
+      "folderName": "FOF持仓分析文档",
+      "items": []
+    },
+    {
+      "kbId": "7502640824983879",
+      "folderId": "folder_7502971600403417",
+      "folderName": "基协表结构项目",
+      "items": [
+        {
+          "media_id": "markdown_78b8e21e90d07a14ed747678adc9b633_a2a9c4a96ac0b5467a4b452deb2835bf7502640824983879",
+          "media_type": 7,
+          "media_type_name": "MD",
+          "title": "OB-HIVE基协表结构说明-摘要.md",
+          "file_size": "116303",
+          "time_wording": "9/8",
+          "can_fetch_content": true,
+          "can_preview": true,
+          "intro": "# OB-HIVE 基协表结构说明 V1（20260907）— 结构化摘要。源文件：OB-HIVE基协表结构说明-V1-20260907.xlsx。数据域：中国证券投资基金业协会（AMAC）资产管理计划备案信息 · 浙商资管。体例：每张表由「数据区 + 元信息块（表中文名 / 数据库 / 用途 / 下游 / 业务老师）+ 字段定义区（序号 / 字段英文 / 字段中文 / 数据类型 / 备注 / 值-例子）」三部分构成。"
+        },
+        {
+          "media_id": "html_78b8e21e90d07a14ed747678adc9b633_9c8e56cbe1fad62160af5bd94a49faab7502640824983879",
+          "media_type": 20,
+          "media_type_name": "HTML",
+          "title": "OB-HIVE基协表结构浏览器.html",
+          "file_size": "196205",
+          "time_wording": "9/8",
+          "can_fetch_content": true,
+          "can_preview": true,
+          "intro": "跨全部表枚举值域浏览器：显示 125 / 125 个字段，点击任意行展开完整值域。含字段名称、类型 / 值域类别、填充情况、值域 / 取值分布（次数）。值域类别判定：是否/标志、常量、长文本、日期、自由值、空列。示例：产品编码 reporting_code varchar(200) 自由值 1119 条 · 100%。"
+        },
+        {
+          "media_id": "excel_78b8e21e90d07a14ed747678adc9b633_5255fadaeb5c9f9088c1457530e0f8657502640824983879",
+          "media_type": 5,
+          "media_type_name": "EXCEL",
+          "title": "OB-HIVE基协表结构说明-V1-脱敏精简.xlsx",
+          "file_size": "2337640",
+          "time_wording": "9/7",
+          "can_fetch_content": true,
+          "can_preview": true,
+          "intro": "[zgrpa_zszg_rpa_fundassistant_d] · OB-HIVE 基协表结构说明 V1 脱敏精简版。"
+        }
+      ]
+    }
+  ]
+}
