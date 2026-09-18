@@ -4330,7 +4330,6 @@ function taskRow(t, opts) {
         (pj ? '<span class="tag brand">' + esc(pj.name) + '</span>' : '<span class="tag">临时事项</span>') +
       '</div>' +
       (isOnesTask(t) ? onesMetaLine(t) : '') +
-      (t.note ? '<div class="note">' + esc(t.note) + '</div>' : '') +
     '</div>' +
     '<div class="acts">' +
       (t.onesUrl ? '<button class="btn xs" data-act="open-url" data-url="' + esc(t.onesUrl) + '" title="打开 ONES 任务" aria-label="打开 ONES 任务">🔗 ONES</button>' : '') +
