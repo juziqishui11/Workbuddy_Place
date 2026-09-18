@@ -1,0 +1,5 @@
+.photo-add {
+  width: 160rpx; height: 160rpx; border-radius: 16rpx;
+  border: 2rpx dashed #C7CDD8; color: #9AA0AC;
+  display: flex; align-items: center; justify-content: center; font-size: 24rpx;
+}

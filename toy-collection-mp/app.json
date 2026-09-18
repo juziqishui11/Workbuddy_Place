@@ -1,0 +1,32 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/dex/dex",
+    "pages/detail/detail",
+    "pages/add/add",
+    "pages/wish/wish",
+    "pages/stats/stats",
+    "pages/settings/settings"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#FF7BAC",
+    "navigationBarTitleText": "潮玩收藏册",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#F6F7FB"
+  },
+  "tabBar": {
+    "color": "#9AA0AC",
+    "selectedColor": "#FF7BAC",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "white",
+    "list": [
+      { "pagePath": "pages/index/index", "text": "娃柜" },
+      { "pagePath": "pages/dex/dex", "text": "图鉴" },
+      { "pagePath": "pages/wish/wish", "text": "心愿" },
+      { "pagePath": "pages/stats/stats", "text": "统计" },
+      { "pagePath": "pages/settings/settings", "text": "设置" }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

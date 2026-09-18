@@ -1,0 +1,4 @@
+.big-emoji { font-size: 120rpx; width: 200rpx; height: 200rpx; line-height: 200rpx; border-radius: 32rpx; margin: 0 auto; text-align: center; }
+.kv { display: flex; justify-content: space-between; padding: 12rpx 0; border-bottom: 1rpx solid #F0F2F6; font-size: 28rpx; }
+.kv text:first-child { color: #5B6472; }
+.kv text:last-child { font-weight: 600; text-align: right; max-width: 60%; }

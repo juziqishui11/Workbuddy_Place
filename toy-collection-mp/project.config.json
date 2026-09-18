@@ -1,0 +1,13 @@
+{
+  "description": "潮玩收藏册 - 双 IP 可切换的潮玩/宝可梦收藏管理小程序",
+  "appid": "touristappid",
+  "projectname": "toy-collection-mp",
+  "setting": {
+    "urlCheck": false,
+    "es6": true,
+    "postcss": true,
+    "minified": false
+  },
+  "compileType": "miniprogram",
+  "libVersion": "latest"
+}

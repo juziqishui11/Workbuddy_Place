@@ -1,0 +1,29 @@
+<view class="page" style="--accent:{{meta.accent}};--accent2:{{meta.accent2}}">
+  <view class="hero">
+    <view class="brand">{{meta.brand}} · 收藏概览</view>
+    <view class="hero-row">
+      <view class="hero-stat"><view class="num">{{stat.ownedCount}}</view><view class="lbl">拥有</view></view>
+      <view class="hero-stat"><view class="num">{{stat.wishCount}}</view><view class="lbl">心愿</view></view>
+      <view class="hero-stat"><view class="num">{{completion}}%</view><view class="lbl">图鉴</view></view>
+    </view>
+    <view class="hero-row" style="margin-top:8rpx;">
+      <view class="hero-stat"><view class="num">¥{{stat.totalValue}}</view><view class="lbl">当前估值</view></view>
+      <view class="hero-stat"><view class="num">¥{{stat.totalBuy}}</view><view class="lbl">累计投入</view></view>
+      <view class="hero-stat"><view class="num" style="color:{{stat.profit>=0 ? '#fff':'#FFD1D1'}}">{{stat.profit>=0?'+':''}}¥{{stat.profit}}</view><view class="lbl">账面盈亏</view></view>
+    </view>
+  </view>
+
+  <view class="section-title">系列完成度</view>
+  <view wx:for="{{progress}}" wx:key="seriesId" class="card">
+    <view style="display:flex;justify-content:space-between;font-weight:600;">
+      <text>{{item.name}}</text><text style="color:#9AA0AC;">{{item.owned}}/{{item.total}}</text>
+    </view>
+    <view class="progress" style="margin-top:12rpx;"><view class="progress-inner" style="width:{{item.percent}}%"></view></view>
+  </view>
+
+  <view class="section-title">稀有度分布</view>
+  <view wx:if="{{byRarity.length === 0}}" class="empty"><view>还没有收藏记录</view></view>
+  <view wx:else class="card" style="display:flex;flex-wrap:wrap;gap:16rpx;">
+    <view wx:for="{{byRarity}}" wx:key="name" class="tag" style="color:{{item.color}};background:{{item.bg}};padding:10rpx 20rpx;font-size:24rpx;">{{item.name}} · {{item.count}}</view>
+  </view>
+</view>

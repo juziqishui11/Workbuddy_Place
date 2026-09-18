@@ -1,0 +1,22 @@
+<view class="page" style="--accent:{{meta.accent}};--accent2:{{meta.accent2}}">
+  <view class="section-title">收藏 IP</view>
+  <view class="card">
+    <view wx:for="{{ips}}" wx:key="key" class="ip-row {{item.key === ip ? 'on' : ''}}" data-ip="{{item.key}}" bindtap="switchIp">
+      <view style="font-weight:700;">{{item.brand}}</view>
+      <view style="color:#9AA0AC;font-size:22rpx;margin-top:4rpx;">{{item.key === 'popmart' ? '泡泡玛特潮玩 · 系列进度 + 隐藏款' : '宝可梦图鉴 · 关都地区收录'}}</view>
+      <view wx:if="{{item.key === ip}}" class="check">✓</view>
+    </view>
+  </view>
+
+  <view class="section-title">数据</view>
+  <view class="card">
+    <view class="row-btn" bindtap="clearData">🗑️ 清空全部收藏与心愿</view>
+    <view class="row-btn" bindtap="copyRepo">🔗 复制项目仓库地址</view>
+  </view>
+
+  <view class="card" style="color:#9AA0AC;font-size:22rpx;line-height:1.7;">
+    潮玩收藏册 · 双 IP 可切换收藏管理小程序（微信原生）。<br/>
+    数据仅保存在本机微信存储，不上传服务器；切换微信或清缓存会丢失，重要收藏请及时截图备份。<br/>
+    泡泡玛特示例库为手工精选的 3 个系列；宝可梦为关都地区精选约 30 只，均可按 data/*.js 的 schema 自行扩充。
+  </view>
+</view>

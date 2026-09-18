@@ -1,0 +1,43 @@
+<view class="page" style="--accent:{{meta.accent}};--accent2:{{meta.accent2}}">
+  <view class="card">
+    <view class="label">系列</view>
+    <picker mode="selector" range="{{seriesList}}" value="{{seriesIndex}}" bindchange="onSeriesChange">
+      <view class="input">{{seriesList[seriesIndex]}}</view>
+    </picker>
+
+    <view class="label">藏品</view>
+    <picker mode="selector" range="{{figuresList}}" value="{{figureIndex}}" bindchange="onFigureChange">
+      <view class="input">{{figuresList[figureIndex]}}</view>
+    </picker>
+
+    <view class="label">购入价（¥）</view>
+    <input class="input" type="digit" placeholder="例如 59" value="{{buyPrice}}" bindinput="onPriceInput" />
+
+    <view class="label">当前估值（¥）</view>
+    <input class="input" type="digit" placeholder="例如 120" value="{{curValue}}" bindinput="onValueInput" />
+
+    <view class="label">入手日期</view>
+    <picker mode="date" value="{{acquiredAt}}" bindchange="onDateChange">
+      <view class="input">{{acquiredAt}}</view>
+    </picker>
+
+    <view class="label">成色</view>
+    <picker mode="selector" range="{{conditionList}}" value="{{conditionIndex}}" bindchange="onConditionChange">
+      <view class="input">{{conditionList[conditionIndex]}}</view>
+    </picker>
+
+    <view class="label">备注</view>
+    <textarea class="input" placeholder="来源、故事、瑕疵…" value="{{note}}" bindinput="onNoteInput" style="height:140rpx;" />
+
+    <view class="label">实物照片</view>
+    <view style="display:flex;align-items:center;gap:16rpx;">
+      <view wx:if="{{photo}}" style="position:relative;">
+        <image src="{{photo}}" mode="aspectFill" style="width:160rpx;height:160rpx;border-radius:16rpx;" />
+        <view style="position:absolute;top:-10rpx;right:-10rpx;background:#FF5C8A;color:#fff;border-radius:50%;width:36rpx;height:36rpx;line-height:36rpx;text-align:center;font-size:24rpx;" bindtap="choosePhoto">✕</view>
+      </view>
+      <view wx:else class="photo-add" bindtap="choosePhoto">＋ 拍照/选图</view>
+    </view>
+  </view>
+
+  <button class="btn block" bindtap="save">保存收藏</button>
+</view>

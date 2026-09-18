@@ -1,0 +1,31 @@
+<view class="page" style="--accent:{{meta.accent}};--accent2:{{meta.accent2}}">
+  <view class="card" style="display:flex;align-items:center;justify-content:space-between;">
+    <view style="font-weight:700;">共 {{series.length}} 个系列 · {{meta.unit}}图鉴</view>
+    <view class="btn sm ghost" bindtap="toggleMissing">{{showMissing ? '显示全部' : '仅看缺失'}}</view>
+  </view>
+
+  <view wx:for="{{series}}" wx:key="seriesId" class="card">
+    <view class="series-head" data-i="{{index}}" bindtap="toggle">
+      <view style="flex:1;">
+        <view style="font-weight:700;font-size:30rpx;">{{item.name}}</view>
+        <view style="color:#9AA0AC;font-size:22rpx;margin-top:4rpx;">已集 {{item.owned}}/{{item.total}} · 心愿 {{item.wish}}</view>
+        <view class="progress" style="margin-top:12rpx;"><view class="progress-inner" style="width:{{item.percent}}%"></view></view>
+      </view>
+      <view style="margin-left:16rpx;color:#9AA0AC;font-size:36rpx;">{{item.open ? '▾' : '▸'}}</view>
+    </view>
+
+    <view wx:if="{{item.open}}" style="margin-top:20rpx;">
+      <view class="grid">
+        <view wx:for="{{item.figures}}" wx:for-item="f" wx:key="figureId" wx:if="{{!showMissing || !f.owned}}" class="cell">
+          <view class="dex-chip" data-series="{{item.seriesId}}" data-figure="{{f.figureId}}" data-owned="{{f.owned}}" bindtap="goFigure">
+            <view class="dex-emoji" style="background:{{f.color}};opacity:{{f.owned ? 1 : 0.5}}">{{f.emoji}}</view>
+            <view class="dex-name">{{f.name}}</view>
+            <view class="tag" style="color:{{f.rarityColor}};background:{{f.rarityBg}}">{{f.rarityLabel}}</view>
+            <view wx:if="{{f.owned}}" class="owned-badge">✓</view>
+            <view wx:elif="{{f.wish}}" class="wish-badge">♡</view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,37 @@
+<view class="page" style="--accent:{{meta.accent}};--accent2:{{meta.accent2}}">
+  <view class="card" style="text-align:center;">
+    <view class="big-emoji" style="background:{{figure.color}}">{{figure.emoji}}</view>
+    <view style="font-size:38rpx;font-weight:800;margin-top:16rpx;">{{figure.name}}</view>
+    <view style="color:#9AA0AC;">{{figure.sub}} · {{figure.seriesName}}</view>
+    <view style="margin-top:14rpx;">
+      <text class="tag" style="color:{{figure.rarityColor}};background:{{figure.rarityBg}}">{{figure.rarityLabel}}</text>
+      <text wx:if="{{figure.type}}" class="tag" style="color:#2E7DD1;background:#E2EEFB;margin-left:10rpx;">{{figure.type}}</text>
+    </view>
+  </view>
+
+  <block wx:if="{{hasRec}}">
+    <view wx:if="{{rec.own}}" class="card">
+      <view class="section-title">我的收藏</view>
+      <view class="kv"><text>购入价</text><text wx:if="{{rec.buyPrice}}">¥{{rec.buyPrice}}</text><text wx:else>—</text></view>
+      <view class="kv"><text>当前估值</text><text wx:if="{{rec.curValue}}">¥{{rec.curValue}}</text><text wx:else>—</text></view>
+      <view class="kv"><text>入手日期</text><text>{{rec.acquiredAt || '—'}}</text></view>
+      <view class="kv"><text>成色</text><text>{{rec.condition || '—'}}</text></view>
+      <view class="kv"><text>备注</text><text>{{rec.note || '—'}}</text></view>
+      <view wx:if="{{rec.photo}}" style="margin-top:12rpx;"><image src="{{rec.photo}}" mode="aspectFill" style="width:100%;height:320rpx;border-radius:16rpx;"/></view>
+    </view>
+    <view wx:elif="{{rec.wish}}" class="card">
+      <view style="color:#FF9F43;font-weight:700;">♡ 心愿中</view>
+      <view style="color:#9AA0AC;font-size:24rpx;margin-top:6rpx;">想要这一只，集齐就冲～</view>
+    </view>
+  </block>
+
+  <view style="display:flex;gap:16rpx;margin-top:8rpx;">
+    <button wx:if="{{!hasRec || rec.wish}}" class="btn block" bindtap="goEdit">加入收藏</button>
+    <button wx:if="{{hasRec && rec.own}}" class="btn block" bindtap="goEdit">编辑</button>
+    <button wx:if="{{hasRec && rec.wish}}" class="btn block" bindtap="markOwned">标记为已入手</button>
+  </view>
+  <view style="display:flex;gap:16rpx;margin-top:16rpx;">
+    <button wx:if="{{!hasRec}}" class="btn ghost block" bindtap="addWish">加入心愿单</button>
+    <button wx:if="{{hasRec}}" class="btn ghost block" bindtap="remove">移出</button>
+  </view>
+</view>

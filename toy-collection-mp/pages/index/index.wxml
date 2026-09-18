@@ -1,0 +1,30 @@
+<view class="page" style="--accent:{{meta.accent}};--accent2:{{meta.accent2}}">
+  <view class="hero">
+    <view class="brand">{{meta.brand}} · 我的娃柜</view>
+    <view class="sub">已收藏 {{ownedCount}} {{meta.unit}} · 心愿 {{wishCount}} · 图鉴完成度 {{completion}}%</view>
+    <view class="hero-row">
+      <view class="hero-stat"><view class="num">{{ownedCount}}</view><view class="lbl">拥有</view></view>
+      <view class="hero-stat"><view class="num">¥{{totalValue}}</view><view class="lbl">估值</view></view>
+      <view class="hero-stat"><view class="num">{{completion}}%</view><view class="lbl">图鉴</view></view>
+    </view>
+  </view>
+
+  <view class="section-title">收藏墙</view>
+  <view wx:if="{{owned.length === 0}}" class="empty">
+    <view class="emoji">🧸</view>
+    <view>还没有收藏，去「图鉴」里点亮第一只吧～</view>
+  </view>
+
+  <view class="grid">
+    <view wx:for="{{owned}}" wx:key="id" class="cell">
+      <view class="toy-card" data-ip="{{item.ip}}" data-series="{{item.seriesId}}" data-figure="{{item.figureId}}" bindtap="goDetail">
+        <view class="toy-emoji" style="background:{{item.color}}">{{item.emoji}}</view>
+        <view class="toy-name">{{item.name}}</view>
+        <view class="toy-sub">{{item.seriesName}}</view>
+        <view class="toy-price" wx:if="{{item.curValue}}">¥{{item.curValue}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="fab" bindtap="goAdd">＋</view>
+</view>

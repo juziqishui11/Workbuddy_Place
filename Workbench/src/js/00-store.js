@@ -12,7 +12,8 @@ var WB_DEPLOY_LINKS = {
   resource: 'https://res-dash.app.workbuddy.host/',
   mbti: 'https://mbti-assessment-14386.app.workbuddy.host/',
   game2048: 'https://2048-game.app.workbuddy.host/',
-  fde: 'https://ef4190335f2349b79e01b26a5c33c69b.app.workbuddy.link/'
+  fde: 'https://ef4190335f2349b79e01b26a5c33c69b.app.workbuddy.link/',
+  toycol: ''
 };
 
 /* 我的作品 / 案例（真实数据，不打 demo 标记）。
@@ -34,6 +35,7 @@ function seedWorks() {
     { id: uid(), name: '个人工作任务台（本站）', type: 'WB案例', cat: '案例', status: '进行中', url: '', github: R + '/Workbench', online: W.workbench, desc: '9 大分区的单文件工作台：任务、项目、知识、学习、技能、文档、工具、复盘、方向。', tags: ['WorkBuddy', '工作台'], createdAt: iso, updatedAt: iso },
     { id: uid(), name: '知识库集成（IMA+Obsidian）', type: 'WB案例', cat: '案例', status: '进行中', url: 'https://ima.qq.com', github: '', online: '', desc: '目录树+知识图谱；V4.8 重扫 63 文件、FR 布局根治崩坏。', tags: ['Obsidian', '图谱'], createdAt: iso, updatedAt: iso },
     { id: uid(), name: 'MBTI 人格测评站', type: 'WB案例', cat: '案例', status: '已上线', url: 'https://github.com/juziqishui11/Workbuddy_Place', github: R + '/mbti-assessment', online: W.mbti, desc: '44 题 / 16 型 / 4 维度，单文件 index.html 交付。', tags: ['MBTI', '单文件'], createdAt: iso, updatedAt: iso },
+    { id: uid(), name: '潮玩收藏册小程序', type: '小程序', cat: '案例', status: '已上线', url: 'https://github.com/juziqishui11/Workbuddy_Place', github: R + '/toy-collection-mp', online: W.toycol, desc: '微信原生小程序：双 IP 可切换（泡泡玛特潮玩 / 宝可梦图鉴）的收藏管理，本地存储、系列进度、估值、心愿单。', tags: ['小程序', '收藏', '双IP'], createdAt: iso, updatedAt: iso },
     { id: uid(), name: '2048 小游戏', type: 'WB案例', cat: '案例', status: '已上线', url: 'https://github.com/juziqishui11/Workbuddy_Place', github: R + '/2048', online: W.game2048, desc: '纯前端小游戏，含动画与最高分记录。', tags: ['游戏'], createdAt: iso, updatedAt: iso },
     { id: uid(), name: 'FDE 90天学习网站', type: 'WB案例', cat: '案例', status: '进行中', url: '', github: '', online: W.fde, desc: '12 周 / 90 天 / 45 练习 / 54 词条 单文件站（本站内置模块）。', tags: ['学习', 'FDE'], createdAt: iso, updatedAt: iso },
     { id: uid(), name: 'WB案例库', type: 'WB案例', cat: '案例', status: '已上线', url: '', github: '', online: '', desc: '站点内置 WB 案例快照模块：团队 / 个人案例沉淀与复用。', tags: ['案例库', 'WB'], createdAt: iso, updatedAt: iso },
