@@ -4333,6 +4333,7 @@ function taskRow(t, opts) {
       (t.note ? '<div class="note">' + esc(t.note) + '</div>' : '') +
     '</div>' +
     '<div class="acts">' +
+      (t.onesUrl ? '<button class="btn xs" data-act="open-url" data-url="' + esc(t.onesUrl) + '" title="打开 ONES 任务" aria-label="打开 ONES 任务">🔗 ONES</button>' : '') +
       (opts.showPomo && t.status !== 'done' ? '<button class="icon-btn" data-act="pomo-start" data-id="' + t.id + '" title="开始专注" aria-label="开始专注">🍅</button>' : '') +
       '<button class="icon-btn" data-act="task-due" data-id="' + t.id + '" title="修改截止日期和时间" aria-label="修改截止日期和时间">⏰</button>' +
       '<button class="icon-btn" data-act="task-status" data-id="' + t.id + '" title="修改状态" aria-label="修改状态">⇄</button>' +
@@ -4565,6 +4566,7 @@ function ledgerRow(t) {
     '<div class="lc-st"><span class="tag ' + st.c + '">' + esc(t.onesStatus || st.t) + '</span></div>' +
     '<div class="lc-plan">' + esc(t.planStart || '—') + ' <span class="arw">→</span> ' + esc(t.planEnd || '—') + '</div>' +
     '<div class="lc-acts">' +
+      (t.onesUrl ? '<button class="icon-btn" data-act="open-url" data-url="' + esc(t.onesUrl) + '" title="打开 ONES 任务" aria-label="打开 ONES 任务">🔗</button>' : '') +
       '<button class="icon-btn" data-act="task-status" data-id="' + t.id + '" title="改状态" aria-label="改状态">⇄</button>' +
       '<button class="icon-btn" data-act="task-edit" data-id="' + t.id + '" title="编辑" aria-label="编辑">✎</button>' +
       '<button class="icon-btn danger" data-act="task-del" data-id="' + t.id + '" title="删除" aria-label="删除">✕</button>' +
@@ -4647,7 +4649,7 @@ function renderLedger(el) {
    ============================================================ */
 function taskForm(task) {
   var isNew = !task;
-  var t = task || { title: '', projectId: null, dueDate: '', dueTime: '', priority: 'mid', status: 'todo', focus: false, note: '', onsId: '', owner: '', progress: null, planStart: '', planEnd: '' };
+  var t = task || { title: '', projectId: null, dueDate: '', dueTime: '', priority: 'mid', status: 'todo', focus: false, note: '', onesUrl: '', onsId: '', owner: '', progress: null, planStart: '', planEnd: '' };
   /* 所属项目：使用自定义预设菜单；若当前项目不在预设内（如 ONES 导入的需求），额外保留一项 */
   var curName = t.projectId ? ((projectOf(t.projectId) || {}).name || '') : '';
   var presets = (typeof PROJECT_PRESETS !== 'undefined') ? PROJECT_PRESETS.slice() : [];
@@ -4672,6 +4674,13 @@ function taskForm(task) {
       '<div class="field"><label>负责人</label><input type="text" id="f-owner" value="' + esc(t.owner || '') + '" placeholder="如 毛华良"></div>' +
     '</div>' +
     '<div class="f-row">' +
+      '<div class="field" style="flex:2"><label>ONES 链接</label><input type="url" id="f-oneslink" value="' + esc(t.onesUrl || '') + '" placeholder="粘贴 ONES 任务链接，保存后可点击跳转"></div>' +
+      '<div class="field"><label>状态</label><select id="f-status">' +
+        Object.keys(STATUS).map(function (k) {
+          return '<option value="' + k + '"' + (t.status === k ? ' selected' : '') + '>' + STATUS[k].t + '</option>';
+        }).join('') + '</select></div>' +
+    '</div>' +
+    '<div class="f-row">' +
       '<div class="field"><label>计划开始日期</label><input type="date" id="f-pstart" value="' + esc(t.planStart || '') + '"></div>' +
       '<div class="field"><label>计划完成日期</label><input type="date" id="f-pend" value="' + esc(t.planEnd || '') + '"></div>' +
     '</div>' +
@@ -4682,12 +4691,8 @@ function taskForm(task) {
       '<div class="field"><label>截止时间</label><input type="time" id="f-time" value="' + esc(t.dueTime || '') + '">' +
         '<div class="tip">留空按当天 23:59 计</div></div>' +
     '</div>' +
-    '<div class="field"><label>状态</label><select id="f-status">' +
-      Object.keys(STATUS).map(function (k) {
-        return '<option value="' + k + '"' + (t.status === k ? ' selected' : '') + '>' + STATUS[k].t + '</option>';
-      }).join('') + '</select></div>' +
     '<label class="check"><input type="checkbox" id="f-focus"' + (t.focus ? ' checked' : '') + '><span>标记为「今日重点」</span></label>' +
-    '<div class="field" style="margin-top:12px"><label>备注</label><textarea id="f-note" placeholder="补充说明、依赖、联系人…">' + esc(t.note || '') + '</textarea></div>';
+    '<div class="field" style="margin-top:12px"><label>任务详情</label><textarea id="f-note" placeholder="填任务详情、步骤、验收标准、依赖…">' + esc(t.note || '') + '</textarea></div>';
 
   var wrap = openModal({
     title: isNew ? '新建任务' : '编辑任务',
@@ -4716,6 +4721,7 @@ function taskForm(task) {
       priority: wrap.querySelector('#f-prio').value,
       focus: wrap.querySelector('#f-focus').checked,
       note: wrap.querySelector('#f-note').value.trim(),
+      onesUrl: wrap.querySelector('#f-oneslink').value.trim(),
       onsId: wrap.querySelector('#f-ons').value.trim(),
       owner: wrap.querySelector('#f-owner').value.trim(),
       planStart: wrap.querySelector('#f-pstart').value,
