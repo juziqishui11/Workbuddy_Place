@@ -4,14 +4,17 @@
  */
 const pokemon = require('../data/pokemon.js');
 
-/** 取展示元信息（品牌、主色、量词） */
+/** 取展示元信息（品牌、主色、量词、系列清单——仅元信息，不含 figures） */
 function getMeta() {
   return {
     ip: pokemon.ip,
     brand: pokemon.brand,
     accent: pokemon.accent,
     accent2: pokemon.accent2,
-    unit: pokemon.unit
+    unit: pokemon.unit,
+    series: pokemon.series.map(function (s) {
+      return { id: s.id, name: s.name, desc: s.desc, total: s.figures.length };
+    })
   };
 }
 
@@ -91,10 +94,12 @@ function enrich(rec) {
     seriesName: found.series.name,
     name: found.figure.name,
     sub: found.figure.sub || '',
+    code: found.figure.code || '',
     types: found.figure.types || '',
     color: found.figure.color || '#EEE',
     sprite: found.figure.sprite || '',
     art: found.figure.art || '',
+    tcgArt: found.figure.tcgArt || '',
     rarity: found.figure.rarity || '普通'
   });
 }

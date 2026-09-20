@@ -8,27 +8,28 @@
 | 模块 | 说明 |
 | --- | --- |
 | 🃏 卡牌（首页） | 收藏墙卡片流 + 顶部概览（拥有数 / 估值 / 图鉴完成度） |
-| 📖 卡册 | 关都 151 全图鉴浏览，进度条显示「已集 X/N」，标「只看未收集」快速查漏 |
-| 🎁 开包 | 模拟拆包，每包 5 张，传说 / 幻之稀有掉落，抽到的卡自动点亮收藏册 |
-| 👤 我的 | 持有 / 完成度 / 心愿统计，清空数据、复制仓库地址 |
+| 📖 卡册 | 全国图鉴前五代（649 只）浏览，可按系列切换，进度条显示「已集 X/N」，标「只看未收集」快速查漏 |
+| 🎁 开包 | 模拟拆包，每包 5 张，可限定某代或全图鉴，传说 / 幻之稀有掉落，抽到的卡自动点亮收藏册 |
+| 👤 我的 | 持有 / 完成度 / 心愿统计，清空数据、复制仓库地址、版权声明 |
 
-- **宝可梦单 IP 主题**：对标「口袋卡牌助手」，蓝黄卡牌风，关都 151 图鉴。
+- **宝可梦单 IP 主题**：对标「口袋卡牌助手」，蓝黄卡牌风，**全国图鉴 1-649**（关都 / 城都 / 丰缘 / 神奥 / 合众）。
+- **官方 TCG 卡面**：卡图取自宝可梦集换式卡牌（TCG）官方卡图，详情页直接展示整张卡牌。
 - **纯本地**：收藏记录存在微信本机存储（`wx.setStorageSync`），**不上传任何服务器**，无需账号、无需后端。
-- **远程精灵图**：卡牌图取自 PokeAPI 官方精灵图（缩略图 + 高清立绘），加载失败自动兜底。
 
 ## 二、目录结构
 
 ```
 toy-collection-mp/
-├── app.js / app.json / app.wxss      # 全局：主题、tabBar
+├── app.js / app.json / app.wxss      # 全局：主题、tabBar、按需注入
 ├── project.config.json / sitemap.json
 ├── data/
-│   └── pokemon.js                    # 宝可梦数据（关都 151）
+│   └── pokemon.js                    # 宝可梦数据（五代 649 只，含 TCG 卡图 URL）
 ├── utils/
 │   ├── source.js                     # 数据抽象层（查找/进度/稀有度映射）
 │   └── store.js                      # 本地收藏 / 心愿的增删改查
-├── scripts/
-│   └── gen_pokemon.py                # 数据生成脚本（不进上传包）
+├── scripts/                          # 数据生成脚本（不进上传包）
+│   ├── fetch_tcg_sets.mjs            # 下载 pokemon-tcg-data 系列 JSON
+│   └── build_data.mjs                # 合并 fanzeyi + veekun + TCG → data/pokemon.js
 └── pages/
     ├── index/  卡牌   ├── dex/  卡册   ├── detail/ 详情
     ├── add/    录入   ├── gacha/ 开包  └── settings/ 我的
@@ -39,10 +40,10 @@ toy-collection-mp/
 1. 下载安装 **微信开发者工具**（稳定版）。
 2. 「导入项目」→ 选择本文件夹 `toy-collection-mp`。
 3. **AppID**：个人预览可选「测试号 / touristappid」；要真机调试需填你自己的小程序 AppID（公众平台注册）。
-4. 编译即可在模拟器看到「卡牌」首页；进「卡册」点任意卡牌 → 标记入手 → 回首页看收藏墙；或进「开包」点拆包抽卡。
+4. 编译即可在模拟器看到「卡牌」首页；进「卡册」切换系列浏览 → 点任意卡牌 → 标记入手 → 回首页看收藏墙；或进「开包」点拆包抽卡。
 5. 真机预览：开发者工具点「预览」扫码即可（个人主体小程序即可）。
 
-> 远程图需在微信公众平台配置 `downloadFile` 合法域名（`raw.githubusercontent.com` 等）；开发工具勾选「不校验合法域名」即可直接预览。
+> 远程图需在微信公众平台配置 `downloadFile` 合法域名（`images.pokemontcg.io`、`raw.githubusercontent.com`）；开发工具勾选「不校验合法域名」即可直接预览。
 
 ## 四、数据 Schema
 
@@ -54,7 +55,7 @@ toy-collection-mp/
     id, name, desc,
     figures: [{
       id, code, name, sub, types, rarity,
-      sprite, art, color,
+      sprite, art, tcgArt, color,
       height_m, weight_kg,
       abilities: [{ name, hidden }],
       base: { hp, atk, def, spa, spd, spe },
@@ -63,13 +64,15 @@ toy-collection-mp/
   }]
 }
 ```
+- 系列 `id`：`kanto`(1-151) / `johto`(152-251) / `hoenn`(252-386) / `sinnoh`(387-493) / `unova`(494-649)。
 - 宝可梦 `rarity`：`普通 | 传说 | 幻之`；`types` 为属性（如 `草/毒`）。
-- `sprite` 为缩略图、`art` 为高清立绘（均来自 PokeAPI，远程 URL）。
+- `tcgArt`：**官方 TCG 卡图**（`images.pokemontcg.io`，按全国图鉴号自动匹配最优稀有度卡），详情页优先展示。
+- `sprite` 为缩略图、`art` 为高清立绘（均来自 PokeAPI，作为兜底）。
 - `height_m` / `weight_kg`：真实身高体重（来自 veekun 图鉴）。
 - `abilities`：特性（含隐藏特性 `hidden:true`），中文名来自 veekun。
 - `base`：六维种族值（HP/攻击/防御/特攻/特防/速度），来自 fanzeyi pokedex。
 - `moves`：升级招式 Top3（含 `power` 威力 / `type` 属性 / `cls` 物理·特殊·变化 / `acc` 命中），来自 veekun。
-- 卡牌详情页（`pages/detail`）渲染为 **宝可梦 TCG 卡牌风格**：卡框/能量色按属性变化，展示 HP、特性、招式与种族值。数据由 `scripts/build_data.mjs` 从 fanzeyi + veekun 合并生成。
+- 数据由 `scripts/build_data.mjs` 从 fanzeyi + veekun + pokemon-tcg-data 合并生成。
 
 本地收藏记录（`utils/store.js`）：
 
@@ -80,16 +83,18 @@ toy-collection-mp/
 
 ## 五、如何扩充藏品库
 
-宝可梦数据就是普通 JS 数组，按上面的 schema 往 `figures` 里加条目即可：
+- 数据由脚本自动生成：先跑 `scripts/fetch_tcg_sets.mjs` 更新 TCG 卡图缓存，再跑 `scripts/build_data.mjs` 重新生成 `data/pokemon.js`。
+- 要新增世代（如 `gen6` 第六世代），在 `build_data.mjs` 的 `series` 数组里加一段 `rangeFigures(650, 721)`，并在 `fetch_tcg_sets.mjs` 补上对应 TCG 系列即可。
 
-- 在 `data/pokemon.js` 的 `kanto` 系列里继续补全到全国图鉴，或新增 `series`（如 `johto`）。
-- `scripts/gen_pokemon.py` 可从 fanzeyi/pokedex 自动生成数据（需联网）。
-
-无需改任何页面逻辑——`utils/source.js` 会自动把新数据接进图鉴、进度、统计。
+无需改任何页面逻辑——`utils/source.js` 会自动把新数据接进图鉴、进度、统计、开包。
 
 ## 六、技术说明
 
 - 框架：微信原生小程序（WXML / WXSS / JS / JSON），无第三方依赖。
 - 存储：`wx.getStorageSync` / `setStorageSync`，key = `toycol_collection_v1`。
 - 主题：页面根节点用 inline `style="--accent:...;--accent2:..."` 注入主色，WXSS 用 `var()` 取色；`onShow` 里 `wx.setNavigationBarColor` 同步导航栏。
-- 分享：`onShareAppMessage` 可后续在页面补（本版聚焦收藏管理，暂未加分享）。
+- 性能：`app.json` 开启 `lazyCodeLoading: requiredComponents`（组件按需注入）。
+
+## 七、版权声明
+
+本小程序中图片、文字等版权归属均为 Nintendo inc. / Creatures inc. / GAME FREAK inc. / DeNA inc. 及相关企业所有，仅供个人学习、交流、参考使用。严禁用于各种商业用途，违者作者保留追究法律责任的权力。

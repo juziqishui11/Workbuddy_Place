@@ -1,10 +1,45 @@
-/* dex.wxss —— 卡册 / 图鉴 */
-.bar { display: flex; align-items: center; justify-content: space-between; margin: 8rpx 4rpx 16rpx; }
+/* dex.wxss —— 卡册 / 图鉴（含系列切换） */
+.hero {
+  background: linear-gradient(135deg, var(--accent, #3B7DDD), #5B9BE8);
+  border-radius: 20rpx; padding: 26rpx 28rpx; color: #fff;
+}
+.brand { font-size: 34rpx; font-weight: 800; }
+.sub { font-size: 24rpx; opacity: .92; margin-top: 6rpx; }
+.progress { border-radius: 999rpx; overflow: hidden; }
+.progress-inner { height: 100%; border-radius: 999rpx; transition: width .3s; }
+
+/* 系列切换 */
+.series-bar { white-space: nowrap; margin: 16rpx 0 4rpx; }
+.series-tab {
+  display: inline-block; font-size: 24rpx; font-weight: 600; color: #5B6472;
+  background: #E6ECF5; border-radius: 999rpx; padding: 12rpx 24rpx; margin-right: 12rpx;
+}
+.series-tab.on { background: var(--accent, #3B7DDD); color: #fff; }
+
+.bar { display: flex; align-items: center; justify-content: space-between; margin: 12rpx 4rpx 16rpx; }
 .chip {
   font-size: 24rpx; font-weight: 600; color: #5B6472;
   background: #E6ECF5; border-radius: 999rpx; padding: 10rpx 22rpx;
 }
 .chip.on { background: var(--accent, #3B7DDD); color: #fff; }
+
+/* 卡册网格 */
+.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16rpx; }
+.cell { }
+.pk-card {
+  position: relative; background: #fff; border-radius: 16rpx; padding: 10rpx 10rpx 12rpx;
+  box-shadow: 0 6rpx 16rpx rgba(30, 60, 120, .1); overflow: hidden;
+}
+.pk-card.missing { background: #F2F4F8; }
+.pk-card .img { height: 188rpx; display: flex; align-items: center; justify-content: center; background: #F4F7FB; border-radius: 12rpx; }
+.pk-card .img image { width: 168rpx; height: 180rpx; }
+.pk-card .name { font-size: 22rpx; font-weight: 700; color: #1F2733; margin-top: 8rpx; text-align: center; }
+.pk-card .code { font-size: 18rpx; color: #8A93A3; text-align: center; }
+.badge {
+  position: absolute; top: 8rpx; right: 8rpx;
+  width: 36rpx; height: 36rpx; border-radius: 50%;
+  background: #22C55E; color: #fff; font-size: 24rpx; line-height: 36rpx; text-align: center;
+}
 .plus {
   position: absolute; top: 8rpx; right: 8rpx;
   width: 36rpx; height: 36rpx; border-radius: 50%;

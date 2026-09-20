@@ -1,26 +1,43 @@
 <view class="page" style="--type:{{figure.typeColor}};--accent:{{accent}};--accent2:{{accent2}}">
-  <!-- ===== TCG 卡牌正面 ===== -->
-  <view class="tcard" style="border-color:{{figure.typeColor}}">
-    <view class="tc-head" style="background:{{figure.typeColor}}">
-      <view class="tc-name">{{figure.name}}</view>
-      <view class="tc-no">No.{{figure.code}}</view>
-      <view class="tc-hp"><text class="hp-l">HP</text><text class="hp-v">{{figure.base.hp}}</text></view>
-    </view>
+  <!-- ===== 官方 TCG 卡图（整张） ===== -->
+  <view class="tcg-wrap">
+    <image wx:if="{{img}}" src="{{img}}" mode="aspectFit" binderror="onImgErr" class="tcg-img"></image>
+    <view wx:if="{{!img}}" class="tcg-fallback">暂无卡图</view>
+  </view>
 
-    <view class="tc-art">
-      <image wx:if="{{img}}" src="{{img}}" mode="aspectFit" binderror="onImgErr"></image>
-    </view>
+  <!-- ===== 名称 / 属性 ===== -->
+  <view class="head-row">
+    <view class="h-name">{{figure.name}}</view>
+    <text class="tag" style="color:{{figure.rarityColor}};background:{{figure.rarityBg}}">{{figure.rarityLabel}}</text>
+  </view>
+  <view class="sub">{{figure.sub}} · No.{{figure.code}} · {{figure.seriesName}}</view>
+  <view class="types">
+    <text class="tag tc-type" style="color:#fff;background:{{figure.typeColor}}">{{figure.types}}</text>
+  </view>
 
-    <view class="tc-tags">
-      <text class="tag tc-type" style="color:#fff;background:{{figure.typeColor}}">{{figure.types}}</text>
-      <text class="tag" style="color:{{figure.rarityColor}};background:{{figure.rarityBg}}">{{figure.rarityLabel}}</text>
+  <!-- ===== 图鉴信息 ===== -->
+  <view class="card">
+    <view class="section-title" style="margin:4rpx 0 12rpx">图鉴信息</view>
+    <view class="hw">
+      <view class="hw-cell"><text class="hw-k">身高</text><text class="hw-v">{{figure.height_m}} m</text></view>
+      <view class="hw-cell"><text class="hw-k">体重</text><text class="hw-v">{{figure.weight_kg}} kg</text></view>
     </view>
+    <view class="divider"></view>
+    <view class="section-title" style="margin:12rpx 0 12rpx">种族值（合计 {{figure.baseTotal}}）</view>
+    <view class="stat-row" wx:for="{{['hp','atk','def','spa','spd','spe']}}" wx:key="*this">
+      <text class="stat-l">{{item === 'hp' ? 'HP' : item === 'atk' ? '攻击' : item === 'def' ? '防御' : item === 'spa' ? '特攻' : item === 'spd' ? '特防' : '速度'}}</text>
+      <view class="stat-bar"><view class="stat-fill" style="width:{{figure.base[item] / 2}}%;background:{{figure.typeColor}}"></view></view>
+      <text class="stat-num">{{figure.base[item]}}</text>
+    </view>
+  </view>
 
+  <!-- ===== 招式 · 特性（补充信息） ===== -->
+  <view class="card">
+    <view class="section-title" style="margin:4rpx 0 12rpx">招式 · 特性</view>
     <view class="tc-ability">
       <text class="tc-k">特性</text>
       <text class="tc-ab" wx:for="{{figure.abilities}}" wx:key="name">{{item.name}}{{item.hidden ? '(隐)' : ''}}<text wx:if="{{index < figure.abilities.length - 1}}"> / </text></text>
     </view>
-
     <view class="tc-moves">
       <view class="tc-move" wx:for="{{figure.moves}}" wx:key="name">
         <view class="mv-left">
@@ -29,21 +46,6 @@
         </view>
         <view class="mv-dmg">{{item.power || '—'}}<text class="mv-u" wx:if="{{item.power}}">伤害</text></view>
       </view>
-    </view>
-  </view>
-
-  <!-- ===== 身价 / 种族值 ===== -->
-  <view class="card">
-    <view class="hw">
-      <view class="hw-cell"><text class="hw-k">身高</text><text class="hw-v">{{figure.height_m}} m</text></view>
-      <view class="hw-cell"><text class="hw-k">体重</text><text class="hw-v">{{figure.weight_kg}} kg</text></view>
-    </view>
-    <view class="divider"></view>
-    <view class="section-title" style="margin:4rpx 0 12rpx">种族值（合计 {{figure.baseTotal}}）</view>
-    <view class="stat-row" wx:for="{{['hp','atk','def','spa','spd','spe']}}" wx:key="*this">
-      <text class="stat-l">{{item === 'hp' ? 'HP' : item === 'atk' ? '攻击' : item === 'def' ? '防御' : item === 'spa' ? '特攻' : item === 'spd' ? '特防' : '速度'}}</text>
-      <view class="stat-bar"><view class="stat-fill" style="width:{{figure.base[item] / 2}}%;background:{{figure.typeColor}}"></view></view>
-      <text class="stat-num">{{figure.base[item]}}</text>
     </view>
   </view>
 

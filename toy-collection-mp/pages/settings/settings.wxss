@@ -5,3 +5,6 @@
 .stat .l { font-size: 22rpx; color: #9AA0AC; margin-top: 4rpx; }
 .row-btn { padding: 22rpx 4rpx; border-bottom: 1rpx solid #F0F2F6; font-weight: 600; }
 .row-btn:last-child { border-bottom: none; }
+
+.disclaimer { color: #8A93A3; font-size: 21rpx; line-height: 1.7; }
+.dis-title { font-size: 24rpx; font-weight: 800; color: #5B6472; margin-bottom: 8rpx; }

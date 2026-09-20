@@ -1,6 +1,13 @@
 /* gacha.wxss —— 开包模拟 */
 .gacha-hero { text-align: center; }
 
+.series-bar { white-space: nowrap; margin: 16rpx 0 4rpx; }
+.series-tab {
+  display: inline-block; font-size: 24rpx; font-weight: 600; color: #5B6472;
+  background: #E6ECF5; border-radius: 999rpx; padding: 12rpx 24rpx; margin-right: 12rpx;
+}
+.series-tab.on { background: var(--accent, #3B7DDD); color: #fff; }
+
 .pack {
   margin: 24rpx 0;
   background: linear-gradient(150deg, var(--accent, #3B7DDD), var(--accent2, #FFCB05));

@@ -49,11 +49,15 @@ Page({
     this.setData({
       meta: meta, seriesId: q.seriesId, figureId: q.figureId,
       figure: fig, hasRec: !!rec, rec: rec,
-      accent: meta.accent, accent2: meta.accent2, img: found.figure.art
+      accent: meta.accent, accent2: meta.accent2, img: found.figure.tcgArt || found.figure.art || found.figure.sprite
     });
   },
 
-  onImgErr: function () { this.setData({ img: this.data.figure.sprite || '' }); },
+  onImgErr: function () {
+    const f = this.data.figure;
+    if (this.data.img === f.tcgArt && f.art) { this.setData({ img: f.art }); }
+    else if (f.sprite) { this.setData({ img: f.sprite }); }
+  },
 
   goEdit: function () {
     const q = this.q;

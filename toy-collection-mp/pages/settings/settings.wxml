@@ -1,7 +1,7 @@
 <view class="page" style="--accent:{{accent}};--accent2:{{accent2}}">
   <view class="hero">
     <view class="brand">{{meta.brand}} · 口袋卡牌助手</view>
-    <view class="sub">关都 151 图鉴收藏与开包</view>
+    <view class="sub">全国图鉴 1-649 收藏与开包（关都 / 城都 / 丰缘 / 神奥 / 合众）</view>
   </view>
 
   <view class="card stats-card">
@@ -16,9 +16,15 @@
     <view class="row-btn" bindtap="copyRepo">🔗 复制项目仓库地址</view>
   </view>
 
+  <view class="section-title">关于</view>
   <view class="card" style="color:#9AA0AC;font-size:22rpx;line-height:1.7;">
     口袋卡牌助手 · 宝可梦卡牌收藏与开包模拟小程序（微信原生）。<br/>
-    数据仅保存在本机微信存储，不上传服务器；卡牌图来自 PokeAPI 官方精灵图。<br/>
-    图鉴收录关都地区 151 只宝可梦，开包可获得传说 / 幻之稀有卡。
+    收藏数据仅保存在本机微信存储，不上传服务器。<br/>
+    图鉴收录全国图鉴前五代共 649 只宝可梦，卡面取自宝可梦集换式卡牌（TCG），开包可获得传说 / 幻之稀有卡。
+  </view>
+
+  <view class="card disclaimer">
+    <view class="dis-title">版权声明</view>
+    本小程序中图片、文字等版权归属均为 Nintendo inc. / Creatures inc. / GAME FREAK inc. / DeNA inc. 及相关企业所有，仅供个人学习、交流、参考使用。严禁用于各种商业用途，违者作者保留追究法律责任的权力。
   </view>
 </view>

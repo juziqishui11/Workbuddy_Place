@@ -66,7 +66,7 @@ for ghpath, full in files:
 new_tree = gh('POST', '/git/trees', {'base_tree': base_tree, 'tree': tree_entries})
 # 5. commit
 new_commit = gh('POST', '/git/commits', {
-    'message': 'feat: 口袋卡牌助手小程序重构（宝可梦单IP · TCG卡牌详情 · 真实图鉴数据 身高/体重/特性/种族值/招式）',
+    'message': 'feat: 口袋卡牌助手扩展全国图鉴前五代(649) + 官方 TCG 卡图（详情页整卡展示、卡册/开包系列切换、版权声明、lazyCodeLoading）',
     'tree': new_tree['sha'], 'parents': [base_sha]})
 # 6. ref
 gh('PATCH', '/git/refs/heads/' + BRANCH, {'sha': new_commit['sha']})

@@ -4,6 +4,10 @@
     <view class="sub">每包 {{packSize}} 张 · 已拆 {{drawCount}} 张</view>
   </view>
 
+  <scroll-view scroll-x class="series-bar" enhanced show-scrollbar="{{false}}">
+    <view class="series-tab {{active === item.id ? 'on' : ''}}" wx:for="{{seriesList}}" wx:key="id" bindtap="switchSeries" data-id="{{item.id}}">{{item.name}}</view>
+  </scroll-view>
+
   <view class="pack" bindtap="doDraw">
     <view class="pack-art">🎴</view>
     <view class="pack-txt">点击拆包</view>

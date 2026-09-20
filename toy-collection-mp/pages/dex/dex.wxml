@@ -1,11 +1,16 @@
 <view class="page" style="--accent:{{accent}};--accent2:{{accent2}}">
   <view class="hero">
     <view class="brand">{{meta.brand}} · 卡册</view>
-    <view class="sub">关都地区图鉴 {{owned}} / {{total}}</view>
+    <view class="sub">当前系列 {{owned}} / {{total}} 已收集</view>
     <view class="progress" style="margin-top:16rpx;height:18rpx;background:rgba(255,255,255,.35)">
       <view class="progress-inner" style="width:{{percent}}%;background:#fff"></view>
     </view>
   </view>
+
+  <!-- ===== 系列切换 ===== -->
+  <scroll-view scroll-x class="series-bar" enhanced show-scrollbar="{{false}}">
+    <view class="series-tab {{active === item.id ? 'on' : ''}}" wx:for="{{seriesList}}" wx:key="id" bindtap="switchSeries" data-id="{{item.id}}">{{item.name}}</view>
+  </scroll-view>
 
   <view class="bar">
     <view class="section-title" style="margin:0">全图鉴</view>

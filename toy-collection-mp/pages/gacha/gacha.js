@@ -13,26 +13,33 @@ function todayStr() {
 
 Page({
   data: {
-    meta: {}, accent: '#3B7DDD', accent2: '#FFCB05',
+    meta: {}, seriesList: [], active: 'all',
+    accent: '#3B7DDD', accent2: '#FFCB05',
     results: [], flipping: false, pulling: false,
     drawCount: 0, lastNew: 0, packSize: 5
   },
 
   onShow: function () {
     const meta = source.getMeta();
+    const list = [{ id: 'all', name: '全图鉴' }].concat(meta.series.map(function (s) { return { id: s.id, name: s.name.split(' ')[0] }; }));
     wx.setNavigationBarColor({ frontColor: '#ffffff', backgroundColor: meta.accent });
     wx.setNavigationBarTitle({ title: '开包模拟' });
-    this.setData({ meta: meta, accent: meta.accent, accent2: meta.accent2 });
+    this.setData({ meta: meta, seriesList: list, accent: meta.accent, accent2: meta.accent2 });
+  },
+
+  switchSeries: function (e) {
+    this.setData({ active: e.currentTarget.dataset.id });
   },
 
   buildPool: function () {
     const src = source.getSource();
     const pool = [];
     src.series.forEach(function (ser) {
+      if (this.data.active !== 'all' && ser.id !== this.data.active) return;
       ser.figures.forEach(function (f) {
         pool.push({ seriesId: ser.id, seriesName: ser.name, figure: f });
       });
-    });
+    }.bind(this));
     return pool;
   },
 
@@ -97,7 +104,7 @@ Page({
     return {
       seriesId: pick.seriesId, seriesName: pick.seriesName, figureId: f.id,
       name: f.name, code: f.code, sub: f.sub || '', color: f.color || '#EEE',
-      sprite: f.sprite, art: f.art, img: f.sprite,
+      sprite: f.sprite, art: f.art, tcgArt: f.tcgArt || '', img: f.tcgArt || f.sprite,
       rarity: f.rarity, rarityLabel: rm.label, rarityColor: rm.color, rarityBg: rm.bg,
       isNew: isNew, owned: true
     };
@@ -145,6 +152,7 @@ Page({
   onImgErr: function (e) {
     const i = e.currentTarget.dataset.i;
     const key = 'results[' + i + '].img';
-    this.setData({ [key]: this.data.results[i].art });
+    const r = this.data.results[i];
+    this.setData({ [key]: r.sprite || r.art });
   }
 });

@@ -17,7 +17,7 @@ Page({
     let owned = ownedRaw.map(function (r) { return source.enrich(r); }).filter(Boolean);
     owned.sort(function (a, b) { return pkNum(a.figureId) - pkNum(b.figureId); });
     owned = owned.map(function (o) {
-      return Object.assign({}, o, { img: o.sprite });
+      return Object.assign({}, o, { img: o.tcgArt || o.sprite });
     });
     const total = source.totalFigures();
     const stat = store.stats();
