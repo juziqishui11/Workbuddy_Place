@@ -31,10 +31,10 @@ Page({
       const rm = source.rarityMeta(f.rarity);
       return {
         seriesId: ser.id, figureId: f.id, code: f.code, name: f.name, sub: f.sub,
-        tcgArt: f.tcgArt, sprite: f.sprite, art: f.art, color: f.color,
+        tcgArt: source.figureImage(f), sprite: f.sprite, art: f.art, color: f.color,
         rarity: f.rarity, rarityLabel: rm.label, rarityColor: rm.color, rarityBg: rm.bg,
         owned: !!(rec && rec.own), wish: !!(rec && rec.wish),
-        img: f.tcgArt || f.sprite
+        img: source.figureImage(f)
       };
     });
     const owned = figures.filter(function (f) { return f.owned; }).length;

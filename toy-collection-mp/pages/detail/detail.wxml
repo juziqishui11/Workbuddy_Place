@@ -1,9 +1,10 @@
 <view class="page" style="--type:{{figure.typeColor}};--accent:{{accent}};--accent2:{{accent2}}">
-  <!-- ===== 官方 TCG 卡图（整张） ===== -->
+  <!-- ===== 官方简体中文版 TCG 卡图（整张） ===== -->
   <view class="tcg-wrap">
     <image wx:if="{{img}}" src="{{img}}" mode="aspectFit" binderror="onImgErr" class="tcg-img"></image>
     <view wx:if="{{!img}}" class="tcg-fallback">暂无卡图</view>
   </view>
+  <view wx:if="{{card}}" class="tcg-cap">{{card.name}}<text wx:if="{{card.no}}"> · {{card.no}}</text> · {{card.setName}}<text wx:if="{{card.hp}}"> · {{card.hp}}HP</text><text wx:if="{{card.attr}}"> · {{card.attr}}</text></view>
 
   <!-- ===== 名称 / 属性 ===== -->
   <view class="head-row">
@@ -13,6 +14,46 @@
   <view class="sub">{{figure.sub}} · No.{{figure.code}} · {{figure.seriesName}}<text wx:if="{{figure.category}}"> · {{figure.category}}</text></view>
   <view class="types">
     <text class="tag tc-type" style="color:#fff;background:{{figure.typeColor}}">{{figure.types}}</text>
+  </view>
+
+  <!-- ===== 卡面技能（该卡的中文招式 / 特性） ===== -->
+  <view wx:if="{{card && (card.atk.length || card.ft.length)}}" class="card">
+    <view class="section-title" style="margin:4rpx 0 10rpx">卡面技能<text class="sec-sub">取自该卡面 · 中文</text></view>
+
+    <view wx:for="{{card.ft}}" wx:key="name" class="ft-item">
+      <view class="ft-head">
+        <text class="ft-tag">特性</text>
+        <text class="ft-name">{{item.name}}</text>
+      </view>
+      <view wx:if="{{item.text}}" class="ft-text">{{item.text}}</view>
+    </view>
+
+    <view wx:for="{{card.atk}}" wx:key="name" class="atk-item">
+      <view class="atk-head">
+        <view class="atk-cost">
+          <text wx:for="{{item.cost}}" wx:for-item="e" wx:key="index" class="cost-dot" style="background:{{e.c}}">{{e.n}}</text>
+        </view>
+        <text class="atk-name">{{item.name}}</text>
+        <text class="atk-dmg">{{item.dmg || '—'}}</text>
+      </view>
+      <view wx:if="{{item.text}}" class="atk-text">{{item.text}}</view>
+    </view>
+
+    <view wx:if="{{card.intl}}" class="intl-tip">该宝可梦暂无简体中文版卡面，以下为国际版卡面。</view>
+  </view>
+
+  <!-- ===== 卡面版本（同一只宝可梦的不同系列 / 不同样子） ===== -->
+  <view wx:if="{{versions.length > 1}}" class="card">
+    <view class="section-title" style="margin:4rpx 0 10rpx">卡面版本<text class="sec-sub">共 {{versions.length}} 张 · 点击放大</text></view>
+    <scroll-view scroll-x class="ver-scroll" enhanced show-scrollbar="{{false}}">
+      <view class="ver-row">
+        <view wx:for="{{versions}}" wx:key="img" class="ver-item {{item.main ? 'on' : ''}}" data-i="{{index}}" bindtap="previewVer">
+          <view class="ver-img"><image src="{{item.img}}" mode="aspectFill" lazy-load></image></view>
+          <view class="ver-set">{{item.setName}}</view>
+          <view class="ver-no">#{{item.no}}<text wx:if="{{item.rarity && item.rarity !== '无标记'}}" class="ver-rar">{{item.rarity}}</text></view>
+        </view>
+      </view>
+    </scroll-view>
   </view>
 
   <!-- ===== 图鉴描述（中文） ===== -->
@@ -51,9 +92,51 @@
     </view>
   </view>
 
-  <!-- ===== 招式 · 特性（补充信息） ===== -->
+  <!-- ===== 进化关系（进化前 / 进化后 / 同族全链） ===== -->
+  <view wx:if="{{evo.has}}" class="card">
+    <view class="section-title" style="margin:4rpx 0 12rpx">进化关系</view>
+
+    <view wx:if="{{evo.from.length}}" class="evo-row">
+      <text class="evo-k">进化前</text>
+      <view class="evo-list">
+        <view wx:for="{{evo.from}}" wx:key="id" class="evo-item" data-series="{{item.seriesId}}" data-id="{{item.id}}" bindtap="goFigure">
+          <view class="evo-img"><image src="{{item.thumb}}" mode="aspectFill" lazy-load></image></view>
+          <view class="evo-name">{{item.name}}</view>
+          <view class="evo-code">No.{{item.code}}</view>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{evo.to.length}}" class="evo-row">
+      <text class="evo-k">进化后</text>
+      <view class="evo-list">
+        <view wx:for="{{evo.to}}" wx:key="id" class="evo-item" data-series="{{item.seriesId}}" data-id="{{item.id}}" bindtap="goFigure">
+          <view class="evo-img"><image src="{{item.thumb}}" mode="aspectFill" lazy-load></image></view>
+          <view class="evo-name">{{item.name}}</view>
+          <view class="evo-code">No.{{item.code}}</view>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{evo.chain.length > 1}}" class="evo-chain-wrap">
+      <view class="evo-chain-k">同族全链（{{evo.chain.length}}）{{evo.branch ? ' · 含分支进化' : ''}}</view>
+      <scroll-view scroll-x class="evo-chain" enhanced show-scrollbar="{{false}}">
+        <view class="evo-chain-row">
+          <block wx:for="{{evo.chain}}" wx:key="id">
+            <view wx:if="{{index > 0}}" class="evo-sep">{{evo.branch ? '·' : '›'}}</view>
+            <view class="evo-chip {{item.mark === 'cur' ? 'cur' : ''}}" data-series="{{item.seriesId}}" data-id="{{item.id}}" bindtap="goFigure">
+              <view class="evo-chip-img"><image src="{{item.thumb}}" mode="aspectFill" lazy-load></image></view>
+              <view class="evo-chip-name">{{item.name}}</view>
+            </view>
+          </block>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+
+  <!-- ===== 游戏数据（招式 · 特性，与卡面技能不同） ===== -->
   <view class="card">
-    <view class="section-title" style="margin:4rpx 0 12rpx">招式 · 特性</view>
+    <view class="section-title" style="margin:4rpx 0 10rpx">游戏数据 · 招式特性<text class="sec-sub">主线游戏数据，非卡面技能</text></view>
     <view class="tc-ability">
       <text class="tc-k">特性</text>
       <text class="tc-ab" wx:for="{{figure.abilities}}" wx:key="name">{{item.name}}{{item.hidden ? '(隐)' : ''}}<text wx:if="{{index < figure.abilities.length - 1}}"> / </text></text>

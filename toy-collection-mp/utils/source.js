@@ -99,7 +99,8 @@ function enrich(rec) {
     color: found.figure.color || '#EEE',
     sprite: found.figure.sprite || '',
     art: found.figure.art || '',
-    tcgArt: found.figure.tcgArt || '',
+    tcgArt: figureImage(found.figure),
+    cn: found.figure.cn || null,
     rarity: found.figure.rarity || '普通',
     category: found.figure.category || '',
     desc: found.figure.desc || '',
@@ -115,6 +116,122 @@ function listSeries() {
   });
 }
 
+/* ============================================================
+ *  官方简体中文版 TCG 卡面（duanxr/PTCG-CHS-Datasets，非商业 / 研究用途）
+ *  数据来源：宝可梦简体中文版集换式卡牌游戏
+ * ============================================================ */
+
+var CHS_IMG_BASE = 'https://raw.githubusercontent.com/duanxr/PTCG-CHS-Datasets/main/';
+
+// TCG 能量 / 属性（与数据集 dict.attribute 一致）
+var ATTR_NAME = { 1: '草', 2: '火', 3: '水', 4: '雷', 5: '超', 6: '斗', 7: '恶', 8: '钢', 9: '妖', 10: '龙', 11: '无色' };
+var ATTR_COLOR = {
+  '草': '#43A047', '火': '#EF6C00', '水': '#1E88E5', '雷': '#F9A825', '超': '#D81B60',
+  '斗': '#B9492F', '恶': '#5D4037', '钢': '#9AA4B2', '妖': '#EC7FA9', '龙': '#7038F8', '无色': '#B7BFCC'
+};
+
+function cnImg(p) { return p ? CHS_IMG_BASE + p : ''; }
+function cnSetName(code) { var m = pokemon.cnSets || {}; return m[code] || code || ''; }
+
+// "2,2,2,2" → [{n:'火',c:'#EF6C00'}, ...]
+function energyCost(s) {
+  var out = [];
+  String(s || '').split(',').forEach(function (code) {
+    var n = ATTR_NAME[code];
+    if (n) out.push({ n: n, c: ATTR_COLOR[n] || '#B7BFCC' });
+  });
+  return out;
+}
+
+/** 列表 / 卡墙用：这只宝可梦的卡面主图 */
+function figureImage(figure) {
+  return cnImg(figure.cn && figure.cn.img) || figure.enArt || figure.art || figure.sprite || '';
+}
+
+/** 详情页「主卡」：中文卡名 · 招式（中文名 + 中文说明 + 能量 + 伤害）· 特性 */
+function mainCard(figure) {
+  var c = figure.cn;
+  if (!c) {
+    if (!figure.enArt) return null;
+    return {
+      img: figure.enArt, name: figure.name, no: '', setCode: '', setName: '国际版卡面',
+      hp: 0, attr: '', rarity: '', atk: [], ft: [], intl: true
+    };
+  }
+  return {
+    img: cnImg(c.img), name: c.n, no: c.no, setCode: c.s, setName: cnSetName(c.s),
+    hp: c.hp, attr: c.a, rarity: c.r, intl: false,
+    atk: (c.atk || []).map(function (a) {
+      return { name: a.n, text: a.d, dmg: a.p, cost: energyCost(a.c) };
+    }),
+    ft: (c.ft || []).map(function (f) { return { name: f.n, text: f.d }; })
+  };
+}
+
+/** 全部卡面版本（主卡 + 其他中文卡面，同一只宝可梦的不同系列 / 不同样子） */
+function cardVersions(figure) {
+  var out = [];
+  var c = figure.cn;
+  if (c) out.push({ img: cnImg(c.img), no: c.no, setId: c.s, setName: cnSetName(c.s), rarity: c.r, main: true });
+  (figure.cvs || []).forEach(function (v) {
+    out.push({ img: cnImg(v[0]), no: v[1], setId: v[2], setName: cnSetName(v[2]), rarity: v[3], main: false });
+  });
+  if (!out.length && figure.enArt) {
+    out.push({ img: figure.enArt, no: '', setId: '', setName: '国际版卡面', rarity: '', main: true });
+  }
+  return out;
+}
+
+// 全国图鉴号 → 图鉴项（懒建索引）
+var _dexIndex = null;
+function figureByDex(dex) {
+  if (!_dexIndex) {
+    _dexIndex = {};
+    pokemon.series.forEach(function (ser) {
+      ser.figures.forEach(function (f) { _dexIndex[Number(f.code)] = { series: ser, figure: f }; });
+    });
+  }
+  return _dexIndex[dex] || null;
+}
+
+// 组装一张「关联宝可梦」小卡（供进化链渲染 / 点击跳转）
+function miniOf(dex, mark) {
+  var hit = figureByDex(dex);
+  if (!hit) return null;
+  var f = hit.figure;
+  return {
+    id: f.id,
+    dex: Number(f.code),
+    code: f.code,
+    name: f.name,
+    seriesId: hit.series.id,
+    thumb: figureImage(f),
+    typeColor: f.color || '#3B7DDD',
+    types: f.types || '',
+    mark: mark || ''
+  };
+}
+
+/** 某只宝可梦的进化关系：进化前（直接）/ 进化后（直接）/ 同族全链 */
+function evolutionOf(figure) {
+  var dex = Number(figure.code);
+  var from = (figure.ef || []).map(function (d) { return miniOf(d, 'from'); }).filter(Boolean);
+  var to = (figure.et || []).map(function (d) { return miniOf(d, 'to'); }).filter(Boolean);
+  var chain = (figure.ec || [dex]).map(function (d) {
+    return miniOf(d, d === dex ? 'cur' : 'kin');
+  }).filter(Boolean);
+  // 分叉判定：同族中任一节点有多个子代（如伊布）→ 不能画成线性箭头
+  var branch = false;
+  (figure.ec || []).forEach(function (d) {
+    var hit = figureByDex(d);
+    if (hit && (hit.figure.et || []).length > 1) branch = true;
+  });
+  return {
+    from: from, to: to, chain: chain, branch: branch,
+    has: from.length > 0 || to.length > 0 || chain.length > 1
+  };
+}
+
 module.exports = {
   getSource: getSource,
   getMeta: getMeta,
@@ -123,5 +240,11 @@ module.exports = {
   progressFor: progressFor,
   totalFigures: totalFigures,
   enrich: enrich,
-  listSeries: listSeries
+  listSeries: listSeries,
+  figureImage: figureImage,
+  mainCard: mainCard,
+  cardVersions: cardVersions,
+  cnSetName: cnSetName,
+  figureByDex: figureByDex,
+  evolutionOf: evolutionOf
 };

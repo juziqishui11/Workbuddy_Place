@@ -66,7 +66,7 @@ for ghpath, full in files:
 new_tree = gh('POST', '/git/trees', {'base_tree': base_tree, 'tree': tree_entries})
 # 5. commit
 new_commit = gh('POST', '/git/commits', {
-    'message': 'fix: 卡册网格布局错乱（display:grid 与全局 .cell{33.33%} 叠加导致格子被压成 1/3 宽、卡名逐字竖排）；卡牌统一改为竖版 TCG 卡比例（245:342）',
+    'message': 'feat: 卡面全面中文化 — 接入官方简体中文版 TCG 数据集（duanxr/PTCG-CHS-Datasets）：卡图/卡名/招式/特性全中文且一一对应（645/649），新增「卡面版本」多系列卡面浏览与「进化关系」（进化前/后/同族全链，含分支进化）；数据紧凑化输出（2.1MB→1.0MB）',
     'tree': new_tree['sha'], 'parents': [base_sha]})
 # 6. ref
 gh('PATCH', '/git/refs/heads/' + BRANCH, {'sha': new_commit['sha']})

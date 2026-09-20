@@ -74,3 +74,72 @@
 .acts { margin-top: 8rpx; }
 .acts .btn { margin-bottom: 16rpx; }
 .btn.danger { background: #fff; color: #EF4444; border: 2rpx solid #EF4444; }
+
+/* ===== 卡面所属系列 ===== */
+.tcg-cap { text-align: center; font-size: 22rpx; color: #8A93A3; margin-top: 14rpx; }
+
+/* ===== 卡面版本（横向滚动） ===== */
+.sec-sub { font-size: 20rpx; font-weight: 500; color: #9AA0AC; margin-left: 12rpx; }
+.ver-scroll { width: 100%; }
+.ver-row { display: flex; padding: 6rpx 0 4rpx; }
+.ver-item { flex-shrink: 0; width: 152rpx; margin-right: 14rpx; border-radius: 14rpx; padding: 6rpx; border: 3rpx solid transparent; box-sizing: border-box; }
+.ver-item.on { border-color: var(--type, #3B7DDD); background: #F4F8FF; }
+.ver-img { width: 100%; height: 208rpx; border-radius: 10rpx; overflow: hidden; background: #F1F5FB; }
+.ver-img image { width: 100%; height: 100%; display: block; }
+.ver-set { font-size: 20rpx; font-weight: 700; color: #1F2733; margin-top: 8rpx; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ver-no { font-size: 18rpx; color: #8A93A3; white-space: nowrap; }
+.ver-rar { margin-left: 8rpx; color: #B7791F; font-weight: 700; }
+
+/* ===== 进化关系 ===== */
+.evo-row { display: flex; align-items: flex-start; margin-bottom: 14rpx; }
+.evo-k { width: 84rpx; flex-shrink: 0; font-size: 24rpx; font-weight: 700; color: #8A93A3; line-height: 40rpx; }
+.evo-list { flex: 1; display: flex; flex-wrap: wrap; }
+.evo-item { width: 124rpx; margin: 0 14rpx 10rpx 0; }
+.evo-img { width: 100%; height: 168rpx; border-radius: 12rpx; overflow: hidden; background: #F1F5FB; border: 2rpx solid #EDF1F7; }
+.evo-img image { width: 100%; height: 100%; display: block; }
+.evo-name { font-size: 22rpx; font-weight: 700; color: #1F2733; margin-top: 6rpx; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.evo-code { font-size: 18rpx; color: #9AA0AC; text-align: center; }
+
+.evo-chain-wrap { margin-top: 6rpx; padding-top: 14rpx; border-top: 1rpx solid #F0F2F6; }
+.evo-chain-k { font-size: 22rpx; color: #8A93A3; font-weight: 600; }
+.evo-chain { width: 100%; margin-top: 10rpx; }
+.evo-chain-row { display: flex; align-items: center; padding: 2rpx 0 6rpx; }
+.evo-sep { flex-shrink: 0; color: #C2CAD6; font-size: 26rpx; margin: 0 8rpx; }
+.evo-chip {
+  flex-shrink: 0; display: flex; flex-direction: column; align-items: center;
+  width: 96rpx; padding: 8rpx 4rpx; border-radius: 12rpx; background: #F6F8FC;
+}
+.evo-chip.cur { background: #F4F8FF; box-shadow: inset 0 0 0 3rpx var(--type, #3B7DDD); }
+.evo-chip-img { width: 60rpx; height: 60rpx; border-radius: 50%; overflow: hidden; background: #EDF1F7; }
+.evo-chip-img image { width: 100%; height: 100%; display: block; }
+.evo-chip-name { font-size: 18rpx; color: #5B6472; margin-top: 4rpx; max-width: 88rpx; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.evo-chip.cur .evo-chip-name { color: #1F2733; font-weight: 800; }
+
+/* ===== 卡面技能（该卡的招式 / 特性） ===== */
+.ft-item {
+  background: #FFFBF0; border-radius: 14rpx; padding: 14rpx 18rpx; margin-bottom: 12rpx;
+  border-left: 6rpx solid #E8A33D;
+}
+.ft-head { display: flex; align-items: center; }
+.ft-tag {
+  font-size: 18rpx; font-weight: 800; color: #fff; background: #E8A33D;
+  padding: 2rpx 12rpx; border-radius: 999rpx; margin-right: 12rpx;
+}
+.ft-name { font-size: 28rpx; font-weight: 800; color: #1F2733; }
+.ft-text { font-size: 24rpx; line-height: 1.6; color: #4A5568; margin-top: 8rpx; }
+
+.atk-item {
+  background: #F6F8FC; border-radius: 14rpx; padding: 14rpx 18rpx; margin-bottom: 10rpx;
+  border-left: 6rpx solid var(--type, #3B7DDD);
+}
+.atk-head { display: flex; align-items: center; }
+.atk-cost { display: flex; margin-right: 12rpx; }
+.cost-dot {
+  width: 32rpx; height: 32rpx; border-radius: 50%; margin-right: 4rpx;
+  color: #fff; font-size: 18rpx; font-weight: 700; line-height: 32rpx; text-align: center;
+  flex-shrink: 0;
+}
+.atk-name { flex: 1; font-size: 28rpx; font-weight: 700; color: #1F2733; }
+.atk-dmg { font-size: 36rpx; font-weight: 800; color: #1F2733; }
+.atk-text { font-size: 24rpx; line-height: 1.6; color: #4A5568; margin-top: 8rpx; }
+.intl-tip { font-size: 20rpx; color: #9AA0AC; margin-top: 6rpx; }

@@ -18,7 +18,13 @@ const SERIES = [
   'pl1','pl2','pl3','pl4',
   'hgss1','hgss2','hgss3','hgss4','col1','ru1','hsp',
   'bw1','bw2','bw3','bw4','bw5','bw6','bw7','bw8','bw9','bw10','bw11','xy0','dv1',
-  'bwp','xyp','dpp'
+  'bwp','xyp','dpp',
+  // XY / 后续世代英文系列（同样含 1-649 老宝可梦的卡面，用于「不同版本卡图」）
+  'xy1','xy2','xy3','xy4','xy5','xy6','xy7','xy8','xy9','xy10','xy11',
+  'g1','dc1','bp',
+  // POP / McDonald's 促销系列（复古卡面）
+  'pop1','pop2','pop3','pop4','pop5','pop6','pop7','pop8','pop9',
+  'mcd11','mcd12','mcd14','mcd15'
 ];
 
 function get(url) {

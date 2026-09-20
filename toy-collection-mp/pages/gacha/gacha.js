@@ -104,7 +104,7 @@ Page({
     return {
       seriesId: pick.seriesId, seriesName: pick.seriesName, figureId: f.id,
       name: f.name, code: f.code, sub: f.sub || '', color: f.color || '#EEE',
-      sprite: f.sprite, art: f.art, tcgArt: f.tcgArt || '', img: f.tcgArt || f.sprite,
+      sprite: f.sprite, art: f.art, tcgArt: source.figureImage(f), img: source.figureImage(f),
       rarity: f.rarity, rarityLabel: rm.label, rarityColor: rm.color, rarityBg: rm.bg,
       isNew: isNew, owned: true
     };

@@ -13,7 +13,9 @@ const TYPE_COLOR_CN = {
 Page({
   data: {
     meta: {}, seriesId: '', figureId: '', figure: {},
-    hasRec: false, rec: null, accent: '#3B7DDD', accent2: '#FFCB05', img: ''
+    hasRec: false, rec: null, accent: '#3B7DDD', accent2: '#FFCB05',
+    card: null, img: '', versions: [], verUrls: [],
+    evo: { from: [], to: [], chain: [], has: false, branch: false }
   },
 
   onLoad: function (q) {
@@ -46,16 +48,43 @@ Page({
         return Object.assign({}, m, { color: TYPE_COLOR_CN[m.type] || '#888' });
       })
     });
+
+    // 卡面（官方简体中文版 TCG）
+    const card = source.mainCard(found.figure);
+    const versions = source.cardVersions(found.figure);
+    const verUrls = versions.map(function (v) { return v.img; });
+    const img = (card && card.img) || found.figure.art || found.figure.sprite;
+
+    // 进化关系（进化前 / 进化后 / 同族全链）
+    const evo = source.evolutionOf(found.figure);
+
     this.setData({
       meta: meta, seriesId: q.seriesId, figureId: q.figureId,
       figure: fig, hasRec: !!rec, rec: rec,
-      accent: meta.accent, accent2: meta.accent2, img: found.figure.tcgArt || found.figure.art || found.figure.sprite
+      accent: meta.accent, accent2: meta.accent2,
+      card: card, img: img, versions: versions, verUrls: verUrls, evo: evo
     });
+  },
+
+  // 点击卡面版本 → 全屏放大浏览（可左右滑动看其他版本）
+  previewVer: function (e) {
+    const i = Number(e.currentTarget.dataset.i) || 0;
+    const urls = this.data.verUrls;
+    if (!urls.length) return;
+    wx.previewImage({ urls: urls, current: urls[i] });
+  },
+
+  // 跳到关联宝可梦（进化前 / 进化后 / 同族）
+  goFigure: function (e) {
+    const d = e.currentTarget.dataset;
+    if (!d.series || !d.id) return;
+    if (d.series === this.data.seriesId && d.id === this.data.figureId) return;
+    wx.redirectTo({ url: '/pages/detail/detail?seriesId=' + d.series + '&figureId=' + d.id });
   },
 
   onImgErr: function () {
     const f = this.data.figure;
-    if (this.data.img === f.tcgArt && f.art) { this.setData({ img: f.art }); }
+    if (f.art && this.data.img !== f.art) { this.setData({ img: f.art }); }
     else if (f.sprite) { this.setData({ img: f.sprite }); }
   },
 

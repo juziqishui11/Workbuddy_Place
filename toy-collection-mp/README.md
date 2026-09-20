@@ -13,7 +13,8 @@
 | 👤 我的 | 持有 / 完成度 / 心愿统计，清空数据、复制仓库地址、版权声明 |
 
 - **宝可梦单 IP 主题**：对标「口袋卡牌助手」，蓝黄卡牌风，**全国图鉴 1-649**（关都 / 城都 / 丰缘 / 神奥 / 合众）。
-- **官方 TCG 卡面**：卡图取自宝可梦集换式卡牌（TCG）官方卡图，详情页直接展示整张卡牌。
+- **官方 TCG 卡面**：卡图取自**宝可梦集换式卡牌（TCG）官方简体中文版**，详情页直接展示整张卡牌，并列出该卡面的**中文招式 / 特性（含规则说明、能量、伤害）**。
+- **卡面版本 + 进化关系**：详情页可看同一只宝可梦在不同系列 / 不同样子的中文卡面（点击放大），并可查看进化前 / 进化后 / 同族全链（如伊布 8 只分支进化），点击直接跳转。
 - **纯本地**：收藏记录存在微信本机存储（`wx.setStorageSync`），**不上传任何服务器**，无需账号、无需后端。
 
 ## 二、目录结构
@@ -28,9 +29,13 @@ toy-collection-mp/
 │   ├── source.js                     # 数据抽象层（查找/进度/稀有度映射）
 │   └── store.js                      # 本地收藏 / 心愿的增删改查
 ├── scripts/                          # 数据生成脚本（不进上传包）
-│   ├── fetch_tcg_sets.mjs            # 下载 pokemon-tcg-data 系列 JSON
+│   ├── fetch_tcg_sets.mjs            # 下载 pokemon-tcg-data 英文系列 JSON（兜底卡图）
 │   ├── fetch_desc_zh.mjs             # 下载 42arch 中文图鉴（描述/分类/弱点）
-│   └── build_data.mjs                # 合并 fanzeyi + veekun + TCG + 中文图鉴 → data/pokemon.js
+│   ├── fetch_chs_tcg.mjs             # 下载官方简体中文版 TCG 数据集（20MB）
+│   ├── analyze_chs.mjs / inspect_chs.mjs   # 中文卡数据集结构 / 覆盖率探查
+│   ├── check_wxss.mjs                # WXSS 大括号配平 + 关键声明校验
+│   ├── smoke_detail.mjs              # 详情页数据链路冒烟测试
+│   └── build_data.mjs                # 合并 fanzeyi + veekun + 中文图鉴 + 中文 TCG → data/pokemon.js
 └── pages/
     ├── index/  卡牌   ├── dex/  卡册   ├── detail/ 详情
     ├── add/    录入   ├── gacha/ 开包  └── settings/ 我的
@@ -44,7 +49,7 @@ toy-collection-mp/
 4. 编译即可在模拟器看到「卡牌」首页；进「卡册」切换系列浏览 → 点任意卡牌 → 标记入手 → 回首页看收藏墙；或进「开包」点拆包抽卡。
 5. 真机预览：开发者工具点「预览」扫码即可（个人主体小程序即可）。
 
-> 远程图需在微信公众平台配置 `downloadFile` 合法域名（`images.pokemontcg.io`、`raw.githubusercontent.com`）；开发工具勾选「不校验合法域名」即可直接预览。
+> 远程图需在微信公众平台配置 `downloadFile` 合法域名（`raw.githubusercontent.com`、`images.pokemontcg.io`）；开发工具勾选「不校验合法域名」即可直接预览。
 
 ## 四、数据 Schema
 
@@ -52,23 +57,38 @@ toy-collection-mp/
 // data/pokemon.js
 {
   ip, brand, accent, accent2, unit,
+  cnSets: { 商品代号: '中文系列名' },     // 中文卡商品表（232 条）
   series: [{
     id, name, desc,
     figures: [{
       id, code, name, sub, types, rarity,
-      sprite, art, tcgArt, color,
+      sprite, art, color,
+      cn: {                              // 官方简体中文版 TCG「代表卡」
+        n: 卡名, no: 卡号, s: 商品代号, img: 'img/515/136.png',
+        hp, a: 属性, r: 稀有度,
+        atk: [{ n: 招式名, d: 中文说明, c: '2,2', p: 伤害 }],   // c = 能量编号
+        ft:  [{ n: 特性名, d: 中文说明 }]
+      },
+      cvs: [[img, 卡号, 商品代号, 稀有度], ...],   // 同一只的其他中文卡面（最多 6）
+      enArt,                             // 少数无中文版者用英文卡图兜底
+      ef, et, ec,                        // 进化前 / 进化后 / 同族全链（图鉴号）
       height_m, weight_kg,
       category, desc, weak, resist,
       abilities: [{ name, hidden }],
       base: { hp, atk, def, spa, spd, spe },
-      moves: [{ name, power, type, cls, acc }]
+      moves: [{ name, power, type, cls, acc }]     // 游戏数据（等级招式 Top3）
     }]
   }]
 }
 ```
 - 系列 `id`：`kanto`(1-151) / `johto`(152-251) / `hoenn`(252-386) / `sinnoh`(387-493) / `unova`(494-649)。
 - 宝可梦 `rarity`：`普通 | 传说 | 幻之`；`types` 为属性（如 `草/毒`）。
-- `tcgArt`：**官方 TCG 卡图**（`images.pokemontcg.io`，按全国图鉴号自动匹配最优稀有度卡），详情页优先展示。
+- `cn`：**官方简体中文版 TCG 卡面**（来自 `duanxr/PTCG-CHS-Datasets`，非商业 / 研究用途）。
+  - 覆盖 **645/649**（缺 496 / 497 / 504 / 505，用 `enArt` 英文卡图兜底）。
+  - `atk` / `ft` 是**该卡面自己的中文招式与特性**（含中文规则说明、能量需求、伤害），与卡图一一对应 —— 与 `moves`（游戏数据）是两回事。
+  - 卡图地址 = `https://raw.githubusercontent.com/duanxr/PTCG-CHS-Datasets/main/` + `img`。
+- `cvs`：同一只宝可梦在**不同商品 / 系列**里的其他中文卡面，详情页「卡面版本」横向展示、点击全屏放大。
+- `ef` / `et` / `ec`：**进化关系**（进化前 / 进化后 / 同族全链，按血缘排序，含伊布这类分支进化）。545/649 有进化关系。
 - `sprite` 为缩略图、`art` 为高清立绘（均来自 PokeAPI，作为兜底）。
 - `height_m` / `weight_kg`：真实身高体重（来自 veekun 图鉴）。
 - `category` / `desc` / `weak` / `resist`：**中文分类、中文图鉴描述、弱点、抵抗**（来自 `42arch/pokemon-dataset-zh`，649/649 全覆盖）。
