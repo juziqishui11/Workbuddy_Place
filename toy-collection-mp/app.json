@@ -6,7 +6,8 @@
     "pages/add/add",
     "pages/wish/wish",
     "pages/stats/stats",
-    "pages/settings/settings"
+    "pages/settings/settings",
+    "pages/gacha/gacha"
   ],
   "window": {
     "navigationBarBackgroundColor": "#FF7BAC",

@@ -9,6 +9,14 @@
     </view>
   </view>
 
+  <view class="gacha-banner" bindtap="goGacha">
+    <view class="gb-left">
+      <view class="gb-title">🎁 抽卡开门</view>
+      <view class="gb-sub">模拟抽卡包 · 抽到的{{meta.unit}}自动点亮收藏册</view>
+    </view>
+    <view class="gb-btn">去抽 →</view>
+  </view>
+
   <view class="section-title">收藏墙</view>
   <view wx:if="{{owned.length === 0}}" class="empty">
     <view class="emoji">🧸</view>

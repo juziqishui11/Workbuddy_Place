@@ -1,0 +1,49 @@
+<view class="page" style="--accent:{{accent}};--accent2:{{accent2}}">
+  <view class="top-hero">
+    <view class="title">🎁 抽卡开门</view>
+    <view class="sub">{{brand}} · 模拟抽卡包，抽到的{{unit}}自动点亮收藏册</view>
+  </view>
+
+  <view class="series-bar">
+    <scroll-view scroll-x="true" class="chips">
+      <view class="chip {{selectedSeries===''?'on':''}}" data-id="" bindtap="selectSeries">全部系列</view>
+      <view class="chip {{selectedSeries===item.id?'on':''}}" wx:for="{{seriesList}}" wx:key="id" data-id="{{item.id}}" bindtap="selectSeries">{{item.name}}</view>
+    </scroll-view>
+  </view>
+
+  <view class="stage">
+    <block wx:if="{{results.length===0}}">
+      <view class="card-back">
+        <view class="q">?</view>
+        <view class="hint">点击下方按钮开始抽卡</view>
+      </view>
+    </block>
+    <block wx:else>
+      <view class="results {{flipping?'flip':''}}">
+        <view class="res-card" wx:for="{{results}}" wx:key="figureId" style="border-color:{{item.rarityColor}}">
+          <view class="res-emoji" style="background:{{item.color}}">{{item.emoji}}</view>
+          <view class="res-name">{{item.name}}</view>
+          <view class="res-series">{{item.seriesName}}</view>
+          <view class="tag" style="color:{{item.rarityColor}};background:{{item.rarityBg}}">{{item.rarityLabel}}</view>
+          <view class="badge {{item.isNew?'new':'dup'}}">{{item.isNew?'NEW 点亮 ✦':'重复'}}</view>
+          <view class="res-acts">
+            <view class="mini" data-idx="{{index}}" bindtap="goDetail">详情</view>
+            <view class="mini ghost" data-idx="{{index}}" bindtap="addWish">心愿♡</view>
+          </view>
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <view class="stat-row">
+    <view class="stat"><view class="n">{{drawCount}}</view><view class="l">累计抽取</view></view>
+    <view class="stat"><view class="n">{{lastNew}}</view><view class="l">本次新品</view></view>
+  </view>
+
+  <view class="draw-btns">
+    <view class="draw-btn" data-n="1" bindtap="doDraw">抽一张</view>
+    <view class="draw-btn solid" data-n="5" bindtap="doDraw">抽一包 (5)</view>
+  </view>
+
+  <view class="tip">模拟抽卡，不涉及任何付费或真实概率公示。抽到的{{unit}}自动加入收藏并点亮图鉴，可到「图鉴」查看系列进度。</view>
+</view>

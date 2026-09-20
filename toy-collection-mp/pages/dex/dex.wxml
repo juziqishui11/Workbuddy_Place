@@ -11,6 +11,7 @@
         <view style="color:#9AA0AC;font-size:22rpx;margin-top:4rpx;">已集 {{item.owned}}/{{item.total}} · 心愿 {{item.wish}}</view>
         <view class="progress" style="margin-top:12rpx;"><view class="progress-inner" style="width:{{item.percent}}%"></view></view>
       </view>
+      <view class="draw-one" data-id="{{item.seriesId}}" catchtap="goGacha">🎲 抽一抽</view>
       <view style="margin-left:16rpx;color:#9AA0AC;font-size:36rpx;">{{item.open ? '▾' : '▸'}}</view>
     </view>
 

@@ -34,5 +34,7 @@ Page({
     wx.navigateTo({ url: '/pages/detail/detail?ip=' + d.ip + '&seriesId=' + d.series + '&figureId=' + d.figure });
   },
 
-  goAdd: function () { wx.navigateTo({ url: '/pages/add/add' }); }
+  goAdd: function () { wx.navigateTo({ url: '/pages/add/add' }); },
+
+  goGacha: function () { wx.navigateTo({ url: '/pages/gacha/gacha' }); }
 });

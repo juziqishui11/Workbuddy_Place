@@ -1,4 +1,11 @@
 .series-head { display: flex; align-items: center; }
+.draw-one {
+  margin-left: 16rpx; flex-shrink: 0;
+  padding: 12rpx 22rpx; border-radius: 999px;
+  background: linear-gradient(135deg, #FF7BAC, #9B6BFF);
+  color: #fff; font-size: 24rpx; font-weight: 700;
+  box-shadow: 0 4rpx 12rpx rgba(255,124,188,.3);
+}
 .dex-chip {
   background: #F7F8FC; border-radius: 18rpx; padding: 14rpx 8rpx 12rpx;
   display: flex; flex-direction: column; align-items: center; text-align: center;

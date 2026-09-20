@@ -55,5 +55,10 @@ Page({
     const d = e.currentTarget.dataset;
     const base = '/pages/' + (d.owned === 'true' ? 'detail/detail' : 'add/add');
     wx.navigateTo({ url: base + '?ip=' + this.data.ip + '&seriesId=' + d.series + '&figureId=' + d.figure });
+  },
+
+  goGacha: function (e) {
+    const seriesId = e.currentTarget.dataset.id;
+    wx.navigateTo({ url: '/pages/gacha/gacha?series=' + seriesId });
   }
 });

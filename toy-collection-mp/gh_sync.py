@@ -14,7 +14,7 @@ ROOTS = [
     (r'D:/workBuddy_place/toy-collection-mp', 'toy-collection-mp'),
 ]
 EXCLUDE_DIRS = {'dist-site', '.workbuddy', 'node_modules', '.git', '__pycache__', '.verify'}
-EXCLUDE_FILES = {'.DS_Store', 'Thumbs.db'}
+EXCLUDE_FILES = {'.DS_Store', 'Thumbs.db', 'push.log'}
 
 def gh(method, path, data=None):
     url = API + path
