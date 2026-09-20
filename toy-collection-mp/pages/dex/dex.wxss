@@ -23,23 +23,11 @@
 }
 .chip.on { background: var(--accent, #3B7DDD); color: #fff; }
 
-/* 卡册网格 */
-.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16rpx; }
-.cell { }
-.pk-card {
-  position: relative; background: #fff; border-radius: 16rpx; padding: 10rpx 10rpx 12rpx;
-  box-shadow: 0 6rpx 16rpx rgba(30, 60, 120, .1); overflow: hidden;
-}
-.pk-card.missing { background: #F2F4F8; }
-.pk-card .img { height: 188rpx; display: flex; align-items: center; justify-content: center; background: #F4F7FB; border-radius: 12rpx; }
-.pk-card .img image { width: 168rpx; height: 180rpx; }
-.pk-card .name { font-size: 22rpx; font-weight: 700; color: #1F2733; margin-top: 8rpx; text-align: center; }
-.pk-card .code { font-size: 18rpx; color: #8A93A3; text-align: center; }
-.badge {
-  position: absolute; top: 8rpx; right: 8rpx;
-  width: 36rpx; height: 36rpx; border-radius: 50%;
-  background: #22C55E; color: #fff; font-size: 24rpx; line-height: 36rpx; text-align: center;
-}
+/* 卡册网格：直接复用 app.wxss 的 .grid(flex wrap) + .cell(33.33%)。
+   ⚠️ 不要在这里用 display:grid / grid-template-columns ——
+   app.wxss 的 .cell{width:33.33%} 会作用在格道内，把每个格子压成 1/3 宽（卡名逐字竖排）。 */
+.grid { display: flex; flex-wrap: wrap; }
+
 .plus {
   position: absolute; top: 8rpx; right: 8rpx;
   width: 36rpx; height: 36rpx; border-radius: 50%;

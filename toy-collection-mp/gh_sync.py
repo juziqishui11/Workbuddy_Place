@@ -66,7 +66,7 @@ for ghpath, full in files:
 new_tree = gh('POST', '/git/trees', {'base_tree': base_tree, 'tree': tree_entries})
 # 5. commit
 new_commit = gh('POST', '/git/commits', {
-    'message': 'feat: 卡牌中文描述（649/649 中文图鉴描述 + 分类 + 弱点/抵抗，详情页新增中文图鉴描述卡）',
+    'message': 'fix: 卡册网格布局错乱（display:grid 与全局 .cell{33.33%} 叠加导致格子被压成 1/3 宽、卡名逐字竖排）；卡牌统一改为竖版 TCG 卡比例（245:342）',
     'tree': new_tree['sha'], 'parents': [base_sha]})
 # 6. ref
 gh('PATCH', '/git/refs/heads/' + BRANCH, {'sha': new_commit['sha']})
