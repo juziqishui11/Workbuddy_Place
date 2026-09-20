@@ -100,7 +100,11 @@ function enrich(rec) {
     sprite: found.figure.sprite || '',
     art: found.figure.art || '',
     tcgArt: found.figure.tcgArt || '',
-    rarity: found.figure.rarity || '普通'
+    rarity: found.figure.rarity || '普通',
+    category: found.figure.category || '',
+    desc: found.figure.desc || '',
+    weak: found.figure.weak || [],
+    resist: found.figure.resist || []
   });
 }
 

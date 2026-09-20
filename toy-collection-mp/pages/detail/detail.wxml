@@ -10,9 +10,15 @@
     <view class="h-name">{{figure.name}}</view>
     <text class="tag" style="color:{{figure.rarityColor}};background:{{figure.rarityBg}}">{{figure.rarityLabel}}</text>
   </view>
-  <view class="sub">{{figure.sub}} · No.{{figure.code}} · {{figure.seriesName}}</view>
+  <view class="sub">{{figure.sub}} · No.{{figure.code}} · {{figure.seriesName}}<text wx:if="{{figure.category}}"> · {{figure.category}}</text></view>
   <view class="types">
     <text class="tag tc-type" style="color:#fff;background:{{figure.typeColor}}">{{figure.types}}</text>
+  </view>
+
+  <!-- ===== 图鉴描述（中文） ===== -->
+  <view wx:if="{{figure.desc}}" class="card desc-card">
+    <view class="section-title" style="margin:4rpx 0 12rpx">图鉴描述</view>
+    <view class="desc-text">{{figure.desc}}</view>
   </view>
 
   <!-- ===== 图鉴信息 ===== -->
@@ -21,6 +27,20 @@
     <view class="hw">
       <view class="hw-cell"><text class="hw-k">身高</text><text class="hw-v">{{figure.height_m}} m</text></view>
       <view class="hw-cell"><text class="hw-k">体重</text><text class="hw-v">{{figure.weight_kg}} kg</text></view>
+    </view>
+    <view wx:if="{{figure.weak.length || figure.resist.length}}" class="wr-row">
+      <view wx:if="{{figure.weak.length}}" class="wr-cell">
+        <text class="wr-k">弱点</text>
+        <view class="wr-chips">
+          <text class="wr-chip weak" wx:for="{{figure.weak}}" wx:key="*this">{{item}}</text>
+        </view>
+      </view>
+      <view wx:if="{{figure.resist.length}}" class="wr-cell">
+        <text class="wr-k">抵抗</text>
+        <view class="wr-chips">
+          <text class="wr-chip resist" wx:for="{{figure.resist}}" wx:key="*this">{{item}}</text>
+        </view>
+      </view>
     </view>
     <view class="divider"></view>
     <view class="section-title" style="margin:12rpx 0 12rpx">种族值（合计 {{figure.baseTotal}}）</view>

@@ -50,6 +50,15 @@ const moveRows = readCSV('pokemon_moves.csv');
 const moves = readCSV('moves.csv');
 const moveNames = readCSV('move_names.csv');
 
+// 中文图鉴描述 / 分类 / 弱点抵抗（来自 42arch/pokemon-dataset-zh）
+let descZh = {};
+try {
+  descZh = JSON.parse(fs.readFileSync(path.join(CACHE, 'desc_zh.json'), 'utf8'));
+  let hasDesc = 0;
+  for (let i = 1; i <= 649; i++) if (descZh[i] && descZh[i].desc) hasDesc++;
+  console.log('中文描述覆盖: ' + hasDesc + '/649');
+} catch (e) { console.log('desc_zh.json 缺失，跳过中文描述'); }
+
 // 名称映射
 const abilityNameZh = {}, abilityNameEn = {};
 abilities.forEach((a) => { abilityNameEn[a.id] = a.identifier; });
@@ -113,6 +122,7 @@ function makeFigure(id) {
   const moveSel = cand.slice(0, 3).map((m) => ({ name: m.name, power: m.power, type: m.type, cls: m.cls, acc: m.acc }));
   const base = fz.base;
   const tcg = tcgMap[id];
+  const dz = descZh[id] || {};
   return {
     id: 'pk-' + String(id).padStart(3, '0'),
     code: String(id).padStart(3, '0'),
@@ -126,6 +136,10 @@ function makeFigure(id) {
     color: color,
     height_m: phys.h,
     weight_kg: phys.w,
+    category: dz.category || '',
+    desc: dz.desc || '',
+    weak: dz.weak || [],
+    resist: dz.resist || [],
     abilities: abList,
     base: { hp: base.HP, atk: base.Attack, def: base.Defense, spa: base['Sp. Attack'], spd: base['Sp. Defense'], spe: base.Speed },
     moves: moveSel

@@ -28,6 +28,19 @@
 .hw-v { display: block; font-size: 30rpx; font-weight: 800; color: #1F2733; margin-top: 4rpx; }
 .divider { height: 1rpx; background: #EDEFF4; margin: 16rpx 0; }
 
+/* ===== 中文图鉴描述 ===== */
+.desc-card { border-left: 8rpx solid var(--type, #3B7DDD); }
+.desc-text { font-size: 28rpx; line-height: 1.7; color: #3C4656; }
+
+/* ===== 弱点 / 抵抗 ===== */
+.wr-row { display: flex; flex-direction: column; margin-top: 16rpx; }
+.wr-cell { display: flex; align-items: flex-start; margin-bottom: 10rpx; }
+.wr-k { width: 76rpx; flex-shrink: 0; font-size: 24rpx; color: #8A93A3; font-weight: 700; line-height: 40rpx; }
+.wr-chips { flex: 1; display: flex; flex-wrap: wrap; }
+.wr-chip { font-size: 20rpx; font-weight: 700; padding: 4rpx 14rpx; border-radius: 999rpx; margin: 0 10rpx 8rpx 0; }
+.wr-chip.weak { color: #fff; background: #EF4444; }
+.wr-chip.resist { color: #fff; background: #16A34A; }
+
 .stat-row { display: flex; align-items: center; margin: 12rpx 0; }
 .stat-l { width: 70rpx; font-size: 24rpx; color: #5B6472; font-weight: 600; }
 .stat-bar { flex: 1; height: 18rpx; background: #EDF1F7; border-radius: 999rpx; overflow: hidden; margin: 0 16rpx; }

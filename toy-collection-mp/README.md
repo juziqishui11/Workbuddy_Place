@@ -29,7 +29,8 @@ toy-collection-mp/
 │   └── store.js                      # 本地收藏 / 心愿的增删改查
 ├── scripts/                          # 数据生成脚本（不进上传包）
 │   ├── fetch_tcg_sets.mjs            # 下载 pokemon-tcg-data 系列 JSON
-│   └── build_data.mjs                # 合并 fanzeyi + veekun + TCG → data/pokemon.js
+│   ├── fetch_desc_zh.mjs             # 下载 42arch 中文图鉴（描述/分类/弱点）
+│   └── build_data.mjs                # 合并 fanzeyi + veekun + TCG + 中文图鉴 → data/pokemon.js
 └── pages/
     ├── index/  卡牌   ├── dex/  卡册   ├── detail/ 详情
     ├── add/    录入   ├── gacha/ 开包  └── settings/ 我的
@@ -57,6 +58,7 @@ toy-collection-mp/
       id, code, name, sub, types, rarity,
       sprite, art, tcgArt, color,
       height_m, weight_kg,
+      category, desc, weak, resist,
       abilities: [{ name, hidden }],
       base: { hp, atk, def, spa, spd, spe },
       moves: [{ name, power, type, cls, acc }]
@@ -69,10 +71,11 @@ toy-collection-mp/
 - `tcgArt`：**官方 TCG 卡图**（`images.pokemontcg.io`，按全国图鉴号自动匹配最优稀有度卡），详情页优先展示。
 - `sprite` 为缩略图、`art` 为高清立绘（均来自 PokeAPI，作为兜底）。
 - `height_m` / `weight_kg`：真实身高体重（来自 veekun 图鉴）。
+- `category` / `desc` / `weak` / `resist`：**中文分类、中文图鉴描述、弱点、抵抗**（来自 `42arch/pokemon-dataset-zh`，649/649 全覆盖）。
 - `abilities`：特性（含隐藏特性 `hidden:true`），中文名来自 veekun。
 - `base`：六维种族值（HP/攻击/防御/特攻/特防/速度），来自 fanzeyi pokedex。
 - `moves`：升级招式 Top3（含 `power` 威力 / `type` 属性 / `cls` 物理·特殊·变化 / `acc` 命中），来自 veekun。
-- 数据由 `scripts/build_data.mjs` 从 fanzeyi + veekun + pokemon-tcg-data 合并生成。
+- 数据由 `scripts/build_data.mjs` 从 fanzeyi + veekun + pokemon-tcg-data + 42arch 中文图鉴合并生成。
 
 本地收藏记录（`utils/store.js`）：
 
