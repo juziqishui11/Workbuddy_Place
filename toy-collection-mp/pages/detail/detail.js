@@ -20,10 +20,18 @@ Page({
 
   onLoad: function (q) {
     this.q = { seriesId: q.seriesId, figureId: q.figureId };
+    this._firstShow = true;
     this.load();
   },
 
-  onShow: function () { if (this.q) this.load(); },
+  onShow: function () {
+    if (!this.q) return;
+    // onLoad 里已经完整 load() 过一次（含 setData + 导航栏 API）。
+    // 首屏的 onShow 直接跳过，避免重复请求（原来同一次打开会调两遍 load）；
+    // 只有从「录入 / 编辑」页返回时才需要重新加载。
+    if (this._firstShow) { this._firstShow = false; return; }
+    this.load();
+  },
 
   load: function () {
     const q = this.q;

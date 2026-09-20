@@ -79,7 +79,14 @@ deferComplete = false;
 // ---- ② detail 页 ----
 console.log('=== detail 页面 ===');
 const detail = loadPage('pages/detail/detail.js');
+nav.length = 0;
 detail.onLoad({ seriesId: 'kanto', figureId: 'pk-006' });
+const afterLoad = nav.length;
+detail.onShow();   // 首屏 onShow：应跳过重复加载
+check(nav.length === afterLoad, '首屏 onShow 不应重复调用导航栏 API（多调 ' + (nav.length - afterLoad) + ' 次）');
+detail.onShow();   // 再次 onShow（模拟从录入/编辑页返回）：应重新加载
+check(nav.length > afterLoad, '从子页返回时应重新加载');
+ok('详情页打开一次只 load 一次（无重复 setData / 导航栏调用）');
 const bb = detail.data.baseBars || [];
 console.log('  baseBars:', bb.map((x) => x.label + ':' + x.val + '(' + x.w + ')').join(' '));
 check(bb.length === 6, 'baseBars 应为 6 项，实际 ' + bb.length);

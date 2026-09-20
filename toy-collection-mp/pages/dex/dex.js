@@ -28,12 +28,12 @@ Page({
     const ser = src.series.find(function (s) { return s.id === this.data.active; }.bind(this)) || src.series[0];
     const figures = ser.figures.map(function (f) {
       const rec = coll.find(function (c) { return c.seriesId === ser.id && c.figureId === f.id; });
-      const rm = source.rarityMeta(f.rarity);
+      // 只下发模板真正用到的字段：dex.wxml 用 owned/seriesId/figureId/img/name/code，
+      // sprite 供图片加载失败时兜底（onImgErr）。原来 16 个字段 → 7 个，
+      // setData 载荷 86.5KB → 约 20KB（151 条时），减少序列化与渲染压力。
       return {
-        seriesId: ser.id, figureId: f.id, code: f.code, name: f.name, sub: f.sub,
-        tcgArt: source.figureImage(f), sprite: f.sprite, art: f.art, color: f.color,
-        rarity: f.rarity, rarityLabel: rm.label, rarityColor: rm.color, rarityBg: rm.bg,
-        owned: !!(rec && rec.own), wish: !!(rec && rec.wish),
+        seriesId: ser.id, figureId: f.id, code: f.code, name: f.name,
+        sprite: f.sprite, owned: !!(rec && rec.own),
         img: source.figureImage(f)
       };
     });

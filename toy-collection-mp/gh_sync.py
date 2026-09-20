@@ -66,7 +66,7 @@ for ghpath, full in files:
 new_tree = gh('POST', '/git/trees', {'base_tree': base_tree, 'tree': tree_entries})
 # 5. commit
 new_commit = gh('POST', '/git/commits', {
-    'message': 'fix: 消除开发者工具 WXML 内联样式校验报错（style 中插值紧跟 % → semi-colon/identifier expected）；进度条与种族值条改为 JS 预算字符串 + WXSS 承载静态样式；修复卡册切系列时导航栏标题异步乱序（收敛到最新系列）；新增 scripts/check_wxml.mjs 与 scripts/smoke_pages.mjs',
+    'message': 'perf: 详情页打开时不再重复 load（onLoad+onShow 各跑一次 → 只跑一次，导航栏 API 调用减半）；卡册 setData 载荷按模板实际字段裁剪（16 字段 → 7 字段，86.5KB → 38.3KB）',
     'tree': new_tree['sha'], 'parents': [base_sha]})
 # 6. ref
 gh('PATCH', '/git/refs/heads/' + BRANCH, {'sha': new_commit['sha']})
