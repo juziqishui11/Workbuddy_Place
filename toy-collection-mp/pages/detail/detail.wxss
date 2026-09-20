@@ -44,7 +44,9 @@
 .stat-row { display: flex; align-items: center; margin: 12rpx 0; }
 .stat-l { width: 70rpx; font-size: 24rpx; color: #5B6472; font-weight: 600; }
 .stat-bar { flex: 1; height: 18rpx; background: #EDF1F7; border-radius: 999rpx; overflow: hidden; margin: 0 16rpx; }
-.stat-fill { height: 100%; border-radius: 999rpx; }
+.stat-fill { height: 100%; border-radius: 999rpx; background: var(--type, #3B7DDD); }
+/* 宽度由 JS 预算成字符串（style="width:{{item.w}}"）；不要在 style 里写 `width:{{x}}%`，
+   插值后紧跟 % 会触发开发者工具 CSS 校验误报。 */
 .stat-num { width: 56rpx; text-align: right; font-size: 26rpx; font-weight: 700; color: #1F2733; }
 
 /* ===== 招式 · 特性 ===== */

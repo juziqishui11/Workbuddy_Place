@@ -66,7 +66,7 @@ for ghpath, full in files:
 new_tree = gh('POST', '/git/trees', {'base_tree': base_tree, 'tree': tree_entries})
 # 5. commit
 new_commit = gh('POST', '/git/commits', {
-    'message': 'feat: 卡面全面中文化 — 接入官方简体中文版 TCG 数据集（duanxr/PTCG-CHS-Datasets）：卡图/卡名/招式/特性全中文且一一对应（645/649），新增「卡面版本」多系列卡面浏览与「进化关系」（进化前/后/同族全链，含分支进化）；数据紧凑化输出（2.1MB→1.0MB）',
+    'message': 'fix: 消除开发者工具 WXML 内联样式校验报错（style 中插值紧跟 % → semi-colon/identifier expected）；进度条与种族值条改为 JS 预算字符串 + WXSS 承载静态样式；修复卡册切系列时导航栏标题异步乱序（收敛到最新系列）；新增 scripts/check_wxml.mjs 与 scripts/smoke_pages.mjs',
     'tree': new_tree['sha'], 'parents': [base_sha]})
 # 6. ref
 gh('PATCH', '/git/refs/heads/' + BRANCH, {'sha': new_commit['sha']})

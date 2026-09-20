@@ -5,8 +5,15 @@
 }
 .brand { font-size: 34rpx; font-weight: 800; }
 .sub { font-size: 24rpx; opacity: .92; margin-top: 6rpx; }
-.progress { border-radius: 999rpx; overflow: hidden; }
-.progress-inner { height: 100%; border-radius: 999rpx; transition: width .3s; }
+/* 进度条：静态样式写在 WXSS 里，宽度由 JS 预算成字符串（style="width:{{barW}}"）。
+   ⚠️ 不要在 style 里写 `width:{{percent}}%` —— 插值后紧跟 `%` 会让开发者工具的 CSS 校验器报
+   「semi-colon expected / identifier expected」，属于误报但会污染「问题」面板。 */
+.progress {
+  margin-top: 16rpx; height: 18rpx;
+  background: rgba(255,255,255,.35);
+  border-radius: 999rpx; overflow: hidden;
+}
+.progress-inner { height: 100%; background: #fff; border-radius: 999rpx; transition: width .3s; }
 
 /* 系列切换 */
 .series-bar { white-space: nowrap; margin: 16rpx 0 4rpx; }

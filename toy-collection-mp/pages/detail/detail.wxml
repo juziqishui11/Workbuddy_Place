@@ -85,10 +85,10 @@
     </view>
     <view class="divider"></view>
     <view class="section-title" style="margin:12rpx 0 12rpx">种族值（合计 {{figure.baseTotal}}）</view>
-    <view class="stat-row" wx:for="{{['hp','atk','def','spa','spd','spe']}}" wx:key="*this">
-      <text class="stat-l">{{item === 'hp' ? 'HP' : item === 'atk' ? '攻击' : item === 'def' ? '防御' : item === 'spa' ? '特攻' : item === 'spd' ? '特防' : '速度'}}</text>
-      <view class="stat-bar"><view class="stat-fill" style="width:{{figure.base[item] / 2}}%;background:{{figure.typeColor}}"></view></view>
-      <text class="stat-num">{{figure.base[item]}}</text>
+    <view class="stat-row" wx:for="{{baseBars}}" wx:key="k">
+      <text class="stat-l">{{item.label}}</text>
+      <view class="stat-bar"><view class="stat-fill" style="width:{{item.w}}"></view></view>
+      <text class="stat-num">{{item.val}}</text>
     </view>
   </view>
 

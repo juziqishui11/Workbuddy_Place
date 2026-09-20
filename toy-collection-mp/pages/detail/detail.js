@@ -39,6 +39,13 @@ Page({
 
     const b = found.figure.base || {};
     const baseTotal = (b.hp || 0) + (b.atk || 0) + (b.def || 0) + (b.spa || 0) + (b.spd || 0) + (b.spe || 0);
+    // 种族值条：宽度在这里算成字符串（如 "65%"）。
+    // ⚠️ 不要改成 WXML 内联样式 `width:{{x}}%` —— 插值后紧跟 % 会让开发者工具 CSS 校验误报。
+    const baseBars = [['hp', 'HP'], ['atk', '攻击'], ['def', '防御'], ['spa', '特攻'], ['spd', '特防'], ['spe', '速度']]
+      .map(function (d) {
+        const v = b[d[0]] || 0;
+        return { k: d[0], label: d[1], val: v, w: Math.min(100, v / 2) + '%' };
+      });
     const fig = Object.assign({}, found.figure, {
       seriesName: found.series.name,
       rarityLabel: rm.label, rarityColor: rm.color, rarityBg: rm.bg,
@@ -62,6 +69,7 @@ Page({
       meta: meta, seriesId: q.seriesId, figureId: q.figureId,
       figure: fig, hasRec: !!rec, rec: rec,
       accent: meta.accent, accent2: meta.accent2,
+      baseBars: baseBars,
       card: card, img: img, versions: versions, verUrls: verUrls, evo: evo
     });
   },

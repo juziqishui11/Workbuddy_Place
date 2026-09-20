@@ -4,7 +4,7 @@ const store = require('../../utils/store.js');
 Page({
   data: {
     meta: {}, seriesList: [], active: 'kanto',
-    total: 0, owned: 0, percent: 0,
+    total: 0, owned: 0, percent: 0, barW: '0%',
     figures: [], showMissing: false, accent: '#3B7DDD', accent2: '#FFCB05'
   },
 
@@ -39,12 +39,27 @@ Page({
     });
     const owned = figures.filter(function (f) { return f.owned; }).length;
     const total = figures.length;
+    const percent = total ? Math.round((owned / total) * 100) : 0;
     this.setData({
-      total: total, owned: owned,
-      percent: total ? Math.round((owned / total) * 100) : 0,
+      total: total, owned: owned, percent: percent,
+      barW: percent + '%',
       figures: figures, accent: meta.accent, accent2: meta.accent2
     });
-    wx.setNavigationBarTitle({ title: '卡册 · ' + ser.name.split(' ')[0] });
+    this.setNavTitle('卡册 · ' + ser.name.split(' ')[0]);
+  },
+
+  // 切系列时 wx.setNavigationBarTitle 的异步回调可能乱序返回，
+  // 导致标题停留在上一个系列名。用递增序号把标题收敛到最新一次调用。
+  setNavTitle: function (title) {
+    const self = this;
+    this._navTitle = title;
+    const seq = (this._navSeq = (this._navSeq || 0) + 1);
+    wx.setNavigationBarTitle({
+      title: title,
+      complete: function () {
+        if (seq !== self._navSeq) wx.setNavigationBarTitle({ title: self._navTitle });
+      }
+    });
   },
 
   toggleMissing: function () { this.setData({ showMissing: !this.data.showMissing }); },
