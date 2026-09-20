@@ -1,11 +1,7 @@
-.ip-row {
-  position: relative; padding: 22rpx 24rpx; border-radius: 18rpx;
-  background: #F7F8FC; margin-bottom: 16rpx; border: 2rpx solid transparent;
-}
-.ip-row.on { border-color: var(--accent, #FF7BAC); background: #FFF5F9; }
-.ip-row .check {
-  position: absolute; top: 24rpx; right: 24rpx; color: var(--accent, #FF7BAC);
-  font-weight: 800; font-size: 32rpx;
-}
+/* settings.wxss —— 我的 */
+.stats-card { display: flex; text-align: center; }
+.stat { flex: 1; }
+.stat .n { font-size: 44rpx; font-weight: 800; color: var(--accent, #3B7DDD); }
+.stat .l { font-size: 22rpx; color: #9AA0AC; margin-top: 4rpx; }
 .row-btn { padding: 22rpx 4rpx; border-bottom: 1rpx solid #F0F2F6; font-weight: 600; }
 .row-btn:last-child { border-bottom: none; }

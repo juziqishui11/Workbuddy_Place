@@ -1,37 +1,66 @@
-<view class="page" style="--accent:{{meta.accent}};--accent2:{{meta.accent2}}">
-  <view class="card" style="text-align:center;">
-    <view class="big-emoji" style="background:{{figure.color}}">{{figure.emoji}}</view>
-    <view style="font-size:38rpx;font-weight:800;margin-top:16rpx;">{{figure.name}}</view>
-    <view style="color:#9AA0AC;">{{figure.sub}} · {{figure.seriesName}}</view>
-    <view style="margin-top:14rpx;">
+<view class="page" style="--type:{{figure.typeColor}};--accent:{{accent}};--accent2:{{accent2}}">
+  <!-- ===== TCG 卡牌正面 ===== -->
+  <view class="tcard" style="border-color:{{figure.typeColor}}">
+    <view class="tc-head" style="background:{{figure.typeColor}}">
+      <view class="tc-name">{{figure.name}}</view>
+      <view class="tc-no">No.{{figure.code}}</view>
+      <view class="tc-hp"><text class="hp-l">HP</text><text class="hp-v">{{figure.base.hp}}</text></view>
+    </view>
+
+    <view class="tc-art">
+      <image wx:if="{{img}}" src="{{img}}" mode="aspectFit" binderror="onImgErr"></image>
+    </view>
+
+    <view class="tc-tags">
+      <text class="tag tc-type" style="color:#fff;background:{{figure.typeColor}}">{{figure.types}}</text>
       <text class="tag" style="color:{{figure.rarityColor}};background:{{figure.rarityBg}}">{{figure.rarityLabel}}</text>
-      <text wx:if="{{figure.type}}" class="tag" style="color:#2E7DD1;background:#E2EEFB;margin-left:10rpx;">{{figure.type}}</text>
+    </view>
+
+    <view class="tc-ability">
+      <text class="tc-k">特性</text>
+      <text class="tc-ab" wx:for="{{figure.abilities}}" wx:key="name">{{item.name}}{{item.hidden ? '(隐)' : ''}}<text wx:if="{{index < figure.abilities.length - 1}}"> / </text></text>
+    </view>
+
+    <view class="tc-moves">
+      <view class="tc-move" wx:for="{{figure.moves}}" wx:key="name">
+        <view class="mv-left">
+          <text class="mv-name">{{item.name}}</text>
+          <text class="mv-meta"><text class="mv-chip" style="color:#fff;background:{{item.color}}">{{item.type}}</text> <text class="mv-cls">{{item.cls}}</text></text>
+        </view>
+        <view class="mv-dmg">{{item.power || '—'}}<text class="mv-u" wx:if="{{item.power}}">伤害</text></view>
+      </view>
     </view>
   </view>
 
-  <block wx:if="{{hasRec}}">
-    <view wx:if="{{rec.own}}" class="card">
-      <view class="section-title">我的收藏</view>
-      <view class="kv"><text>购入价</text><text wx:if="{{rec.buyPrice}}">¥{{rec.buyPrice}}</text><text wx:else>—</text></view>
-      <view class="kv"><text>当前估值</text><text wx:if="{{rec.curValue}}">¥{{rec.curValue}}</text><text wx:else>—</text></view>
-      <view class="kv"><text>入手日期</text><text>{{rec.acquiredAt || '—'}}</text></view>
-      <view class="kv"><text>成色</text><text>{{rec.condition || '—'}}</text></view>
-      <view class="kv"><text>备注</text><text>{{rec.note || '—'}}</text></view>
-      <view wx:if="{{rec.photo}}" style="margin-top:12rpx;"><image src="{{rec.photo}}" mode="aspectFill" style="width:100%;height:320rpx;border-radius:16rpx;"/></view>
+  <!-- ===== 身价 / 种族值 ===== -->
+  <view class="card">
+    <view class="hw">
+      <view class="hw-cell"><text class="hw-k">身高</text><text class="hw-v">{{figure.height_m}} m</text></view>
+      <view class="hw-cell"><text class="hw-k">体重</text><text class="hw-v">{{figure.weight_kg}} kg</text></view>
     </view>
-    <view wx:elif="{{rec.wish}}" class="card">
-      <view style="color:#FF9F43;font-weight:700;">♡ 心愿中</view>
-      <view style="color:#9AA0AC;font-size:24rpx;margin-top:6rpx;">想要这一只，集齐就冲～</view>
+    <view class="divider"></view>
+    <view class="section-title" style="margin:4rpx 0 12rpx">种族值（合计 {{figure.baseTotal}}）</view>
+    <view class="stat-row" wx:for="{{['hp','atk','def','spa','spd','spe']}}" wx:key="*this">
+      <text class="stat-l">{{item === 'hp' ? 'HP' : item === 'atk' ? '攻击' : item === 'def' ? '防御' : item === 'spa' ? '特攻' : item === 'spd' ? '特防' : '速度'}}</text>
+      <view class="stat-bar"><view class="stat-fill" style="width:{{figure.base[item] / 2}}%;background:{{figure.typeColor}}"></view></view>
+      <text class="stat-num">{{figure.base[item]}}</text>
     </view>
-  </block>
-
-  <view style="display:flex;gap:16rpx;margin-top:8rpx;">
-    <button wx:if="{{!hasRec || rec.wish}}" class="btn block" bindtap="goEdit">加入收藏</button>
-    <button wx:if="{{hasRec && rec.own}}" class="btn block" bindtap="goEdit">编辑</button>
-    <button wx:if="{{hasRec && rec.wish}}" class="btn block" bindtap="markOwned">标记为已入手</button>
   </view>
-  <view style="display:flex;gap:16rpx;margin-top:16rpx;">
-    <button wx:if="{{!hasRec}}" class="btn ghost block" bindtap="addWish">加入心愿单</button>
-    <button wx:if="{{hasRec}}" class="btn ghost block" bindtap="remove">移出</button>
+
+  <!-- ===== 我的收藏 ===== -->
+  <view wx:if="{{hasRec}}" class="card">
+    <view class="section-title" style="margin:4rpx 0 12rpx">我的收藏</view>
+    <view class="row"><text class="k">入手日期</text><text class="v">{{rec.acquiredAt || '—'}}</text></view>
+    <view class="row"><text class="k">品相</text><text class="v">{{rec.condition || '全新'}}</text></view>
+    <view class="row"><text class="k">估值</text><text class="v">¥{{rec.curValue || 0}}</text></view>
+    <view class="row" wx:if="{{rec.note}}"><text class="k">备注</text><text class="v">{{rec.note}}</text></view>
+  </view>
+
+  <!-- ===== 操作 ===== -->
+  <view class="acts">
+    <button wx:if="{{!hasRec || !rec.own}}" class="btn block" bindtap="markOwned">标记入手</button>
+    <button wx:if="{{!hasRec || !rec.wish}}" class="btn ghost block" bindtap="addWish">加入心愿</button>
+    <button class="btn ghost block" bindtap="goEdit">编辑资料</button>
+    <button wx:if="{{hasRec}}" class="btn danger block" bindtap="remove">移除记录</button>
   </view>
 </view>

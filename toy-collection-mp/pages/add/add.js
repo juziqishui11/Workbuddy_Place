@@ -1,4 +1,3 @@
-const app = getApp();
 const source = require('../../utils/source.js');
 const store = require('../../utils/store.js');
 
@@ -6,24 +5,23 @@ const CONDITIONS = ['全新', '拆封', '二手'];
 
 Page({
   data: {
-    ip: '', meta: {}, mode: 'add',
+    meta: {}, mode: 'add',
     seriesList: [], figuresList: [], conditionList: CONDITIONS,
     seriesIndex: 0, figureIndex: 0,
     buyPrice: '', curValue: '', acquiredAt: '', conditionIndex: 0, note: '', photo: '', today: ''
   },
 
   onLoad: function (q) {
-    const ip = q.ip || app.getIp();
-    const meta = source.getMeta(ip);
-    const src = source.getSource(ip);
+    const meta = source.getMeta();
+    const src = source.getSource();
     this.seriesArr = src.series;
     this.q = q;
     const seriesList = src.series.map(function (s) { return s.name; });
     const today = this.fmtDate(new Date());
 
-    this.setData({ ip: ip, meta: meta, seriesList: seriesList, conditionList: CONDITIONS, today: today, acquiredAt: today });
+    this.setData({ meta: meta, seriesList: seriesList, conditionList: CONDITIONS, today: today, acquiredAt: today });
     wx.setNavigationBarColor({ frontColor: '#ffffff', backgroundColor: meta.accent });
-    wx.setNavigationBarTitle({ title: (q.mode === 'edit' ? '编辑藏品' : '录入藏品') });
+    wx.setNavigationBarTitle({ title: (q.mode === 'edit' ? '编辑卡牌' : '录入卡牌') });
 
     let si = 0, fi = 0;
     if (q.seriesId) {
@@ -38,7 +36,7 @@ Page({
     }
     this.setData({ seriesIndex: si, figureIndex: fi });
 
-    const rec = store.findRecord(ip, q.seriesId, q.figureId);
+    const rec = store.findRecord(q.seriesId, q.figureId);
     if (rec) {
       this.setData({
         buyPrice: rec.buyPrice || '', curValue: rec.curValue || '',
@@ -90,12 +88,11 @@ Page({
   },
 
   save: function () {
-    const ip = this.data.ip;
     const ser = this.seriesArr[this.data.seriesIndex];
     const fig = ser.figures[this.data.figureIndex];
-    if (!ser || !fig) { wx.showToast({ title: '请选择藏品', icon: 'none' }); return; }
+    if (!ser || !fig) { wx.showToast({ title: '请选择卡牌', icon: 'none' }); return; }
     const rec = {
-      ip: ip, seriesId: ser.id, figureId: fig.id, own: true, wish: false,
+      seriesId: ser.id, figureId: fig.id, own: true, wish: false,
       rarity: fig.rarity,
       buyPrice: Number(this.data.buyPrice) || 0,
       curValue: Number(this.data.curValue) || 0,

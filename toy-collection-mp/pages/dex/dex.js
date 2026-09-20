@@ -1,64 +1,54 @@
-const app = getApp();
 const source = require('../../utils/source.js');
 const store = require('../../utils/store.js');
 
 Page({
   data: {
-    ip: '', meta: {}, series: [], showMissing: false
+    meta: {}, total: 0, owned: 0, percent: 0,
+    figures: [], showMissing: false, accent: '#3B7DDD', accent2: '#FFCB05'
   },
 
   onShow: function () { this.refresh(); },
 
   refresh: function () {
-    const ip = app.getIp();
-    const meta = source.getMeta(ip);
-    const src = source.getSource(ip);
+    const meta = source.getMeta();
+    const src = source.getSource();
     const coll = store.getCollection();
-    const prog = source.progressFor(ip, coll);
-
-    const series = src.series.map(function (ser, i) {
-      const p = prog[i];
-      const figures = ser.figures.map(function (f) {
-        const rec = coll.find(function (c) {
-          return c.ip === ip && c.seriesId === ser.id && c.figureId === f.id;
-        });
-        const rm = source.rarityMeta(f.rarity);
-        return {
-          figureId: f.id, code: f.code, name: f.name, emoji: f.emoji, color: f.color,
-          rarity: f.rarity, rarityLabel: rm.label, rarityColor: rm.color, rarityBg: rm.bg,
-          owned: !!(rec && rec.own), wish: !!(rec && rec.wish)
-        };
-      });
+    const ser = src.series[0];
+    const figures = ser.figures.map(function (f) {
+      const rec = coll.find(function (c) { return c.seriesId === ser.id && c.figureId === f.id; });
+      const rm = source.rarityMeta(f.rarity);
       return {
-        seriesId: ser.id, name: ser.name, desc: ser.desc,
-        total: p.total, owned: p.owned, wish: p.wish, percent: p.percent,
-        open: i === 0, figures: figures
+        seriesId: ser.id, figureId: f.id, code: f.code, name: f.name, sub: f.sub,
+        sprite: f.sprite, art: f.art, color: f.color,
+        rarity: f.rarity, rarityLabel: rm.label, rarityColor: rm.color, rarityBg: rm.bg,
+        owned: !!(rec && rec.own), wish: !!(rec && rec.wish),
+        img: f.sprite
       };
     });
+    const owned = figures.filter(function (f) { return f.owned; }).length;
+    const total = figures.length;
 
     wx.setNavigationBarColor({ frontColor: '#ffffff', backgroundColor: meta.accent });
-    wx.setNavigationBarTitle({ title: meta.brand + ' · 图鉴' });
-    this.setData({ ip: ip, meta: meta, series: series });
+    wx.setNavigationBarTitle({ title: '卡册 · 图鉴' });
+
+    this.setData({
+      meta: meta, total: total, owned: owned,
+      percent: total ? Math.round((owned / total) * 100) : 0,
+      figures: figures, accent: meta.accent, accent2: meta.accent2
+    });
   },
 
-  toggle: function (e) {
-    const i = e.currentTarget.dataset.i;
-    const key = 'series[' + i + '].open';
-    this.setData({ [key]: !this.data.series[i].open });
-  },
-
-  toggleMissing: function () {
-    this.setData({ showMissing: !this.data.showMissing });
-  },
+  toggleMissing: function () { this.setData({ showMissing: !this.data.showMissing }); },
 
   goFigure: function (e) {
     const d = e.currentTarget.dataset;
     const base = '/pages/' + (d.owned === 'true' ? 'detail/detail' : 'add/add');
-    wx.navigateTo({ url: base + '?ip=' + this.data.ip + '&seriesId=' + d.series + '&figureId=' + d.figure });
+    wx.navigateTo({ url: base + '?seriesId=' + d.series + '&figureId=' + d.figure });
   },
 
-  goGacha: function (e) {
-    const seriesId = e.currentTarget.dataset.id;
-    wx.navigateTo({ url: '/pages/gacha/gacha?series=' + seriesId });
+  onImgErr: function (e) {
+    const i = e.currentTarget.dataset.i;
+    const key = 'figures[' + i + '].img';
+    this.setData({ [key]: this.data.figures[i].art });
   }
 });

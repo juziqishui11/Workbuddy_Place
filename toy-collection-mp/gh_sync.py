@@ -13,7 +13,7 @@ ROOTS = [
     (r'D:/workBuddy_place/Workbench', 'Workbench'),
     (r'D:/workBuddy_place/toy-collection-mp', 'toy-collection-mp'),
 ]
-EXCLUDE_DIRS = {'dist-site', '.workbuddy', 'node_modules', '.git', '__pycache__', '.verify'}
+EXCLUDE_DIRS = {'dist-site', '.workbuddy', 'node_modules', '.git', '__pycache__', '.verify', 'cache'}
 EXCLUDE_FILES = {'.DS_Store', 'Thumbs.db', 'push.log'}
 
 def gh(method, path, data=None):
@@ -66,7 +66,7 @@ for ghpath, full in files:
 new_tree = gh('POST', '/git/trees', {'base_tree': base_tree, 'tree': tree_entries})
 # 5. commit
 new_commit = gh('POST', '/git/commits', {
-    'message': 'feat: 新增《潮玩收藏册》小程序案例（双 IP 可切换 · 泡泡玛特/宝可梦）+ 工作台案例注册',
+    'message': 'feat: 口袋卡牌助手小程序重构（宝可梦单IP · TCG卡牌详情 · 真实图鉴数据 身高/体重/特性/种族值/招式）',
     'tree': new_tree['sha'], 'parents': [base_sha]})
 # 6. ref
 gh('PATCH', '/git/refs/heads/' + BRANCH, {'sha': new_commit['sha']})

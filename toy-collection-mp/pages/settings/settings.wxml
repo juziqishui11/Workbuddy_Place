@@ -1,11 +1,13 @@
-<view class="page" style="--accent:{{meta.accent}};--accent2:{{meta.accent2}}">
-  <view class="section-title">收藏 IP</view>
-  <view class="card">
-    <view wx:for="{{ips}}" wx:key="key" class="ip-row {{item.key === ip ? 'on' : ''}}" data-ip="{{item.key}}" bindtap="switchIp">
-      <view style="font-weight:700;">{{item.brand}}</view>
-      <view style="color:#9AA0AC;font-size:22rpx;margin-top:4rpx;">{{item.key === 'popmart' ? '泡泡玛特潮玩 · 系列进度 + 隐藏款' : '宝可梦图鉴 · 关都地区收录'}}</view>
-      <view wx:if="{{item.key === ip}}" class="check">✓</view>
-    </view>
+<view class="page" style="--accent:{{accent}};--accent2:{{accent2}}">
+  <view class="hero">
+    <view class="brand">{{meta.brand}} · 口袋卡牌助手</view>
+    <view class="sub">关都 151 图鉴收藏与开包</view>
+  </view>
+
+  <view class="card stats-card">
+    <view class="stat"><view class="n">{{ownedCount}}</view><view class="l">持有卡牌</view></view>
+    <view class="stat"><view class="n">{{completion}}%</view><view class="l">图鉴完成度</view></view>
+    <view class="stat"><view class="n">{{wishCount}}</view><view class="l">心愿</view></view>
   </view>
 
   <view class="section-title">数据</view>
@@ -15,8 +17,8 @@
   </view>
 
   <view class="card" style="color:#9AA0AC;font-size:22rpx;line-height:1.7;">
-    潮玩收藏册 · 双 IP 可切换收藏管理小程序（微信原生）。<br/>
-    数据仅保存在本机微信存储，不上传服务器；切换微信或清缓存会丢失，重要收藏请及时截图备份。<br/>
-    泡泡玛特示例库为手工精选的 3 个系列；宝可梦为关都地区精选约 30 只，均可按 data/*.js 的 schema 自行扩充。
+    口袋卡牌助手 · 宝可梦卡牌收藏与开包模拟小程序（微信原生）。<br/>
+    数据仅保存在本机微信存储，不上传服务器；卡牌图来自 PokeAPI 官方精灵图。<br/>
+    图鉴收录关都地区 151 只宝可梦，开包可获得传说 / 幻之稀有卡。
   </view>
 </view>

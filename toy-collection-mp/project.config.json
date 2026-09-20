@@ -1,5 +1,5 @@
 {
-  "description": "潮玩收藏册 - 双 IP 可切换的潮玩/宝可梦收藏管理小程序",
+  "description": "口袋卡牌助手 - 宝可梦卡牌收藏与开包模拟小程序（关都 151）",
   "appid": "wxaffe24c20ce6779d",
   "projectname": "toy-collection-mp",
   "setting": {
@@ -31,6 +31,7 @@
   "packOptions": {
     "ignore": [
       { "type": "suffix", "value": ".png" },
+      { "type": "folder", "value": "scripts" },
       { "type": "file", "value": "gh_sync.py" },
       { "type": "file", "value": "README.md" },
       { "type": "file", "value": "小程序基础信息.md" }

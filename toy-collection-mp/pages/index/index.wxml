@@ -1,38 +1,32 @@
-<view class="page" style="--accent:{{meta.accent}};--accent2:{{meta.accent2}}">
+<view class="page" style="--accent:{{accent}};--accent2:{{accent2}}">
   <view class="hero">
-    <view class="brand">{{meta.brand}} · 我的娃柜</view>
-    <view class="sub">已收藏 {{ownedCount}} {{meta.unit}} · 心愿 {{wishCount}} · 图鉴完成度 {{completion}}%</view>
+    <view class="brand">{{meta.brand}} · 我的卡牌</view>
+    <view class="sub">已收集 {{ownedCount}} / {{total}} 只宝可梦</view>
     <view class="hero-row">
-      <view class="hero-stat"><view class="num">{{ownedCount}}</view><view class="lbl">拥有</view></view>
+      <view class="hero-stat"><view class="num">{{completion}}%</view><view class="lbl">图鉴完成度</view></view>
+      <view class="hero-stat"><view class="num">{{ownedCount}}</view><view class="lbl">持有卡牌</view></view>
       <view class="hero-stat"><view class="num">¥{{totalValue}}</view><view class="lbl">估值</view></view>
-      <view class="hero-stat"><view class="num">{{completion}}%</view><view class="lbl">图鉴</view></view>
     </view>
   </view>
 
-  <view class="gacha-banner" bindtap="goGacha">
-    <view class="gb-left">
-      <view class="gb-title">🎁 抽卡开门</view>
-      <view class="gb-sub">模拟抽卡包 · 抽到的{{meta.unit}}自动点亮收藏册</view>
-    </view>
-    <view class="gb-btn">去抽 →</view>
-  </view>
-
-  <view class="section-title">收藏墙</view>
+  <view class="section-title">我的卡牌墙</view>
   <view wx:if="{{owned.length === 0}}" class="empty">
-    <view class="emoji">🧸</view>
-    <view>还没有收藏，去「图鉴」里点亮第一只吧～</view>
+    <view class="emoji">🃏</view>
+    <view class="tip">还没有卡牌，去「开包」抽一波吧！</view>
+    <button class="btn" bindtap="goGacha">去开包</button>
+    <view class="link" bindtap="goDex">或去卡册手动标记 →</view>
   </view>
 
-  <view class="grid">
-    <view wx:for="{{owned}}" wx:key="id" class="cell">
-      <view class="toy-card" data-ip="{{item.ip}}" data-series="{{item.seriesId}}" data-figure="{{item.figureId}}" bindtap="goDetail">
-        <view class="toy-emoji" style="background:{{item.color}}">{{item.emoji}}</view>
-        <view class="toy-name">{{item.name}}</view>
-        <view class="toy-sub">{{item.seriesName}}</view>
-        <view class="toy-price" wx:if="{{item.curValue}}">¥{{item.curValue}}</view>
+  <view wx:else class="grid">
+    <view wx:for="{{owned}}" wx:key="figureId" class="cell">
+      <view class="pk-card" bindtap="goDetail" data-series="{{item.seriesId}}" data-figure="{{item.figureId}}">
+        <view class="img"><image src="{{item.img}}" mode="aspectFit" binderror="onImgErr" data-i="{{index}}"></image></view>
+        <view class="name">{{item.name}}</view>
+        <view class="code">No.{{item.code}}</view>
+        <view class="badge">✓</view>
       </view>
     </view>
   </view>
 
-  <view class="fab" bindtap="goAdd">＋</view>
+  <view class="fab" bindtap="goGacha">🎁</view>
 </view>

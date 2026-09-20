@@ -1,62 +1,40 @@
-.page { padding: 24rpx 24rpx 60rpx; min-height: 100vh; background: linear-gradient(160deg, #FFF0F6 0%, #F6F7FB 40%); }
+/* gacha.wxss —— 开包模拟 */
+.gacha-hero { text-align: center; }
 
-.top-hero { text-align: center; padding: 28rpx 0 18rpx; }
-.top-hero .title { font-size: 44rpx; font-weight: 800; color: #2A2433; }
-.top-hero .sub { margin-top: 10rpx; font-size: 24rpx; color: #8A8596; }
-
-.series-bar { margin: 16rpx 0; }
-.chips { white-space: nowrap; }
-.chip {
-  display: inline-block; padding: 12rpx 26rpx; margin-right: 16rpx;
-  background: #fff; border-radius: 999px; font-size: 24rpx; color: #6B6478;
-  box-shadow: 0 2rpx 8rpx rgba(0,0,0,.05);
+.pack {
+  margin: 24rpx 0;
+  background: linear-gradient(150deg, var(--accent, #3B7DDD), var(--accent2, #FFCB05));
+  border-radius: 28rpx; padding: 56rpx 0; text-align: center; color: #fff;
+  box-shadow: 0 14rpx 34rpx rgba(59, 125, 221, 0.35);
 }
-.chip.on { background: var(--accent); color: #fff; font-weight: 700; }
+.pack-art { font-size: 110rpx; line-height: 1; }
+.pack-txt { font-size: 36rpx; font-weight: 800; margin-top: 12rpx; }
+.pack-sub { font-size: 22rpx; opacity: 0.92; margin-top: 8rpx; }
 
-.stage { margin: 20rpx 0; min-height: 360rpx; display: flex; align-items: center; justify-content: center; }
-.card-back {
-  width: 300rpx; height: 380rpx; border-radius: 28rpx;
-  background: linear-gradient(150deg, var(--accent), var(--accent2));
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  box-shadow: 0 12rpx 30rpx rgba(0,0,0,.12);
-}
-.card-back .q { font-size: 140rpx; color: #fff; font-weight: 800; line-height: 1; }
-.card-back .hint { margin-top: 16rpx; color: rgba(255,255,255,.9); font-size: 24rpx; }
-
-.results { display: flex; flex-wrap: wrap; gap: 20rpx; justify-content: center; width: 100%; }
-.results.flip { animation: flip .55s ease; }
-@keyframes flip {
-  0% { transform: rotateY(90deg); opacity: 0; }
-  100% { transform: rotateY(0); opacity: 1; }
+.new-tip {
+  text-align: center; color: var(--accent, #3B7DDD); font-weight: 700;
+  background: #EAF1FD; border-radius: 16rpx; padding: 14rpx; margin: 8rpx 0 16rpx; font-size: 26rpx;
 }
 
-.res-card {
-  width: 200rpx; background: #fff; border-radius: 24rpx; padding: 22rpx 16rpx 16rpx;
-  border: 3rpx solid #EEE; box-shadow: 0 8rpx 20rpx rgba(0,0,0,.07);
+.results { display: flex; flex-wrap: wrap; gap: 20rpx; justify-content: center; }
+.rcard {
+  width: 200rpx; min-height: 280rpx; background: #fff; border-radius: 22rpx; padding: 18rpx 14rpx;
+  border: 3rpx solid #EEF1F7; box-shadow: 0 8rpx 20rpx rgba(30, 60, 120, 0.08);
   display: flex; flex-direction: column; align-items: center; position: relative;
 }
-.res-emoji { width: 130rpx; height: 130rpx; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 64rpx; }
-.res-name { margin-top: 12rpx; font-weight: 700; font-size: 26rpx; color: #2A2433; text-align: center; }
-.res-series { font-size: 20rpx; color: #9AA0AC; margin-top: 2rpx; text-align: center; }
-.tag { margin-top: 10rpx; font-size: 20rpx; padding: 3rpx 14rpx; border-radius: 999px; font-weight: 700; }
-.badge { position: absolute; top: -14rpx; right: -10rpx; font-size: 18rpx; padding: 4rpx 12rpx; border-radius: 999px; font-weight: 800; }
-.badge.new { background: #FF5C8A; color: #fff; }
-.badge.dup { background: #E7EAF0; color: #8A8596; }
-.res-acts { display: flex; gap: 10rpx; margin-top: 14rpx; }
-.mini { font-size: 20rpx; padding: 8rpx 16rpx; border-radius: 999px; background: var(--accent); color: #fff; }
-.mini.ghost { background: #EFF1F6; color: #6B6478; }
+.rcard.back { background: linear-gradient(150deg, var(--accent, #3B7DDD), var(--accent2, #FFCB05)); border: none; }
+.rcard-back { color: #fff; font-size: 96rpx; font-weight: 800; line-height: 280rpx; }
+.rcard.front { animation: pop .45s ease; }
+@keyframes pop { 0% { transform: scale(.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 
-.stat-row { display: flex; gap: 20rpx; margin: 24rpx 0; }
-.stat { flex: 1; background: #fff; border-radius: 20rpx; padding: 22rpx; text-align: center; box-shadow: 0 4rpx 12rpx rgba(0,0,0,.05); }
-.stat .n { font-size: 40rpx; font-weight: 800; color: var(--accent); }
-.stat .l { font-size: 22rpx; color: #8A8596; margin-top: 4rpx; }
-
-.draw-btns { display: flex; gap: 20rpx; margin-top: 8rpx; }
-.draw-btn {
-  flex: 1; text-align: center; padding: 28rpx 0; border-radius: 20rpx;
-  background: #fff; color: var(--accent); font-weight: 800; font-size: 30rpx;
-  box-shadow: 0 6rpx 16rpx rgba(0,0,0,.07);
+.r-img { width: 100%; height: 150rpx; display: flex; align-items: center; justify-content: center; background: #F1F5FB; border-radius: 16rpx; }
+.r-img image { width: 130rpx; height: 130rpx; }
+.r-name { margin-top: 10rpx; font-weight: 700; font-size: 26rpx; text-align: center; }
+.r-code { font-size: 20rpx; color: #9AA0AC; margin-top: 2rpx; }
+.r-acts { display: flex; gap: 10rpx; margin-top: 12rpx; }
+.r-btn { font-size: 20rpx; padding: 8rpx 16rpx; border-radius: 999rpx; background: var(--accent, #3B7DDD); color: #fff; }
+.r-btn.ghost { background: #EFF1F6; color: #5B6472; }
+.newflag {
+  position: absolute; top: -12rpx; right: -8rpx; font-size: 18rpx; padding: 4rpx 12rpx;
+  border-radius: 999rpx; font-weight: 800; background: #FF5C8A; color: #fff;
 }
-.draw-btn.solid { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; }
-
-.tip { margin-top: 30rpx; font-size: 21rpx; color: #9AA0AC; line-height: 1.7; text-align: center; padding: 0 10rpx; }

@@ -1,4 +1,68 @@
-.big-emoji { font-size: 120rpx; width: 200rpx; height: 200rpx; line-height: 200rpx; border-radius: 32rpx; margin: 0 auto; text-align: center; }
-.kv { display: flex; justify-content: space-between; padding: 12rpx 0; border-bottom: 1rpx solid #F0F2F6; font-size: 28rpx; }
-.kv text:first-child { color: #5B6472; }
-.kv text:last-child { font-weight: 600; text-align: right; max-width: 60%; }
+/* detail.wxss —— 宝可梦 TCG 卡牌风格 */
+.page { padding: 24rpx 24rpx 160rpx; }
+
+/* ===== TCG 卡牌正面 ===== */
+.tcard {
+  background: #fff; border: 8rpx solid var(--type, #3B7DDD); border-radius: 22rpx;
+  padding: 0; overflow: hidden; box-shadow: 0 14rpx 34rpx rgba(30, 60, 120, 0.18);
+}
+.tc-head {
+  display: flex; align-items: center; padding: 18rpx 22rpx; color: #fff;
+}
+.tc-name { font-size: 34rpx; font-weight: 800; flex: 1; }
+.tc-no { font-size: 22rpx; opacity: 0.9; margin-right: 14rpx; }
+.tc-hp { display: flex; align-items: baseline; }
+.hp-l { font-size: 20rpx; font-weight: 700; margin-right: 4rpx; }
+.hp-v { font-size: 34rpx; font-weight: 800; }
+
+.tc-art {
+  height: 320rpx; background:
+    radial-gradient(circle at 30% 30%, rgba(255,255,255,.7), transparent 60%),
+    linear-gradient(135deg, #F4F7FB, #E6ECF5);
+  display: flex; align-items: center; justify-content: center;
+  border-top: 3rpx solid rgba(0,0,0,.06); border-bottom: 3rpx solid rgba(0,0,0,.06);
+}
+.tc-art image { width: 280rpx; height: 280rpx; }
+
+.tc-tags { display: flex; gap: 12rpx; padding: 16rpx 22rpx 8rpx; }
+.tc-type { font-weight: 700; }
+
+.tc-ability { padding: 4rpx 22rpx 12rpx; font-size: 24rpx; }
+.tc-k { color: #5B6472; font-weight: 700; margin-right: 10rpx; }
+.tc-ab { color: #1F2733; }
+
+.tc-moves { padding: 8rpx 16rpx 18rpx; }
+.tc-move {
+  display: flex; align-items: center; justify-content: space-between;
+  background: #F6F8FC; border-radius: 14rpx; padding: 14rpx 18rpx; margin-bottom: 10rpx;
+  border-left: 6rpx solid var(--type, #3B7DDD);
+}
+.mv-left { display: flex; flex-direction: column; }
+.mv-name { font-size: 28rpx; font-weight: 700; color: #1F2733; }
+.mv-meta { margin-top: 6rpx; display: flex; align-items: center; gap: 10rpx; }
+.mv-chip { font-size: 18rpx; padding: 2rpx 12rpx; border-radius: 999rpx; font-weight: 700; }
+.mv-cls { font-size: 20rpx; color: #8A93A3; }
+.mv-dmg { font-size: 36rpx; font-weight: 800; color: #1F2733; text-align: right; }
+.mv-u { display: block; font-size: 16rpx; color: #8A93A3; font-weight: 600; }
+
+/* ===== 身价 / 种族值 ===== */
+.card .hw { display: flex; gap: 16rpx; }
+.hw-cell { flex: 1; background: #F4F7FB; border-radius: 16rpx; padding: 18rpx; text-align: center; }
+.hw-k { display: block; font-size: 22rpx; color: #8A93A3; }
+.hw-v { display: block; font-size: 30rpx; font-weight: 800; color: #1F2733; margin-top: 4rpx; }
+
+.stat-row { display: flex; align-items: center; margin: 12rpx 0; }
+.stat-l { width: 70rpx; font-size: 24rpx; color: #5B6472; font-weight: 600; }
+.stat-bar { flex: 1; height: 18rpx; background: #EDF1F7; border-radius: 999rpx; overflow: hidden; margin: 0 16rpx; }
+.stat-fill { height: 100%; border-radius: 999rpx; }
+.stat-num { width: 56rpx; text-align: right; font-size: 26rpx; font-weight: 700; color: #1F2733; }
+
+/* ===== 我的收藏 / 操作 ===== */
+.card .row { display: flex; justify-content: space-between; padding: 14rpx 0; font-size: 28rpx; border-bottom: 1rpx solid #F0F2F6; }
+.card .row:last-child { border-bottom: none; }
+.card .k { color: #5B6472; }
+.card .v { font-weight: 600; text-align: right; max-width: 64%; }
+
+.acts { margin-top: 8rpx; }
+.acts .btn { margin-bottom: 16rpx; }
+.btn.danger { background: #fff; color: #EF4444; border: 2rpx solid #EF4444; }

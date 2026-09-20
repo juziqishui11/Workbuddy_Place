@@ -4,28 +4,25 @@
     "pages/dex/dex",
     "pages/detail/detail",
     "pages/add/add",
-    "pages/wish/wish",
-    "pages/stats/stats",
-    "pages/settings/settings",
-    "pages/gacha/gacha"
+    "pages/gacha/gacha",
+    "pages/settings/settings"
   ],
   "window": {
-    "navigationBarBackgroundColor": "#FF7BAC",
-    "navigationBarTitleText": "潮玩收藏册",
+    "navigationBarBackgroundColor": "#3B7DDD",
+    "navigationBarTitleText": "口袋卡牌助手",
     "navigationBarTextStyle": "white",
-    "backgroundColor": "#F6F7FB"
+    "backgroundColor": "#EEF3FB"
   },
   "tabBar": {
     "color": "#9AA0AC",
-    "selectedColor": "#FF7BAC",
+    "selectedColor": "#3B7DDD",
     "backgroundColor": "#FFFFFF",
     "borderStyle": "white",
     "list": [
-      { "pagePath": "pages/index/index", "text": "娃柜" },
-      { "pagePath": "pages/dex/dex", "text": "图鉴" },
-      { "pagePath": "pages/wish/wish", "text": "心愿" },
-      { "pagePath": "pages/stats/stats", "text": "统计" },
-      { "pagePath": "pages/settings/settings", "text": "设置" }
+      { "pagePath": "pages/index/index", "text": "卡牌" },
+      { "pagePath": "pages/dex/dex", "text": "卡册" },
+      { "pagePath": "pages/gacha/gacha", "text": "开包" },
+      { "pagePath": "pages/settings/settings", "text": "我的" }
     ]
   },
   "style": "v2",
