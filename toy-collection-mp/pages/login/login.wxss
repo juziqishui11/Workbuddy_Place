@@ -12,14 +12,15 @@
   margin-top: 26rpx; padding: 12rpx 0;
 }
 
-/* 头像选择（open-type="chooseAvatar" 的按钮，需清掉 button 默认样式） */
+/* 头像选择（open-type="chooseAvatar" 的按钮，需清掉 button 默认样式）
+   圆角矩形，与「我的」页 .uc-ava 保持一致 */
 .lg-ava-row { display: flex; align-items: center; margin-bottom: 26rpx; }
 .lg-ava-btn {
   width: 152rpx; height: 152rpx; padding: 0; margin: 0; flex-shrink: 0;
-  border-radius: 50%; overflow: hidden; background: #E6ECF5;
+  border-radius: 24rpx; overflow: hidden; background: #E6ECF5;
   display: flex; align-items: center; justify-content: center; line-height: normal;
 }
-.lg-ava-img { width: 152rpx; height: 152rpx; border-radius: 50%; display: block; }
+.lg-ava-img { width: 152rpx; height: 152rpx; border-radius: 24rpx; display: block; }
 .lg-ava-ph { font-size: 52rpx; font-weight: 800; color: #8E9AB0; }
 .lg-ava-hint { margin-left: 24rpx; }
 .lg-ava-t { font-size: 27rpx; font-weight: 700; }
