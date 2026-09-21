@@ -5,7 +5,8 @@
     "pages/detail/detail",
     "pages/add/add",
     "pages/gacha/gacha",
-    "pages/settings/settings"
+    "pages/settings/settings",
+    "pages/login/login"
   ],
   "window": {
     "navigationBarBackgroundColor": "#3B7DDD",

@@ -1,7 +1,16 @@
 import fs from 'fs';
 const R = 'D:/workBuddy_place/toy-collection-mp/';
 
-const wxss = ['app.wxss', 'pages/dex/dex.wxss', 'pages/index/index.wxss', 'pages/gacha/gacha.wxss', 'pages/detail/detail.wxss', 'pages/settings/settings.wxss', 'pages/add/add.wxss'];
+// 自动枚举：app.wxss + app.json 里每个页面的同名 wxss
+// （硬编码名单曾漏检新增的 login 页 —— 新页面务必靠自动发现覆盖）
+const wxss = (() => {
+  const app = JSON.parse(fs.readFileSync(R + 'app.json', 'utf8'));
+  const pages = (app.pages || []).slice();
+  (app.subPackages || app.subpackages || []).forEach((sp) => {
+    (sp.pages || []).forEach((p) => pages.push(sp.root + '/' + p));
+  });
+  return ['app.wxss'].concat(pages.map((p) => p + '.wxss')).filter((f) => fs.existsSync(R + f));
+})();
 let bad = 0;
 for (const f of wxss) {
   const s = fs.readFileSync(R + f, 'utf8');

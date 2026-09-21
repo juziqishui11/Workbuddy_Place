@@ -34,7 +34,20 @@ function loadPage(rel) {
   if (!captured) throw new Error('页面未调用 Page(): ' + rel);
   const inst = Object.assign({}, captured);
   inst.data = JSON.parse(JSON.stringify(captured.data || {}));
-  inst.setData = function (o) { Object.assign(this.data, o); };
+  // 支持 'form.nickName' / 'list[0].x' 这类路径键（真机 setData 本就支持，桩要对齐）
+  inst.setData = function (o) {
+    Object.keys(o).forEach((k) => {
+      if (k.indexOf('.') < 0 && k.indexOf('[') < 0) { this.data[k] = o[k]; return; }
+      const parts = k.replace(/\[(\d+)\]/g, '.$1').split('.');
+      let cur = this.data;
+      for (let i = 0; i < parts.length - 1; i++) {
+        const p = parts[i];
+        if (cur[p] == null) cur[p] = /^\d+$/.test(parts[i + 1]) ? [] : {};
+        cur = cur[p];
+      }
+      cur[parts[parts.length - 1]] = o[k];
+    });
+  };
   return inst;
 }
 
@@ -311,10 +324,144 @@ console.log('=== 卡包皮肤 ===');
   ok('6 种皮肤可切换 / 越界回绕 / 动画中锁定 / 立绘失败兜底 / 事件绑定正确');
 }
 
+// ---- ⑨ 登录 / 本机档案（头像昵称 / 退出登录不得动收藏）----
+console.log('=== 登录与本机档案 ===');
+{
+  // 用「可读写内存 storage」替换全局 wx 桩：档案逻辑必须真实走存储才能验
+  const mem = {};
+  const navUrls = [];
+  let loginCalls = 0, loginShouldFail = false;
+  const baseWx = global.wx;
+  const fsStub = {
+    accessSync: (p) => { if (!mem.__files || !mem.__files[p]) throw new Error('ENOENT'); },
+    unlinkSync: (p) => { if (mem.__files) delete mem.__files[p]; },
+    saveFile: (o) => { mem.__files = mem.__files || {}; mem.__files[o.filePath] = 1; o.success && o.success({}); }
+  };
+  global.wx = Object.assign({}, baseWx, {
+    getStorageSync: (k) => (k in mem ? mem[k] : null),
+    setStorageSync: (k, v) => { mem[k] = v; },
+    removeStorageSync: (k) => { delete mem[k]; },
+    env: { USER_DATA_PATH: '/mock/userdata' },
+    getFileSystemManager: () => fsStub,
+    login: (o) => { loginCalls++; if (loginShouldFail) o.fail({ errMsg: 'mock fail' }); else o.success({ code: 'mock-code' }); },
+    navigateTo: (o) => { navUrls.push(o.url); },
+    navigateBack: () => {}, switchTab: () => {}, showToast: () => {},
+    showModal: (o) => { o.success && o.success({ confirm: true }); }
+  });
+
+  const profile = require(R + 'utils/profile.js');
+  const storeM = require(R + 'utils/store.js');
+  const login = loadPage('pages/login/login.js');
+
+  check(profile.isLogged() === false, '初始应未登录');
+  check(profile.skipped() === false, '初始不应标记为已跳过');
+
+  // 昵称清洗
+  check(profile.cleanNick('  枫 城  ') === '枫 城', '昵称应去首尾空白并压缩连续空白');
+  check(profile.cleanNick('   ') === '' && profile.cleanNick('') === '', '空 / 纯空白昵称应判非法');
+  check(profile.cleanNick('a'.repeat(30)).length === 20, '昵称应截断到 20 字');
+  check(profile.cleanNick('枫\u0000城') === '枫城', '昵称应滤掉控制字符');
+  check(profile.avatarCharOf('皮卡丘') === '皮' && profile.avatarCharOf('') === '?', '头像占位应取首字、无昵称回落 ?');
+
+  // 第一步
+  login.onLoad();
+  check(login.data.step === 1, '未登录时登录页应停在「微信登录」第一步');
+  login.doWxLogin();
+  check(loginCalls === 1, 'doWxLogin 应调用一次 wx.login');
+  check(login.data.step === 2, '微信登录后应进入「完善资料」第二步');
+
+  // wx.login 失败也不得阻断
+  const login2 = loadPage('pages/login/login.js');
+  login2.onLoad();
+  loginShouldFail = true;
+  login2.doWxLogin();
+  check(login2.data.step === 2 && login2.data.logging === false, 'wx.login 失败也必须能继续填资料（不阻断）');
+  loginShouldFail = false;
+
+  // 空昵称必须被拦下
+  login2.setData({ form: { nickName: '   ', avatarUrl: '' } });
+  login2.doSave();
+  check(!!login2.data.err, '空昵称保存应报错');
+  check(profile.isLogged() === false, '空昵称不得写入档案');
+
+  // 头像持久化：临时文件 → 本地用户文件（否则退出小程序后会变破图）
+  let persisted = '', keptHttp = '';
+  profile.persistAvatar('http://tmp/xxx.jpeg', (p) => { persisted = p; });
+  check(persisted === '/mock/userdata/profile_avatar.png', 'chooseAvatar 的临时文件应转成持久路径');
+  profile.persistAvatar('https://thirdwx.qlogo.cn/a.png', (p) => { keptHttp = p; });
+  check(keptHttp === 'https://thirdwx.qlogo.cn/a.png', '已是 http 地址应原样保留');
+
+  // 正常保存
+  login2.setData({ form: { nickName: '枫城', avatarUrl: persisted } });
+  login2.doSave();
+  check(profile.isLogged() === true, '合法昵称应写入档案');
+  const savedP = profile.get();
+  check(savedP.nickName === '枫城', '档案昵称应正确');
+  check(savedP.avatarUrl === '/mock/userdata/profile_avatar.png', '档案头像应存持久路径');
+  check(!!savedP.loginAt, '档案应记录登录时间');
+
+  // 已登录再进登录页 = 编辑资料
+  const login3 = loadPage('pages/login/login.js');
+  login3.onLoad();
+  check(login3.data.step === 2 && login3.data.form.nickName === '枫城', '已登录再进登录页应直接回填资料');
+
+  // 「我的」页展示
+  const st = loadPage('pages/settings/settings.js');
+  st.onShow();
+  check(st.data.logged === true, '「我的」页登录后应显示已登录');
+  check(st.data.profile && st.data.profile.nickName === '枫城', '「我的」页应带出昵称');
+  check(st.data.avatarChar === '枫', '「我的」页应带出头像首字兜底');
+  check(!!st.data.loginAtText, '「我的」页应显示登录日期');
+  st.onAvatarErr();
+  check(st.data.profile.avatarUrl === '', '头像文件失效应回落首字占位（不显示破图）');
+
+  // 【关键】退出登录只清档案，绝不动收藏
+  storeM.upsert({ seriesId: 'kanto', figureId: 'pk-006', own: true });
+  check(storeM.ownedList().length === 1, '准备阶段：应有 1 条收藏');
+  st.logout();
+  check(profile.isLogged() === false, '退出登录应清掉档案');
+  check(storeM.ownedList().length === 1, '退出登录不得清掉收藏（这条最容易写错）');
+
+  // 首页首次引导：只在「未登录且没点过暂不登录」时引导一次
+  navUrls.length = 0;
+  const idx1 = loadPage('pages/index/index.js');
+  idx1.onShow();
+  check(navUrls.indexOf('/pages/login/login') >= 0, '未登录首次进首页应引导到登录页');
+  navUrls.length = 0;
+  idx1.onShow();
+  check(navUrls.length === 0, '同一次会话内不应重复引导');
+  profile.markSkipped();
+  navUrls.length = 0;
+  loadPage('pages/index/index.js').onShow();
+  check(navUrls.length === 0, '点过「暂不登录」后不应再自动引导');
+  profile.save({ nickName: '枫城' });
+  navUrls.length = 0;
+  loadPage('pages/index/index.js').onShow();
+  check(navUrls.length === 0, '已登录后不应再引导');
+
+  // WXML / JS 静态断言
+  const lgWxml = require('fs').readFileSync(R + 'pages/login/login.wxml', 'utf8');
+  const lgJs = require('fs').readFileSync(R + 'pages/login/login.js', 'utf8');
+  const stWxml = require('fs').readFileSync(R + 'pages/settings/settings.wxml', 'utf8');
+  check(/open-type="chooseAvatar"/.test(lgWxml) && /bindchooseavatar="onChooseAvatar"/.test(lgWxml),
+    '登录页必须用官方 chooseAvatar 按钮并绑定 bindchooseavatar');
+  check(/type="nickname"/.test(lgWxml), '昵称输入框必须 type="nickname"（才有微信昵称快捷填入）');
+  check(/bindtap="skip"/.test(lgWxml), '登录页必须有「暂不登录」出口（微信禁止硬阻断核心功能）');
+  check(!/getUserProfile|getUserInfo/.test(lgJs + lgWxml), '不得使用已被回收的 getUserProfile / getUserInfo');
+  check(/bindtap="goLogin"/.test(stWxml) && /bindtap="logout"/.test(stWxml),
+    '「我的」页需有 goLogin 入口与 logout 行');
+  check(/class="card user-card"\s+bindtap="goLogin"/.test(stWxml), '用户行整行应可点击进登录/编辑');
+  check(/class="uc-arrow"/.test(stWxml), '用户行右侧应有箭头（微信「我」页风的可点击提示）');
+  ok('档案读写 / 昵称清洗 / 头像持久化 / 登录不阻断 / 退出不动收藏 / 首次引导仅一次');
+
+  global.wx = baseWx;
+}
+
 // ---- 其余页面：能加载不报错 ----
 console.log('=== 其余页面加载 ===');
 [['pages/index/index.js', 'index'], ['pages/gacha/gacha.js', 'gacha'],
- ['pages/settings/settings.js', 'settings'], ['pages/add/add.js', 'add']].forEach(([f, n]) => {
+ ['pages/settings/settings.js', 'settings'], ['pages/add/add.js', 'add'],
+ ['pages/login/login.js', 'login']].forEach(([f, n]) => {
   try {
     const p = loadPage(f);
     if (p.onLoad) p.onLoad(n === 'add' ? { seriesId: 'kanto', figureId: 'pk-006' } : {});

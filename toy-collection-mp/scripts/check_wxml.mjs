@@ -11,7 +11,17 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 const R = path.dirname(fileURLToPath(import.meta.url)) + '/../';
-const PAGES = ['index', 'dex', 'detail', 'gacha', 'add', 'settings'];
+
+/** 从 app.json 自动枚举全部页面（含分包）—— 硬编码名单曾漏检新增的 login 页 */
+function listPages() {
+  const app = JSON.parse(fs.readFileSync(R + 'app.json', 'utf8'));
+  const out = (app.pages || []).slice();
+  (app.subPackages || app.subpackages || []).forEach((sp) => {
+    (sp.pages || []).forEach((p) => out.push(sp.root + '/' + p));
+  });
+  return out;
+}
+const PAGES = listPages();
 
 const TAGS = ['view', 'text', 'scroll-view', 'block', 'image', 'button', 'input', 'picker', 'swiper', 'swiper-item', 'navigator', 'form', 'label', 'radio', 'checkbox'];
 
@@ -19,7 +29,7 @@ let bad = 0;
 const problems = [];
 
 for (const p of PAGES) {
-  const f = 'pages/' + p + '/' + p + '.wxml';
+  const f = p + '.wxml';
   const file = R + f;
   if (!fs.existsSync(file)) { console.log(f.padEnd(26), 'MISSING'); bad++; continue; }
   const s = fs.readFileSync(file, 'utf8');

@@ -1,0 +1,45 @@
+<view class="page lg-page" style="--accent:{{accent}};--accent2:{{accent2}}">
+  <view class="hero">
+    <view class="brand">微信登录</view>
+    <view class="sub">登录后可在「我的」页面显示你的头像与昵称</view>
+  </view>
+
+  <!-- 第一步：微信登录 -->
+  <view wx:if="{{step === 1}}" class="card">
+    <view class="lg-title">用微信登录</view>
+    <view class="lg-desc">登录只用于在本机记录你的头像和昵称，收藏数据不会离开你的手机。</view>
+    <button class="btn block lg-btn" bindtap="doWxLogin" loading="{{logging}}">微信一键登录</button>
+    <view class="lg-skip" bindtap="skip">暂不登录，先逛逛 →</view>
+  </view>
+
+  <!-- 第二步：完善头像昵称 -->
+  <view wx:else class="card">
+    <view class="lg-title">完善你的资料</view>
+    <view class="lg-desc">微信已不再下发头像昵称授权，请点一下自行选择头像、确认昵称。</view>
+
+    <view class="lg-ava-row">
+      <button class="lg-ava-btn" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
+        <image wx:if="{{form.avatarUrl}}" class="lg-ava-img" src="{{form.avatarUrl}}" mode="aspectFill"></image>
+        <view wx:else class="lg-ava-ph">{{avatarChar}}</view>
+      </button>
+      <view class="lg-ava-hint">
+        <view class="lg-ava-t">点击选择头像</view>
+        <view class="lg-ava-s">可选，不选则用昵称首字</view>
+      </view>
+    </view>
+
+    <view class="label">昵称</view>
+    <input class="input" type="nickname" maxlength="{{nickMax}}" value="{{form.nickName}}"
+           placeholder="点这里可快捷填入微信昵称"
+           bindinput="onNickInput" bindblur="onNickBlur" />
+    <view class="lg-err" wx:if="{{err}}">{{err}}</view>
+
+    <button class="btn block lg-btn" bindtap="doSave">保存并开始收藏</button>
+    <view class="lg-skip" bindtap="skip">暂不设置 →</view>
+  </view>
+
+  <view class="card lg-safe">
+    <view class="lg-safe-t">🔒 关于你的数据</view>
+    收藏、照片、备注、价格全部保存在本机微信存储，不会上传到任何服务器；换设备或清理缓存会丢失。
+  </view>
+</view>

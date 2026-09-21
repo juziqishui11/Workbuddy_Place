@@ -1,4 +1,34 @@
 /* settings.wxss —— 我的 */
+/* 用户行 —— 微信「我」页风：通栏白底 / 无阴影 / 圆角矩形头像 / 右侧箭头
+   用 .card.user-card 提高优先级，避免被 app.wxss 的 .card 覆盖 */
+.card.user-card {
+  background: #fff; padding: 0; box-shadow: none; border-radius: 0;
+  margin: 0 -24rpx 24rpx;            /* 抵消 .page 的 24rpx 内边距 → 通栏 */
+}
+.uc-row { display: flex; align-items: center; padding: 32rpx 28rpx; }
+.uc-ava {
+  width: 128rpx; height: 128rpx; border-radius: 18rpx;
+  background: #E6ECF5; flex-shrink: 0;
+}
+.uc-ava-ph {
+  display: flex; align-items: center; justify-content: center;
+  font-size: 54rpx; font-weight: 700; color: #8E9AB0;
+}
+.uc-info { flex: 1; min-width: 0; margin-left: 28rpx; }
+.uc-name {
+  font-size: 42rpx; font-weight: 600; color: #191919;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.uc-sub {
+  font-size: 27rpx; color: #9A9A9A; margin-top: 12rpx;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.uc-arrow {
+  width: 18rpx; height: 18rpx; flex-shrink: 0; margin-left: 16rpx;
+  border-right: 3rpx solid #C8C8C8; border-top: 3rpx solid #C8C8C8;
+  transform: rotate(45deg);
+}
+
 .stats-card { display: flex; text-align: center; }
 .stat { flex: 1; }
 .stat .n { font-size: 44rpx; font-weight: 800; color: var(--accent, #3B7DDD); }

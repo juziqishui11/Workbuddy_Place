@@ -4,10 +4,28 @@
     <view class="sub">全国图鉴 {{total}} 只 · 七世代收藏与开包</view>
   </view>
 
+  <view class="card user-card" bindtap="goLogin">
+    <view class="uc-row">
+      <image wx:if="{{logged && profile.avatarUrl}}" class="uc-ava" src="{{profile.avatarUrl}}" mode="aspectFill" binderror="onAvatarErr"></image>
+      <view wx:else class="uc-ava uc-ava-ph">{{avatarChar}}</view>
+      <view class="uc-info">
+        <view class="uc-name">{{logged ? profile.nickName : '未登录'}}</view>
+        <view class="uc-sub">{{logged ? (loginAtText + ' 登录 · 数据仅存本机') : '点击微信登录，显示你的头像与昵称'}}</view>
+      </view>
+      <view class="uc-arrow"></view>
+    </view>
+  </view>
+
   <view class="card stats-card">
     <view class="stat"><view class="n">{{ownedCount}}</view><view class="l">持有卡牌</view></view>
     <view class="stat"><view class="n">{{completion}}%</view><view class="l">图鉴完成度</view></view>
     <view class="stat"><view class="n">{{wishCount}}</view><view class="l">心愿</view></view>
+  </view>
+
+  <view class="section-title">账号</view>
+  <view class="card">
+    <view class="row-btn" bindtap="goLogin">{{logged ? '编辑头像与昵称' : '微信登录'}}</view>
+    <view wx:if="{{logged}}" class="row-btn" bindtap="logout">退出登录</view>
   </view>
 
   <view class="section-title">数据</view>
@@ -18,7 +36,8 @@
   <view class="section-title">关于</view>
   <view class="card" style="color:#9AA0AC;font-size:22rpx;line-height:1.7;">
     口袋卡牌助手 · 宝可梦卡牌收藏与开包模拟小程序（微信原生）。<br/>
-    收藏数据仅保存在本机微信存储，不上传服务器。<br/>
+    收藏、照片、备注、价格，以及你的头像昵称，全部保存在本机微信存储，不上传服务器；
+    每个微信号的数据各自独立、互不可见，换设备或清理缓存会丢失。<br/>
     图鉴收录全国图鉴七世代共 {{total}} 只宝可梦，卡面取自宝可梦集换式卡牌（TCG）。
   </view>
 

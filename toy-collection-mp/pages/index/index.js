@@ -1,5 +1,6 @@
 const source = require('../../utils/source.js');
 const store = require('../../utils/store.js');
+const profile = require('../../utils/profile.js');
 
 function pkNum(id) { return Number(String(id).replace('pk-', '')) || 0; }
 
@@ -9,7 +10,22 @@ Page({
     completion: 0, totalValue: 0, accent: '#3B7DDD', accent2: '#FFCB05'
   },
 
-  onShow: function () { this.refresh(); },
+  onShow: function () {
+    this.refresh();
+    this.maybeGuideLogin();
+  },
+
+  /**
+   * 首次进入且未登录、也没点过「暂不登录」→ 引导一次。
+   * 注意：**不阻断任何功能**（微信规定不得硬阻断核心功能），
+   * 登录页永远有「暂不登录，先逛逛」，且可物理返回。
+   */
+  maybeGuideLogin: function () {
+    if (this._guided) return;
+    this._guided = true;
+    if (profile.isLogged() || profile.skipped()) return;
+    wx.navigateTo({ url: '/pages/login/login', fail: function () {} });
+  },
 
   refresh: function () {
     const meta = source.getMeta();

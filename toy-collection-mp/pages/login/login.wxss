@@ -1,0 +1,31 @@
+/* login.wxss —— 微信登录 / 完善资料
+   新组件一律加 lg- 前缀，避免和 app.wxss 的全局布局类冲突 */
+.lg-page button::after { border: none; }
+
+.lg-title { font-size: 32rpx; font-weight: 800; }
+.lg-desc { font-size: 24rpx; color: #7A8494; line-height: 1.6; margin: 10rpx 0 26rpx; }
+
+.lg-btn { margin-top: 6rpx; }
+
+.lg-skip {
+  text-align: center; color: #9AA0AC; font-size: 24rpx;
+  margin-top: 26rpx; padding: 12rpx 0;
+}
+
+/* 头像选择（open-type="chooseAvatar" 的按钮，需清掉 button 默认样式） */
+.lg-ava-row { display: flex; align-items: center; margin-bottom: 26rpx; }
+.lg-ava-btn {
+  width: 152rpx; height: 152rpx; padding: 0; margin: 0; flex-shrink: 0;
+  border-radius: 50%; overflow: hidden; background: #E6ECF5;
+  display: flex; align-items: center; justify-content: center; line-height: normal;
+}
+.lg-ava-img { width: 152rpx; height: 152rpx; border-radius: 50%; display: block; }
+.lg-ava-ph { font-size: 52rpx; font-weight: 800; color: #8E9AB0; }
+.lg-ava-hint { margin-left: 24rpx; }
+.lg-ava-t { font-size: 27rpx; font-weight: 700; }
+.lg-ava-s { font-size: 22rpx; color: #9AA0AC; margin-top: 8rpx; }
+
+.lg-err { color: #EF4444; font-size: 23rpx; margin: -6rpx 0 16rpx; }
+
+.lg-safe { color: #8A93A3; font-size: 22rpx; line-height: 1.75; }
+.lg-safe-t { font-size: 24rpx; font-weight: 800; color: #5B6472; margin-bottom: 8rpx; }
