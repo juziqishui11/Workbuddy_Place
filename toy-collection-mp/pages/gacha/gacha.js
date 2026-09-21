@@ -15,7 +15,6 @@ const PREMIUM_FORMS = { '极巨化': 1, 'MEGA': 1, '光辉': 1, 'GX': 1 };
 // 触发光边特效：传说、幻之、PREMIUM 形态、EX、V
 const GLOW_FORMS = { 'EX': 1, 'V': 1, '极巨化': 1, 'MEGA': 1, '光辉': 1, 'GX': 1, 'LV.X': 1 };
 const PACK_SIZE = 5;
-const CARD_BACK = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png';
 
 function todayStr() {
   const d = new Date();
@@ -161,6 +160,8 @@ Page({
     return {
       seriesId: entry.seriesId, seriesName: entry.seriesName, figureId: f.id,
       name: f.name, code: f.code, sub: f.sub || '', color: f.color || '#EEE',
+      // wx:key 用：与 draw() 的去重键一致（seriesId/figureId/form），列表内唯一
+      uid: entry.seriesId + '/' + f.id + '/' + (entry.form || 'base'),
       img: entry.img, sprite: f.sprite, art: f.art,
       rarity: entry.rarity, rarityLabel: rm.label, rarityColor: rm.color, rarityBg: rm.bg,
       form: entry.form || '', formImg: entry.form ? entry.img : '',
@@ -233,12 +234,16 @@ Page({
     let i = 0;
     function step() {
       if (i >= n) { setTimeout(function () { self.setData({ state: 'done' }); }, 720); return; }
+      // ⚠️ 必须把序号捕获成 idx：内层 setTimeout 在 340ms 后才执行，
+      //    那时 i 早已 i++ 自增 → flipped[i + 1]，导致 flipped[0] 永远为 false，
+      //    第 1 张卡停在卡背（蓝青渐变 + 斜纹）翻不开，且整体翻牌错位一张。
+      const idx = i;
       const appear = self.data.appear.slice();
-      appear[i] = true;
+      appear[idx] = true;
       self.setData({ appear: appear });
       setTimeout(function () {
         const flipped = self.data.flipped.slice();
-        flipped[i] = true;
+        flipped[idx] = true;
         self.setData({ flipped: flipped });
       }, 340);
       i++;

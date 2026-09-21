@@ -243,6 +243,34 @@ console.log('=== 撕卡包手势 ===');
   ok('撕卡包方向正确：左 → 右横撕（含斜向右下）生效，向左 / 纵向不生效');
 }
 
+// ---- ⑦ 开包翻牌：第 1 张卡必须也翻开（回归：曾因内层定时器读错 i 而永久停在卡背）----
+console.log('=== 开包翻牌顺序 ===');
+{
+  const g = loadPage('pages/gacha/gacha.js');
+  const n = 5;
+  g.setData({
+    state: 'opened',
+    cards: Array.from({ length: n }, (_, k) => ({ uid: 'u' + k, img: 'x.png', name: 'n' + k })),
+    appear: Array.from({ length: n }, () => false),
+    flipped: Array.from({ length: n }, () => false)
+  });
+  g.startFlying();
+  await new Promise((r) => setTimeout(r, 4300));
+  check(g.data.appear.every(Boolean), n + ' 张卡应全部飞入，实际 ' + JSON.stringify(g.data.appear));
+  check(g.data.flipped[0] === true, '第 1 张卡必须翻开（flipped[0] 应为 true，实际 ' + g.data.flipped[0] + '）');
+  check(g.data.flipped.every(Boolean), n + ' 张卡应全部翻开，实际 ' + JSON.stringify(g.data.flipped));
+  check(g.data.state === 'done', '动画结束后 state 应为 done，实际 ' + g.data.state);
+
+  // uid 唯一性（WXML wx:key="uid" 依赖它）
+  const g2 = loadPage('pages/gacha/gacha.js');
+  g2.onShow();
+  const lits = g2.draw(5).map((p) => g2.lightUp(p));
+  const uids = lits.map((c) => c.uid);
+  check(uids.every(Boolean), '每张卡都应有 uid，实际 ' + JSON.stringify(uids));
+  check(new Set(uids).size === uids.length, 'uid 必须唯一，实际 ' + JSON.stringify(uids));
+  ok('翻牌顺序正确：每张飞入后各自翻开，第 1 张不再停留在卡背；uid 唯一');
+}
+
 // ---- 其余页面：能加载不报错 ----
 console.log('=== 其余页面加载 ===');
 [['pages/index/index.js', 'index'], ['pages/gacha/gacha.js', 'gacha'],
