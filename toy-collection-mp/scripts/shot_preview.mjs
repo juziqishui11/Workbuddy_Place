@@ -1,5 +1,5 @@
 // scripts/shot_preview.mjs —— 用本机 chromium 给预览页截图（渲染级验证）
-// 用法：node scripts/shot_preview.mjs [预览页 file:// URL] [输出 PNG] [宽] [高] [等待 ms]
+// 用法：node scripts/shot_preview.mjs [预览页 file:// URL] [输出 PNG] [宽] [高] [等待 ms] [设备像素比]
 //   不带参数时默认截取 toy-detail-preview.html
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
@@ -12,9 +12,11 @@ const W = Number(process.argv[4] || 1800);
 const H = Number(process.argv[5] || 1200);
 // 预览页含外链卡图时给足加载时间
 const wait = Number(process.argv[6] || 18000);
+// 设备像素比：细线条 / 小控件做近距离验证时传 2~3，避免缩放后看不清
+const DPR = Number(process.argv[7] || 1);
 
 const browser = await chromium.launch({ executablePath: EXE });
-const page = await browser.newPage({ viewport: { width: W, height: H }, deviceScaleFactor: 1 });
+const page = await browser.newPage({ viewport: { width: W, height: H }, deviceScaleFactor: DPR });
 const errs = [];
 page.on('pageerror', (e) => errs.push('pageerror: ' + e.message));
 page.on('console', (m) => { if (m.type() === 'error') errs.push('console: ' + m.text()); });

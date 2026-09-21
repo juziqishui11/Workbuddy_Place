@@ -271,6 +271,46 @@ console.log('=== 开包翻牌顺序 ===');
   ok('翻牌顺序正确：每张飞入后各自翻开，第 1 张不再停留在卡背；uid 唯一');
 }
 
+// ---- ⑧ 卡包皮肤：6 种可切换（越界回绕 / 动画中锁定 / 立绘失败兜底）----
+console.log('=== 卡包皮肤 ===');
+{
+  const g = loadPage('pages/gacha/gacha.js');
+  g.onShow();
+  const skins = g.data.skins;
+  check(Array.isArray(skins) && skins.length === 6, '应有 6 种卡包皮肤，实际 ' + (skins && skins.length));
+  check(new Set(skins.map((s) => s.id)).size === 6, '皮肤 id 必须唯一');
+  check(skins.every((s) => s.name && s.c1 && s.c2 && s.dex), '每种皮肤都要有 name / c1 / c2 / dex');
+
+  g.applySkin(0);
+  g.switchSkin({ currentTarget: { dataset: { i: 3 } } });
+  check(g.data.skinIdx === 3, '切到第 4 种皮肤，实际 skinIdx=' + g.data.skinIdx);
+  check(g.data.packColor1 === skins[3].c1 && g.data.packColor2 === skins[3].c2,
+    '切换后卡包主色应跟随皮肤，实际 ' + g.data.packColor1 + '/' + g.data.packColor2);
+  check(String(g.data.packArt).indexOf(String(skins[3].dex)) > -1,
+    '切换后封面立绘应跟随皮肤，实际 ' + g.data.packArt);
+
+  g.applySkin(9);
+  check(g.data.skinIdx === 3, 'applySkin(9) 应对 6 取模回绕到 3，实际 ' + g.data.skinIdx);
+  g.applySkin(-1);
+  check(g.data.skinIdx === 5, 'applySkin(-1) 应回绕到 5，实际 ' + g.data.skinIdx);
+
+  const before = g.data.skinIdx;
+  g.setData({ state: 'flying' });
+  g.switchSkin({ currentTarget: { dataset: { i: 1 } } });
+  check(g.data.skinIdx === before, '开包动画中不应允许换皮肤');
+
+  g.setData({ state: 'idle' });
+  g.onPackArtErr();
+  check(g.data.packArt === '', '封面立绘加载失败应清空 packArt（只留渐变底）');
+
+  // WXML 事件绑定（静态断言）：色点必须 catchtap —— bindtap 会冒泡到外层触发 openPack
+  const gachaWxml = require('fs').readFileSync(R + 'pages/gacha/gacha.wxml', 'utf8');
+  check(/catchtap="switchSkin"/.test(gachaWxml), '皮肤色点必须用 catchtap，否则点击会冒泡触发开包');
+  check(/class="pack-body[^>]*bindtouchstart="packTouchStart"/.test(gachaWxml),
+    '撕开手势应绑在 pack-body 上，绑在 pack-wrap 会被色点拖动误触发');
+  ok('6 种皮肤可切换 / 越界回绕 / 动画中锁定 / 立绘失败兜底 / 事件绑定正确');
+}
+
 // ---- 其余页面：能加载不报错 ----
 console.log('=== 其余页面加载 ===');
 [['pages/index/index.js', 'index'], ['pages/gacha/gacha.js', 'gacha'],

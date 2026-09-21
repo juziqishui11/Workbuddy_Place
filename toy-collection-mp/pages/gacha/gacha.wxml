@@ -7,23 +7,38 @@
 
   <!-- 空闲态 / 撕开态：卡包 -->
   <view wx:if="{{state === 'idle' || state === 'tearing'}}" class="stage idle-stage">
-    <view class="pack-wrap" bindtouchstart="packTouchStart" bindtouchmove="packTouchMove" bindtouchend="packTouchEnd" bindtap="openPack">
-      <view class="pack-body {{hasPremium ? 'premium' : ''}}">
+    <view class="pack-wrap">
+      <!-- 撕开手势只绑在卡包本体上：绑在外层容器会让「在下方色点上拖动」也被当成撕拉 -->
+      <view class="pack-body {{hasPremium ? 'premium' : ''}}" bindtouchstart="packTouchStart" bindtouchmove="packTouchMove" bindtouchend="packTouchEnd" bindtap="openPack">
+        <!-- 实体卡包质感：锡箔斜纹 + 网点 + 中央光晕 + 主题立绘 -->
+        <view class="pack-tex"></view>
+        <view class="pack-dots"></view>
         <view class="pack-inner" style="{{packInnerStyle}}"></view>
-        <view class="pack-face">
-          <view class="pack-logo">{{meta.brand}}</view>
+        <view class="pack-halo"></view>
+        <view class="pack-art" wx:if="{{packArt}}">
+          <image src="{{packArt}}" mode="aspectFit" binderror="onPackArtErr"></image>
+        </view>
+        <!-- 底部铭牌：品牌 + 卡包名 + 张数（顶部只留撕口线，避免与线抢位） -->
+        <view class="pack-foot">
+          <view wx:if="{{meta.brand}}" class="pack-brand">{{meta.brand}}</view>
           <view class="pack-name">{{packName}}</view>
-          <view class="pack-count">{{packSize}} 张 / 包</view>
+          <view class="pack-count">{{skin.name}} · {{packSize}} 张 / 包</view>
         </view>
         <!-- 撕开时会发光 -->
         <view class="pack-glow" style="opacity:{{packGlow}}"></view>
-        <!-- 顶部封条：从左往右横撕（左上 → 右上） -->
-        <view class="pack-seal" style="{{packSealStyle}}">
-          <view class="seal-text">撕开</view>
-          <view class="seal-notch"></view>
+        <!-- 撕口：一条易撕线 + 沿线左右滑动的引导滑块（单向复现，不误导方向） -->
+        <view class="pack-seal {{tearProgress > 0 ? 'tearing' : ''}}" style="{{packSealStyle}}">
+          <view class="seal-line"></view>
+          <view class="seal-knob">→</view>
         </view>
       </view>
-      <view class="pack-hint">{{tearProgress > 0.12 ? '继续向右撕开…' : '→ 按住封条，从左往右撕开'}}</view>
+      <view class="skin-bar {{state !== 'idle' ? 'off' : ''}}">
+        <view wx:for="{{skins}}" wx:key="id"
+              class="skin-dot {{skinIdx === index ? 'on' : ''}}"
+              style="background:linear-gradient(140deg,{{item.c1}},{{item.c2}})"
+              catchtap="switchSkin" data-i="{{index}}"></view>
+      </view>
+      <view class="pack-hint">{{tearProgress > 0.12 ? '继续向右撕开…' : '按住这条线，从左往右撕开'}}</view>
     </view>
   </view>
 
@@ -37,7 +52,14 @@
           <!-- 卡背：飞入前显示 -->
           <view class="fly-back" style="opacity:{{flipped[index] ? 0 : 1}}; transform:scale({{flipped[index] ? 0.85 : 1}});">
             <view class="back-pattern"></view>
-            <view class="back-ball"></view>
+            <view class="back-frame"></view>
+            <!-- 精灵球：全部用真实 view 绘制。上一版用 ::before/::after + 双位置渐变，
+                 在部分基础库/渲染层下整条声明失效 → 卡背只剩纯蓝底（用户实测）。 -->
+            <view class="back-ball">
+              <view class="bb-top"></view>
+              <view class="bb-band"></view>
+              <view class="bb-btn"></view>
+            </view>
           </view>
           <!-- 正面：翻开时显示 -->
           <view class="fly-front {{item.glow ? 'glow' : ''}} {{item.premium ? 'premium' : ''}}" style="opacity:{{flipped[index] ? 1 : 0}}; transform:scale({{flipped[index] ? 1 : 0.85}}) translateY({{flipped[index] ? 0 : '20rpx'}});">

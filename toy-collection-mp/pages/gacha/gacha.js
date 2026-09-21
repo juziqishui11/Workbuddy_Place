@@ -16,6 +16,20 @@ const PREMIUM_FORMS = { '极巨化': 1, 'MEGA': 1, '光辉': 1, 'GX': 1 };
 const GLOW_FORMS = { 'EX': 1, 'V': 1, '极巨化': 1, 'MEGA': 1, '光辉': 1, 'GX': 1, 'LV.X': 1 };
 const PACK_SIZE = 5;
 
+// ===== 卡包皮肤（实体卡包外观，可切换 6 种）=====
+// dex = 该主题的封面立绘（PokeAPI official artwork，透明 PNG，压在渐变底上）
+// c1/c2 = 卡包渐变主色；tag = 属性标签
+const ART_BASE = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/';
+const PACK_SKINS = [
+  { id: 'fire',    name: '烈焰', dex: 6,   c1: '#FF7A3D', c2: '#F5C542', tag: '火' },
+  { id: 'water',   name: '碧波', dex: 9,   c1: '#2E86DE', c2: '#26C6DA', tag: '水' },
+  { id: 'forest',  name: '翠林', dex: 3,   c1: '#3DBE6B', c2: '#B7E86A', tag: '草' },
+  { id: 'thunder', name: '雷鸣', dex: 25,  c1: '#F5B301', c2: '#FFE9A8', tag: '雷' },
+  { id: 'psychic', name: '幻境', dex: 150, c1: '#8E5BF0', c2: '#E56BD8', tag: '超' },
+  { id: 'legend',  name: '传说', dex: 384, c1: '#1F3A5F', c2: '#4E9BC9', tag: '龙' }
+];
+const SKIN_KEY = 'packSkinIdx';
+
 function todayStr() {
   const d = new Date();
   const m = ('0' + (d.getMonth() + 1)).slice(-2);
@@ -31,6 +45,8 @@ Page({
     state: 'idle',
     packName: '全图鉴卡包',
     packColor1: '#3B7DDD', packColor2: '#FFCB05',
+    // 卡包外观（6 种可切换）
+    skins: PACK_SKINS, skinIdx: 0, skin: PACK_SKINS[0], packArt: ART_BASE + PACK_SKINS[0].dex + '.png',
     // 撕卡包
     tearProgress: 0,
     packSealStyle: '',
@@ -50,6 +66,9 @@ Page({
     wx.setNavigationBarColor({ frontColor: '#ffffff', backgroundColor: meta.accent });
     wx.setNavigationBarTitle({ title: '开包模拟' });
     this.setData({ meta: meta, seriesList: list, accent: meta.accent, accent2: meta.accent2 });
+    let idx = 0;
+    try { idx = Number(wx.getStorageSync(SKIN_KEY)) || 0; } catch (e) { idx = 0; }
+    this.applySkin(idx);
     this.updatePackStyle();
   },
 
@@ -62,6 +81,28 @@ Page({
     this.setData({ active: e.currentTarget.dataset.id });
     this.updatePackStyle();
   },
+
+  // 应用第 idx 种卡包皮肤（取模，越界自动回绕）
+  applySkin: function (idx) {
+    const n = PACK_SKINS.length;
+    const i = ((Math.round(idx) % n) + n) % n;
+    const sk = PACK_SKINS[i];
+    this.setData({
+      skinIdx: i, skin: sk,
+      packColor1: sk.c1, packColor2: sk.c2,
+      packArt: ART_BASE + sk.dex + '.png'
+    });
+    try { wx.setStorageSync(SKIN_KEY, i); } catch (e) {}
+  },
+
+  // 切换卡包皮肤（只在未开包时允许，避免动画中途换装）
+  switchSkin: function (e) {
+    if (this.data.state !== 'idle') return;
+    this.applySkin(Number(e.currentTarget.dataset.i));
+  },
+
+  // 封面立绘加载失败 → 清空，只留渐变底（不影响其他元素）
+  onPackArtErr: function () { this.setData({ packArt: '' }); },
 
   updatePackStyle: function () {
     const active = this.data.active;
@@ -184,13 +225,12 @@ Page({
     if (dx < 6) return;
     const max = 240; // 横向撕拉阈值（px）
     const s = Math.min(1, Math.abs(dx) / max);
-    const rot = -s * 6;   // 右端微微上翘，像把封条掀起来
-    const tx = s * 440;   // 顺着滑向划出卡包右边缘
-    const ty = -s * 24;   // 抬起一点点，形成「撕离」的层次感
+    const tx = s * 440;   // 整条易撕线向右滑出卡包右边缘
+    const ty = -s * 12;   // 抬起一点点，形成「抽离」的层次感（不上翘、不旋转）
     this.setData({
       tearProgress: s,
       packGlow: s,
-      packSealStyle: 'transform: translate(' + tx + 'rpx, ' + ty + 'rpx) rotate(' + rot + 'deg); opacity:' + (1 - s * 0.85) + ';',
+      packSealStyle: 'transform: translate(' + tx + 'rpx, ' + ty + 'rpx); opacity:' + (1 - s * 0.7) + ';',
       packInnerStyle: 'transform: scale(' + (1 + s * 0.06) + '); opacity:' + (0.2 + s * 0.8) + ';'
     });
   },
@@ -219,7 +259,7 @@ Page({
       hasPremium: hasPremium,
       tearProgress: 1,
       packGlow: 1,
-      packSealStyle: 'transform: translate(470rpx, -34rpx) rotate(-9deg); opacity:0;',
+      packSealStyle: 'transform: translate(470rpx, -16rpx); opacity:0;',
       packInnerStyle: 'transform: scale(1.12); opacity:1;'
     });
     setTimeout(function () { self.setData({ state: 'opened' }); self.startFlying(); }, 520);
