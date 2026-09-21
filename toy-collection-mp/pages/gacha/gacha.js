@@ -168,7 +168,7 @@ Page({
     };
   },
 
-  // ===== 撕卡包手势：从左上往右下撕开 =====
+  // ===== 撕卡包手势：按住顶部封条，从左往右横撕（左上 → 右上）=====
   packTouchStart: function (e) {
     if (this.data.state !== 'idle') return;
     const t = e.touches[0];
@@ -179,19 +179,17 @@ Page({
     if (!this._tearStart || this.data.state !== 'idle') return;
     const t = e.touches[0];
     const dx = t.clientX - this._tearStart.x;
-    const dy = t.clientY - this._tearStart.y;
-    // 只有向右下方滑动才生效
-    if (dx < 0 || dy < 0) return;
-    const dist = Math.sqrt(dx * dx + dy * dy);
-    const max = 260; // 撕开阈值（rpx 基准，但这里用 px 估算）
-    const s = Math.min(1, dist / max);
-    const rot = s * 70; // 封条旋转角度
-    const tx = s * 260;
-    const ty = s * 160;
+    // 只认「向右」的横向撕拉；纵向位移不参与进度，避免横撕时封条上下乱跳
+    if (dx < 6) return;
+    const max = 240; // 横向撕拉阈值（px）
+    const s = Math.min(1, Math.abs(dx) / max);
+    const rot = -s * 6;   // 右端微微上翘，像把封条掀起来
+    const tx = s * 440;   // 顺着滑向划出卡包右边缘
+    const ty = -s * 24;   // 抬起一点点，形成「撕离」的层次感
     this.setData({
       tearProgress: s,
       packGlow: s,
-      packSealStyle: 'transform: translate(' + tx + 'rpx, ' + ty + 'rpx) rotate(' + rot + 'deg); opacity:' + (1 - s * 0.9) + ';',
+      packSealStyle: 'transform: translate(' + tx + 'rpx, ' + ty + 'rpx) rotate(' + rot + 'deg); opacity:' + (1 - s * 0.85) + ';',
       packInnerStyle: 'transform: scale(' + (1 + s * 0.06) + '); opacity:' + (0.2 + s * 0.8) + ';'
     });
   },
@@ -220,7 +218,7 @@ Page({
       hasPremium: hasPremium,
       tearProgress: 1,
       packGlow: 1,
-      packSealStyle: 'transform: translate(420rpx, 280rpx) rotate(110deg); opacity:0;',
+      packSealStyle: 'transform: translate(470rpx, -34rpx) rotate(-9deg); opacity:0;',
       packInnerStyle: 'transform: scale(1.12); opacity:1;'
     });
     setTimeout(function () { self.setData({ state: 'opened' }); self.startFlying(); }, 520);

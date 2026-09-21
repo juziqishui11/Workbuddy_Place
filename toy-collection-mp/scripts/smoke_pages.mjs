@@ -204,6 +204,45 @@ if (plain) {
 }
 ok('形态权重与闪光特效映射正确');
 
+// ---- ⑥ 撕卡包手势：方向必须是「左上 → 右上」的横撕 ----
+console.log('=== 撕卡包手势 ===');
+{
+  const g = loadPage('pages/gacha/gacha.js');
+  const start = (x, y) => g.packTouchStart({ touches: [{ clientX: x, clientY: y }] });
+  const move = (x, y) => g.packTouchMove({ touches: [{ clientX: x, clientY: y }] });
+  const reset = () => { g._tearStart = null; g.setData({ state: 'idle', tearProgress: 0, packSealStyle: '' }); };
+
+  // 纯横向右撕（dy = 0）必须生效
+  reset(); start(100, 300); move(300, 300);
+  check(g.data.tearProgress > 0, '横向右撕（dy=0）应生效，实际 tearProgress=' + g.data.tearProgress);
+  const st = String(g.data.packSealStyle || '');
+  const m = st.match(/translate\((-?[\d.]+)rpx,\s*(-?[\d.]+)rpx\)/);
+  check(!!m, 'packSealStyle 应含 translate(x, y)，实际 ' + st);
+  if (m) {
+    check(Number(m[1]) > 0, '封条应向右位移，实际 tx=' + m[1]);
+    check(Number(m[2]) <= 0, '封条不应向下位移（应向上轻抬），实际 ty=' + m[2]);
+  }
+
+  // 斜向右下同样生效（旧版只认右下，新版以横向为主）
+  reset(); start(100, 300); move(300, 420);
+  check(g.data.tearProgress > 0, '斜向右下撕也应生效');
+
+  // 向左拖拽不触发
+  reset(); start(300, 300); move(100, 300);
+  check(g.data.tearProgress === 0, '向左拖拽不应触发撕开');
+
+  // 纵向下拉不触发（旧版正是靠 dy 判定，会导致横撕失败）
+  reset(); start(200, 200); move(202, 420);
+  check(g.data.tearProgress === 0, '纵向拉拽不应触发撕开');
+
+  // 向右位移量需足以滑出卡包（卡包 380rpx）
+  reset(); start(100, 300); move(400, 300);
+  const st2 = String(g.data.packSealStyle || '');
+  const m2 = st2.match(/translate\((-?[\d.]+)rpx/);
+  check(!!m2 && Number(m2[1]) >= 380, '撕满时封条须滑出卡包右缘（≥380rpx），实际 ' + (m2 ? m2[1] : '?'));
+  ok('撕卡包方向正确：左 → 右横撕（含斜向右下）生效，向左 / 纵向不生效');
+}
+
 // ---- 其余页面：能加载不报错 ----
 console.log('=== 其余页面加载 ===');
 [['pages/index/index.js', 'index'], ['pages/gacha/gacha.js', 'gacha'],

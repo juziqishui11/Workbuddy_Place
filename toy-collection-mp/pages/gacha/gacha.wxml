@@ -17,13 +17,13 @@
         </view>
         <!-- 撕开时会发光 -->
         <view class="pack-glow" style="opacity:{{packGlow}}"></view>
-        <!-- 顶部封条：从左上往右下撕 -->
+        <!-- 顶部封条：从左往右横撕（左上 → 右上） -->
         <view class="pack-seal" style="{{packSealStyle}}">
           <view class="seal-text">撕开</view>
           <view class="seal-notch"></view>
         </view>
       </view>
-      <view class="pack-hint">{{tearProgress > 0.12 ? '继续撕开…' : '↘ 按住封条从左上撕到右下'}}</view>
+      <view class="pack-hint">{{tearProgress > 0.12 ? '继续向右撕开…' : '→ 按住封条，从左往右撕开'}}</view>
     </view>
   </view>
 
