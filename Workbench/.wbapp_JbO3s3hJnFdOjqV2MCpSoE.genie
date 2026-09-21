@@ -1,5 +1,0 @@
-appId: wbapp_JbO3s3hJnFdOjqV2MCpSoE
-name: 本机资源看板
-localDir: D:\workBuddy_place\dashboards\resource
-appType: web
-entryHtml: resource-dashboard.html
