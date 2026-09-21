@@ -40,11 +40,13 @@
     </scroll-view>
   </view>
 
-  <!-- ===== 卡面技能（该卡的中文招式 / 特性） ===== -->
-  <view wx:if="{{card && (card.atk.length || card.ft.length) && currentVerIdx === 0}}" class="card">
-    <view class="section-title" style="margin:4rpx 0 10rpx">卡面技能<text class="sec-sub">取自该卡面 · 中文</text></view>
+  <!-- ===== 卡面技能（中文招式 / 特性；国际版卡面显示中文对照） ===== -->
+  <view wx:if="{{card && (card.atk.length || card.ft.length || card.skillsLoading)}}" class="card">
+    <view class="section-title" style="margin:4rpx 0 10rpx">卡面技能<text class="sec-sub">{{card.intl ? '国际版卡面 · 中文对照' : '取自该卡面 · 中文'}}</text></view>
 
-    <view wx:for="{{card.ft}}" wx:key="name" class="ft-item">
+    <view wx:if="{{card.skillsLoading}}" class="desc-empty">正在加载中文对照…</view>
+
+    <view wx:for="{{card.ft}}" wx:key="index" class="ft-item">
       <view class="ft-head">
         <text class="ft-tag">特性</text>
         <text class="ft-name">{{item.name}}</text>
@@ -52,7 +54,7 @@
       <view wx:if="{{item.text}}" class="ft-text">{{item.text}}</view>
     </view>
 
-    <view wx:for="{{card.atk}}" wx:key="name" class="atk-item">
+    <view wx:for="{{card.atk}}" wx:key="index" class="atk-item">
       <view class="atk-head">
         <view class="atk-cost">
           <text wx:for="{{item.cost}}" wx:for-item="e" wx:key="index" class="cost-dot" style="background:{{e.c}}">{{e.n}}</text>
@@ -63,7 +65,8 @@
       <view wx:if="{{item.text}}" class="atk-text">{{item.text}}</view>
     </view>
 
-    <view wx:if="{{card.intl}}" class="intl-tip">该宝可梦暂无简体中文版卡面，以下为国际版卡面。</view>
+    <view wx:if="{{card.intl}}" class="intl-tip">该卡暂无官方简体中文版卡面（简中进度尚未收录该形态），以上为国际版英文卡面的中文对照。</view>
+    <view wx:if="{{card.intl}}" class="intl-link" bindtap="goGlossary">查看卡牌术语表 ›</view>
   </view>
 
   <!-- ===== 卡面版本（同一只宝可梦的不同系列 / 不同样子） ===== -->

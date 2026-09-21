@@ -1,0 +1,14 @@
+<view class="page">
+  <view class="lead">
+    简体中文版卡牌当前尚未收录 EX / GX / V / MEGA 等形态，这些卡只能展示国际版英文卡面。
+    这份对照表帮你读懂卡面文字。
+  </view>
+
+  <view wx:for="{{groups}}" wx:key="title" class="card">
+    <view class="gt">{{item.title}}</view>
+    <view class="row" wx:for="{{item.items}}" wx:for-item="it" wx:key="*this">
+      <text class="en">{{it[0]}}</text>
+      <text class="zh">{{it[1]}}</text>
+    </view>
+  </view>
+</view>

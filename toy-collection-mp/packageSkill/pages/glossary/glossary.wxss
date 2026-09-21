@@ -1,0 +1,55 @@
+.page {
+  padding: 24rpx 24rpx 60rpx;
+  background: #EEF3FB;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.lead {
+  background: #FFF;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  font-size: 26rpx;
+  line-height: 1.7;
+  color: #5B6472;
+  margin-bottom: 20rpx;
+}
+
+.card {
+  background: #FFF;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 20rpx;
+}
+
+.gt {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #3B7DDD;
+  margin-bottom: 16rpx;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  padding: 12rpx 0;
+  border-bottom: 1rpx solid #F1F4F9;
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+.en {
+  flex: 1;
+  font-size: 26rpx;
+  color: #8A93A5;
+  font-family: Consolas, Menlo, monospace;
+}
+
+.zh {
+  flex: 1;
+  font-size: 27rpx;
+  color: #2B3445;
+  text-align: right;
+}

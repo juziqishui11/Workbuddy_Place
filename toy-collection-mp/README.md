@@ -9,12 +9,12 @@
 | --- | --- |
 | 🃏 卡牌（首页） | 收藏墙卡片流 + 顶部概览（拥有数 / 估值 / 图鉴完成度） |
 | 📖 卡册 | 全国图鉴 **1-809**（关都 → 阿罗拉，七世代）浏览，可按地区切换；支持**系列 / 卡包筛选**（292 个卡包）与「只看未收集」快速查漏 |
-| 🔍 详情 | 整张官方卡面 + 中文招式 / 特性；**9 种特殊形态**（EX / MEGA / GX / V / 极巨化 / 光辉 / LV.X / δ / 暗之）快捷入口；卡面版本横滑切换、点击全屏放大；进化链时间线 |
+| 🔍 详情 | 整张官方卡面 + **全中文**招式 / 特性 / 规则（国际版卡面也已中文化，**1562 张卡 / 8006 条技能条目 100% 覆盖**，无中文卡面的宝可梦同样有中文技能）；**9 种特殊形态**（EX / MEGA / GX / V / 极巨化 / 光辉 / LV.X / δ / 暗之）快捷入口；卡面版本横滑切换、点击全屏放大；进化链时间线 |
 | 🎁 开包 | 模拟拆包（竖排逐张飞出 + 左上角撕封条手势），每包 5 张，含 **2431 条卡池**（基础 809 + 特殊形态 1622），高稀有度卡带彩虹边框 / 金色光边特效，抽到的卡自动点亮收藏册 |
 | 👤 我的 | 持有 / 完成度 / 心愿统计，清空数据、版权声明 |
 
 - **宝可梦单 IP 主题**：对标「口袋卡牌助手」，蓝黄卡牌风，**全国图鉴 1-809**（关都 / 城都 / 丰缘 / 神奥 / 合众 / 卡洛斯 / 阿罗拉）。
-- **官方 TCG 卡面**：卡图取自**宝可梦集换式卡牌（TCG）官方简体中文版**（覆盖 800/809），其余用国际版英文卡图兜底；详情页直接展示整张卡牌，并列出该卡面的**中文招式 / 特性（含规则说明、能量、伤害）**。
+- **官方 TCG 卡面**：卡图取自**宝可梦集换式卡牌（TCG）官方简体中文版**（覆盖 800/809），其余用国际版英文卡图兜底；详情页直接展示整张卡牌，并列出该卡面的**中文招式 / 特性（含规则说明、能量、伤害）**。简中版未收录的形态卡（EX / GX / V / VMAX 等，简中进度未到）虽用国际版卡图，**技能文本同样已中文化**。
 - **卡面版本 + 进化关系**：详情页可看同一只宝可梦在不同系列 / 不同样子的卡面（含 EX / MEGA / V / VMAX 等特殊形态，点击放大），并可查看进化前 / 进化后 / 同族全链（如伊布 8 只分支进化），点击直接跳转。
 - **纯本地**：收藏记录存在微信本机存储（`wx.setStorageSync`），**不上传任何服务器**，无需账号、无需后端。
 
@@ -27,8 +27,11 @@ toy-collection-mp/
 ├── data/
 │   └── pokemon.js                    # 宝可梦数据（七代 809 只，含 TCG 卡图 URL）
 ├── utils/
-│   ├── source.js                     # 数据抽象层（查找/进度/稀有度/形态/卡包筛选）
+│   ├── source.js                     # 数据抽象层（查找/进度/稀有度/形态/卡包筛选/卡图 key）
 │   └── store.js                      # 本地收藏 / 心愿的增删改查
+├── packageSkill/                     # 分包：国际版卡面技能中文数据（主包放不下）
+│   ├── en-skills.js                  # 技能分包数据（~668KB，紧凑索引结构）
+│   └── pages/glossary/               # 规则文本术语表页
 ├── scripts/                          # 数据生成与校验脚本（不进上传包）
 │   ├── fetch_tcg_sets.mjs            # 下载 pokemon-tcg-data 英文系列 JSON（sm/swsh/sv 全世代）
 │   ├── fetch_chs_tcg.mjs             # 下载官方简体中文版 TCG 数据集
@@ -36,6 +39,12 @@ toy-collection-mp/
 │   ├── fetch_veekun.mjs              # 下载 veekun 图鉴（特性 / 招式 / 传说标记）
 │   ├── analyze_chs.mjs / inspect_chs.mjs     # 中文卡数据集结构 / 覆盖率探查
 │   ├── build_data.mjs                # 合并 fanzeyi + veekun + 中文图鉴 + 中英 TCG → data/pokemon.js
+│   ├── extract_en_skills.mjs         # 从英文 TCG 缓存提取形态卡的技能 / 规则原文
+│   ├── tcgdex_zh.mjs                 # 来源①：TCGdex 繁中卡表配对（zh-tw → 简中用语对齐）
+│   ├── chs_zh.mjs                    # 来源②：简中 TCG 数据集配对（官方简中原文）
+│   ├── rules_zh.mjs                  # 规则文本模板映射（EX/GX/V/VSTAR/太晶 等）
+│   ├── merge_zh.mjs / en-skill-zh.json       # 译文词典合并（英文原文 → 中文）
+│   ├── build_en_skills.mjs           # 生成 packageSkill/en-skills.js（未译自动回落英文）
 │   ├── check_wxml.mjs / check_wxss.mjs       # WXML 标签配平 / WXSS 大括号与关键声明校验
 │   ├── smoke_pages.mjs / smoke_detail.mjs    # 页面与详情页数据链路冒烟测试
 │   ├── size_breakdown.mjs            # 上传包体积拆解（2MB 上限核算）
@@ -104,6 +113,25 @@ toy-collection-mp/
 - `moves`：升级招式 Top3（含 `power` 威力 / `type` 属性 / `cls` 物理·特殊·变化 / `acc` 命中），来自 veekun。
 - 数据由 `scripts/build_data.mjs` 从 fanzeyi + veekun + pokemon-tcg-data + 42arch 中文图鉴 + 简中 TCG 合并生成。
 
+国际版卡面的技能中文数据（分包 `packageSkill/en-skills.js`）：
+
+```js
+{
+  C: { 'sv3/228': [卡名, 卡号, 系列名, HP, 属性, 形态, 特性[], 招式[], 规则索引[]] },
+  N:  ['Claw Slash', ...],   // 英文原名池
+  T:  ['选择附着于…', ...],   // 英文原文池（未译时回落展示）
+  ZN: ['利爪劈开', ...],      // 中文名池（与 N 同下标，空串/缺项表示未译）
+  Z:  ['选择附着于…', ...],   // 中文文本池（与 T 同下标）
+  E:  [['火','#E8541F'], ...] // 能量类型表
+}
+```
+
+- `C` 的 key 是**卡图相对路径**（如 `sv3/228`），由 `utils/source.js` 的 `intlCardKey(url)` 从图片 URL 反查；详情页切到国际版卡面时按 key 取中文技能。
+- 译文两个来源，**优先取官方简中原文**：① `chs_zh.mjs` —— 用官方简体中文版 TCG 数据集按「卡面指纹（HP/画师/后撤/招式数/招式签名）+ 宝可梦名 + 数值一致性」配对；② `tcgdex_zh.mjs` —— 用 TCGdex 繁中卡表配对后经 OpenCC 转简并做官方用语对齐（奖赏卡 / 昏厥 / 抛掷）。规则模板（EX / GX / V / VSTAR / 太晶等）由 `rules_zh.mjs` 补齐。
+- 词典（`scripts/en-skill-zh.json`，约 4950 条）以**英文原文为键**；`build_en_skills.mjs` 查不到就回落到英文原串 —— 因此**翻译可以增量补充，不必全量完成才上线**。当前已 **100% 覆盖**（名称 1753 条 / 文本 1582 条全部有中文）。
+- 收录范围 = ①**带特殊形态**的英文卡（EX / GX / V / MEGA 等，简中未收录）；②**该宝可梦完全没有中文卡面**的（如青藤蛇、探探鼠、虚吾伊德，共 9 只）—— 它们的主卡面就是国际版卡面，不收录技能区会空白。其余无形态的英文卡不收录（用户几乎不会点，且要多吃 45 万字符）。
+- ⚠️ `extract_en_skills.mjs` 的卡图索引**必须按 `cardKeyOf()` 归一化**：`enCvs` 存的是相对 key（`sv3/228_hires.png`），缓存里是完整 URL，直接互相查表会全量落空（曾导致分包被打成 0 张卡）。
+
 本地收藏记录（`utils/store.js`）：
 
 ```js
@@ -115,8 +143,8 @@ toy-collection-mp/
 
 - 数据由脚本自动生成：先跑 `scripts/fetch_tcg_sets.mjs` 更新 TCG 卡图缓存，再跑 `scripts/build_data.mjs` 重新生成 `data/pokemon.js`。
 - 要新增世代，在 `build_data.mjs` 的 `series` 定义里加一段对应图鉴号区间的 `rangeFigures(a, b)`，并在 `fetch_tcg_sets.mjs` 补上对应 TCG 系列即可。
-- **体积红线**：上传包上限 2MB。`data/pokemon.js` 已占约 1.8MB，加世代前先跑
-  `scripts/size_breakdown.mjs` 核算；`cvs` / `enCvs` 只存页面真正需要展示的字段（卡面图片、卡号、系列、稀有度、形态），不要把卡名等原始字段写回。
+- **体积红线**：上传包上限 2MB。当前**主包 ≈ 1.71MB（余量约 298KB）**，其中 `data/pokemon.js` 占 1.6MB；技能数据放不进主包，走**分包 `packageSkill/`（约 671KB，独立 2MB 上限）**。`scripts/en-skill-zh.json` 词典占 674KB，但 `scripts/` 已被 `packOptions.ignore` 排除，不计入任何包。
+  加内容前先跑 `scripts/size_breakdown.mjs` 核算；`cvs` / `enCvs` 只存页面真正需要展示的字段（卡面图片、卡号、系列、稀有度、形态），**不要把卡名写回**（曾因此吃掉 350KB）；英文卡图存的是**相对 key**（如 `sv3/228_hires.png`），URL 由 `source.js` 运行时拼接（曾因存完整 URL 吃掉 330KB）。
 
 无需改任何页面逻辑——`utils/source.js` 会自动把新数据接进图鉴、进度、统计、开包。
 

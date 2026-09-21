@@ -238,6 +238,9 @@ function pickCnVers(list, main) {
 }
 
 // ---- 英文 TCG 卡图兜底 + 英文版本列表（补充中文数据集未收录的卡，如 M Venusaur-EX）----
+// 国际版卡图只在数据里存「相对 key」（如 sv3/228_hires），运行时再由 source.js 拼前缀。
+// 6471 条卡面 × 每条省 44 字符 ≈ 省下 285KB 主包体积 —— 这些空间用来放中文技能说明。
+const EN_IMG_BASE = 'https://images.pokemontcg.io/';
 const RARITY_RANK = {
   'Rare Holo': 10, 'Rare Ultra': 11, 'Rare Secret': 12,
   'Rare Holo EX': 13, 'Rare Holo GX': 14, 'Rare Holo V': 15, 'Rare Holo VMAX': 16,
@@ -267,7 +270,7 @@ for (const f of fs.readdirSync(CACHE)) {
   if (!Array.isArray(arr)) continue;
   for (const c of arr) {
     if (!c.nationalPokedexNumbers) continue;
-    const img = c.images && (c.images.large || c.images.small);
+    const img = String((c.images && (c.images.large || c.images.small)) || '').replace(EN_IMG_BASE, '');
     if (!img) continue;
     if (String(c.id).indexOf('?') >= 0) continue; // 卡号含 ? 的异形卡，图像地址无规律
     const r = RARITY_RANK[c.rarity] || 0;

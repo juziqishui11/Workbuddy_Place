@@ -150,6 +150,14 @@ var ATTR_COLOR = {
 function cnImg(p) { return p ? CHS_IMG_BASE + p : ''; }
 function cnSetName(code) { var m = pokemon.cnSets || {}; return m[code] || code || ''; }
 
+// 国际版卡图（pokemon-tcg-data）：数据里只存相对 key（如 sv3/228_hires），此处统一拼前缀。
+// 已是完整 URL 的原样返回，兼容旧数据。
+var EN_IMG_BASE = 'https://images.pokemontcg.io/';
+function enImg(p) {
+  if (!p) return '';
+  return String(p).indexOf('http') === 0 ? p : EN_IMG_BASE + p;
+}
+
 // "2,2,2,2" → [{n:'火',c:'#EF6C00'}, ...]
 function energyCost(s) {
   var out = [];
@@ -162,7 +170,7 @@ function energyCost(s) {
 
 /** 列表 / 卡墙用：这只宝可梦的卡面主图 */
 function figureImage(figure) {
-  return cnImg(figure.cn && figure.cn.img) || figure.enArt || figure.art || figure.sprite || '';
+  return cnImg(figure.cn && figure.cn.img) || enImg(figure.enArt) || figure.art || figure.sprite || '';
 }
 
 // ============================================================
@@ -188,13 +196,23 @@ function cardForm(name) {
 function formColor(f) { return FORM_COLOR[f] || '#7B83A3'; }
 function formWeight(f) { return FORM_ORDER[f] || 99; }
 
+/**
+ * 从国际版卡图 URL 反查技能数据的 key（分包 packageSkill/en-skills.js 用）
+ * https://images.pokemontcg.io/sv3/228_hires.png → sv3/228
+ */
+function intlCardKey(img) {
+  var m = String(img || '').match(/pokemontcg\.io\/([^/]+)\/([^/]+?)\.png/);
+  if (!m) return '';
+  return m[1] + '/' + m[2].replace(/_hires$/, '');
+}
+
 /** 详情页「主卡」：中文卡名 · 招式（中文名 + 中文说明 + 能量 + 伤害）· 特性 */
 function mainCard(figure) {
   var c = figure.cn;
   if (!c) {
     if (!figure.enArt) return null;
     return {
-      img: figure.enArt, name: figure.name, no: '', setCode: '', setName: '国际版卡面',
+      img: enImg(figure.enArt), name: figure.name, no: '', setCode: '', setName: '国际版卡面',
       hp: 0, attr: '', rarity: '', atk: [], ft: [], intl: true, form: ''
     };
   }
@@ -227,10 +245,10 @@ function cardVersions(figure) {
     push(cnImg(v[0]), v[1], v[2], cnSetName(v[2]), v[3], false, false, v[4]);
   });
   (figure.enCvs || []).forEach(function (v) {
-    push(v[0], v[1], '', v[2] || '国际版卡面', v[3], false, true, v[4]);
+    push(enImg(v[0]), v[1], '', v[2] || '国际版卡面', v[3], false, true, v[4]);
   });
   if (!out.length && figure.enArt) {
-    push(figure.enArt, '', '', '国际版卡面', '', true, true, '');
+    push(enImg(figure.enArt), '', '', '国际版卡面', '', true, true, '');
   }
   return out;
 }
@@ -367,6 +385,7 @@ module.exports = {
   setsOf: setsOf,
   cardForm: cardForm,
   formColor: formColor,
+  intlCardKey: intlCardKey,
   cnSetName: cnSetName,
   figureByDex: figureByDex,
   evolutionOf: evolutionOf

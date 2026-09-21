@@ -27,5 +27,14 @@
   },
   "style": "v2",
   "lazyCodeLoading": "requiredComponents",
+  "subPackages": [
+    {
+      "root": "packageSkill",
+      "name": "skill",
+      "pages": [
+        "pages/glossary/glossary"
+      ]
+    }
+  ],
   "sitemapLocation": "sitemap.json"
 }

@@ -1,6 +1,23 @@
 const source = require('../../utils/source.js');
 const store = require('../../utils/store.js');
 
+// ---- 国际版（英文）卡面技能数据 -------------------------------------------
+// 简中版数据集尚未收录 EX / GX / V / MEGA 等形态卡，这些卡只能显示国际版英文卡面，
+// 卡面文字为英文。中文对照数据放在分包 packageSkill 里（约 450KB），
+// 用到时才异步拉取，不占用主包体积；基础库过低时回落显示英文原文。
+var skillMod = null;
+var skillLoading = false;
+
+function loadSkillData(cb) {
+  if (skillMod) { cb(skillMod); return; }
+  if (typeof require.async !== 'function') { cb(null); return; }
+  if (skillLoading) { setTimeout(function () { loadSkillData(cb); }, 120); return; }
+  skillLoading = true;
+  require.async('../../packageSkill/en-skills.js').then(function (m) {
+    skillMod = m; skillLoading = false; cb(m);
+  }).catch(function () { skillLoading = false; cb(null); });
+}
+
 // 属性中文 → 卡牌配色（卡框/能量色按属性变化，每张卡都不一样）
 const TYPE_COLOR_CN = {
   '一般': '#A8A878', '格斗': '#C03028', '飞行': '#A890F0', '毒': '#A040A0',
@@ -72,6 +89,9 @@ Page({
     // 特殊形态（EX / MEGA / V / 极巨化 / 光辉 等）
     const forms = source.figureForms(found.figure);
 
+    // 主卡面本身就是国际版（该宝可梦没有简中版卡）→ 首屏也要异步取中文技能
+    if (card && card.intl) card.skillsLoading = true;
+
     this.setData({
       meta: meta, seriesId: q.seriesId, figureId: q.figureId,
       figure: fig, hasRec: !!rec, rec: rec,
@@ -80,6 +100,8 @@ Page({
       card: card, img: img, versions: versions, verUrls: verUrls, forms: forms, evo: evo,
       currentVerIdx: 0, tab: 'card', rarityIcon: source.rarityIcon(card && card.rarity)
     });
+
+    if (card && card.intl) this.loadIntlSkills(0, img);
   },
 
   // 切换当前展示的主卡面版本（点击版本缩略图）
@@ -90,11 +112,59 @@ Page({
     const baseCard = this.data.card || {};
     const newCard = Object.assign({}, baseCard, {
       img: v.img, no: v.no, setCode: v.setId,
-      setName: source.cnSetName(v.setId), rarity: v.rarity, main: v.main, form: v.form
+      setName: v.setName || source.cnSetName(v.setId), rarity: v.rarity,
+      main: v.main, form: v.form, intl: !!v.intl
     });
+    if (v.intl) {
+      // 国际版卡面：技能区换成「这一张卡」自己的技能（有中文对照则显示中文）
+      newCard.atk = []; newCard.ft = []; newCard.skillsLoading = true;
+      this.setData({
+        currentVerIdx: i, img: v.img, card: newCard,
+        rarityIcon: source.rarityIcon(v.rarity)
+      });
+      this.loadIntlSkills(i, v.img);
+      return;
+    }
     this.setData({
       currentVerIdx: i, img: v.img, card: newCard,
       rarityIcon: source.rarityIcon(v.rarity)
+    });
+  },
+
+  // 异步取国际版卡面的技能（分包数据）并回填到当前卡面
+  loadIntlSkills: function (idx, img) {
+    const self = this;
+    loadSkillData(function (mod) {
+      if (self.data.currentVerIdx !== idx) return;      // 用户已切走，丢弃这次结果
+      const entry = mod && mod.C ? mod.C[source.intlCardKey(img)] : null;
+      const atk = []; const ft = [];
+      if (entry) {
+        const txt = function (t) { return (t >= 0 && mod.Z[t]) ? mod.Z[t] : (t >= 0 ? mod.T[t] : ''); };
+        const nam = function (t) { return (t >= 0 && mod.ZN[t]) ? mod.ZN[t] : (t >= 0 ? mod.N[t] : ''); };
+        (entry[6] || []).forEach(function (a) {
+          ft.push({ name: nam(a[0]), type: a[1], text: txt(a[2]) });
+        });
+        (entry[7] || []).forEach(function (a) {
+          atk.push({
+            name: nam(a[0]), dmg: a[1],
+            cost: (a[2] || []).map(function (ei) {
+              const e = (mod.E && mod.E[ei]) || ['', '#888'];
+              return { n: e[0], c: e[1] };
+            }),
+            text: txt(a[3])
+          });
+        });
+      }
+      const card = Object.assign({}, self.data.card, {
+        atk: atk, ft: ft, skillsLoading: false, skillsLoaded: true
+      });
+      // 国际版卡面的 HP / 属性来自分包（主包数据里没有）
+      if (entry) {
+        if (!card.hp && entry[3]) card.hp = entry[3];
+        if (!card.attr && entry[4]) card.attr = entry[4];
+        if (!card.name && entry[0]) card.name = entry[0];
+      }
+      self.setData({ card: card });
     });
   },
 
@@ -118,6 +188,11 @@ Page({
     const urls = this.data.verUrls;
     if (!urls.length) return;
     wx.previewImage({ urls: urls, current: urls[i] });
+  },
+
+  // 打开卡牌术语表（分包页面）
+  goGlossary: function () {
+    wx.navigateTo({ url: '/packageSkill/pages/glossary/glossary' });
   },
 
   switchTab: function (e) {
