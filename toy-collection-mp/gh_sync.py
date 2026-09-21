@@ -11,6 +11,12 @@ Git Data API 推送 —— 把本地工程推到 juziqishui11/Workbuddy_Place。
     python gh_sync.py                      # 推送 ROOTS 中全部工程
     python gh_sync.py toy-collection-mp    # 只推送指定远端前缀
     python gh_sync.py toy-collection-mp --dry-run
+    COMMIT_MSG_FILE=msg.txt python gh_sync.py toy-collection-mp   # 自定义提交信息
+
+⚠️ 提交信息只认环境变量 COMMIT_MSG / COMMIT_MSG_FILE；不支持 `-m`。
+   写 `-m "xxx"` 会被当成"只看这个前缀"的过滤参数而**静默忽略**，最终落成默认
+   的 `chore: sync toy-collection-mp`。Windows 下中文信息请走 COMMIT_MSG_FILE
+   （UTF-8 文件），避免命令行编码把中文写成乱码。
 
 特性：
   * 逐文件计算 git blob sha1 与远端比对，只上传真正变更的文件（大文件不重复传）
