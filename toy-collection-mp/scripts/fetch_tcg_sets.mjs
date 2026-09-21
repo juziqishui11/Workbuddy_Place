@@ -24,7 +24,14 @@ const SERIES = [
   'g1','dc1','bp',
   // POP / McDonald's 促销系列（复古卡面）
   'pop1','pop2','pop3','pop4','pop5','pop6','pop7','pop8','pop9',
-  'mcd11','mcd12','mcd14','mcd15'
+  'mcd11','mcd12','mcd14','mcd15',
+  // ===== 太阳&月亮（GX / TAG TEAM / 棱镜之星）=====
+  'sm1','sm2','sm3','sm4','sm5','sm6','sm7','sm8','sm9','sm10','sm11','sm12','smp',
+  // ===== 剑&盾（V / VMAX / VSTAR / 光辉）=====
+  'swsh1','swsh2','swsh3','swsh4','swsh5','swsh6','swsh7','swsh8','swsh9','swsh10','swsh11','swsh12','swshp',
+  'cel25','cel25c','det1','pgo',
+  // ===== 朱&紫（ex / 太晶）=====
+  'sv1','sv2','sv3','sv3pt5','sv4','sv4pt5','sv5','sv6','sv6pt5','sv7','sv8','sv8pt5','svp'
 ];
 
 function get(url) {

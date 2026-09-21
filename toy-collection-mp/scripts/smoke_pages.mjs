@@ -106,6 +106,104 @@ console.log('  幸福蛋 HP bar:', hpBar && (hpBar.val + ' -> ' + hpBar.w));
 check(hpBar && hpBar.w === '100%', 'HP 255 应封顶 100%，实际 ' + (hpBar && hpBar.w));
 ok('极端值封顶正常');
 
+// ---- ④ 系列 / 卡包筛选 ----
+console.log('=== 系列/卡包筛选 ===');
+const sets = src.listSets();
+check(sets.length > 0, 'listSets 为空');
+const cnSets = sets.filter((s) => s.lang === 'cn');
+const enSets = sets.filter((s) => s.lang === 'en');
+console.log('  卡包总数 ' + sets.length + '（中文 ' + cnSets.length + ' / 国际版 ' + enSets.length + '）');
+check(cnSets.length > 0 && enSets.length > 0, '中文/国际版分组应都非空');
+sets.forEach((s) => {
+  check(/^(cn|en):/.test(s.key), 'key 前缀异常 ' + s.key);
+  check(s.count > 0, 'count 应为正 ' + s.key);
+  check(!!s.name, 'name 为空 ' + s.key);
+});
+
+// 打开面板 → 列表有内容
+const dex2 = loadPage('pages/dex/dex.js');
+dex2.onLoad();
+dex2.openSetPanel();
+check(dex2.data.setPanelOpen === true, '面板未打开');
+check(dex2.data.setCn.length > 0, '面板中文列表为空');
+check(dex2.data.setEn.length > 0, '面板国际版列表为空');
+console.log('  面板：中文 ' + dex2.data.setCn.length + ' 项 / 国际版 ' + dex2.data.setEn.length + ' 项');
+
+// 选一个含喷火龙的卡包（对战派对组合 火），关都应命中但少于全量
+dex2.toggleSet({ currentTarget: { dataset: { key: 'cn:CSMPbC' } } });
+check(dex2.data.setFilterCnt === 1, '已选数量应为 1，实际 ' + dex2.data.setFilterCnt);
+check(dex2.data.setNames.length === 1 && !!dex2.data.setNames[0].name, 'setNames 结构异常');
+dex2.closeSetPanel();
+dex2.refresh();
+const hitNames = dex2.data.figures.map((f) => f.name);
+check(hitNames.indexOf('喷火龙') >= 0, '筛选后应包含喷火龙');
+check(dex2.data.figures.length > 0 && dex2.data.figures.length < 151, '筛选后应少于全量且非空，实际 ' + dex2.data.figures.length);
+console.log('  选中「对战派对组合 火」→ 关都命中 ' + dex2.data.figures.length + ' 只: ' + hitNames.slice(0, 8).join('/'));
+
+// 空态：选一个绝不含关都宝可梦的国际版卡包（Fates Collide 为 XY 期，关都有少量）
+dex2.clearSets();
+dex2.refresh();
+check(dex2.data.figures.length === 151, '清空后应恢复 151 只，实际 ' + dex2.data.figures.length);
+ok('清空筛选恢复全量');
+
+// 搜索词过滤（中文 / 代码 / 英文名 都能命中）
+dex2.onSetKw({ detail: { value: '喷火龙' } });
+check(dex2.data.setCn.length > 0 && dex2.data.setCn.every((s) => s.name.indexOf('喷火龙') >= 0), '搜索词过滤失效（中文）');
+dex2.onSetKw({ detail: { value: 'CSMPbC' } });
+check(dex2.data.setCn.length === 1 && dex2.data.setCn[0].code === 'CSMPbC', '按商品代号搜索失效');
+dex2.onSetKw({ detail: { value: 'generations' } });
+check(dex2.data.setEn.length === 1, '按英文系列名搜索失效');
+dex2.clearSetKw();
+check(dex2.data.setKw === '' && dex2.data.setCn.length > 1, '清空搜索词后应恢复完整列表');
+console.log('  搜索：中文名 / 商品代号 / 英文系列名 均命中');
+ok('搜索与清空正常');
+
+// removeSet（点顶部筛选条上的 chip 移除）
+dex2.toggleSet({ currentTarget: { dataset: { key: 'cn:CSMPbC' } } });
+dex2.removeSet({ currentTarget: { dataset: { key: 'cn:CSMPbC' } } });
+check(dex2.data.setFilterCnt === 0, 'removeSet 后应为 0，实际 ' + dex2.data.setFilterCnt);
+ok('removeSet 正常');
+
+// 国际版筛选：挑一个 count 最大的英文卡包，应能筛出结果
+const topEn = enSets.slice().sort((a, b) => b.count - a.count)[0];
+dex2.toggleSet({ currentTarget: { dataset: { key: topEn.key } } });
+dex2.switchSeries({ currentTarget: { dataset: { id: 'kanto' } } });
+console.log('  国际版「' + topEn.name + '」→ 关都命中 ' + dex2.data.figures.length + ' 只');
+check(dex2.data.figures.length > 0, '国际版筛选应能命中结果');
+check(dex2.data.setNames[0].name === topEn.name, 'setNames 名称应与卡包名一致');
+dex2.clearSets();
+dex2.refresh();
+check(dex2.data.figures.length === 151, '再次清空应恢复 151 只');
+ok('国际版筛选 + 二次清空正常');
+
+// ---- ⑤ 开包：形态权重 / 闪光特效映射 ----
+console.log('=== 开包形态特效 ===');
+const gacha = loadPage('pages/gacha/gacha.js');
+gacha.onShow();
+const pool = gacha.buildPool();
+const byForm = {};
+pool.forEach((p) => { const k = p.form || '(基础)'; byForm[k] = (byForm[k] || 0) + 1; });
+console.log('  抽卡池 ' + pool.length + ' 条：' + Object.keys(byForm).map((k) => k + '×' + byForm[k]).join(' / '));
+check(pool.length > 800, '池子应包含全部基础卡');
+['EX', 'MEGA', 'GX', 'V', '极巨化', '光辉', 'δ', 'LV.X', '暗之'].forEach((fm) => {
+  check(byForm[fm] > 0, '抽卡池缺少形态 ' + fm);
+});
+// lightUp 的特效映射：key 必须与 cardForm() 返回值一致
+const litCases = [['极巨化', true, true], ['MEGA', true, true], ['GX', true, true], ['EX', false, true], ['V', false, true]];
+litCases.forEach(([fm, wantPremium, wantGlow]) => {
+  const e = pool.find((p) => p.form === fm);
+  if (!e) { bad++; console.log('  ✗ 池中没有 ' + fm + ' 卡，无法验证特效'); return; }
+  const lit = gacha.lightUp(e);
+  check(lit.premium === wantPremium, fm + ' premium 应为 ' + wantPremium + '，实际 ' + lit.premium);
+  check(lit.glow === wantGlow, fm + ' glow 应为 ' + wantGlow + '，实际 ' + lit.glow);
+});
+const plain = pool.find((p) => !p.form && p.figure.rarity === '普通');
+if (plain) {
+  const litP = gacha.lightUp(plain);
+  check(litP.premium === false && litP.glow === false, '普通基础卡不应带闪光特效');
+}
+ok('形态权重与闪光特效映射正确');
+
 // ---- 其余页面：能加载不报错 ----
 console.log('=== 其余页面加载 ===');
 [['pages/index/index.js', 'index'], ['pages/gacha/gacha.js', 'gacha'],

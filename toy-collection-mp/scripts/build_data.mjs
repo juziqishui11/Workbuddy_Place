@@ -1,5 +1,5 @@
 // scripts/build_data.mjs —— 合并 fanzeyi(种族值/中文名/属性) + veekun(身高/体重/特性/招式) + TCG卡图(pokemon-tcg-data)
-// 输出 data/pokemon.js：全国图鉴 1-649（关都/城都/丰缘/神奥/合众），每 figure 含 tcgArt。
+// 输出 data/pokemon.js：全国图鉴 1-809（关都～阿罗拉），每 figure 含 tcgArt 与多版本卡面。
 import fs from 'fs';
 import path from 'path';
 
@@ -55,8 +55,8 @@ let descZh = {};
 try {
   descZh = JSON.parse(fs.readFileSync(path.join(CACHE, 'desc_zh.json'), 'utf8'));
   let hasDesc = 0;
-  for (let i = 1; i <= 649; i++) if (descZh[i] && descZh[i].desc) hasDesc++;
-  console.log('中文描述覆盖: ' + hasDesc + '/649');
+  for (let i = 1; i <= 809; i++) if (descZh[i] && descZh[i].desc) hasDesc++;
+  console.log('中文描述覆盖: ' + hasDesc + '/809');
 } catch (e) { console.log('desc_zh.json 缺失，跳过中文描述'); }
 
 // 名称映射
@@ -75,9 +75,9 @@ const abilByForm = {}; abilRows.forEach((a) => { (abilByForm[a.pokemon_id] = abi
 const movesByForm = {}; moveRows.forEach((m) => { if (m.pokemon_move_method_id !== '1') return; (movesByForm[m.pokemon_id] = movesByForm[m.pokemon_id] || []).push({ id: m.move_id, level: Number(m.level) || 0 }); });
 const moveDetail = {}; moves.forEach((m) => { moveDetail[m.id] = { type: TYPE_CN[TYPE_ID[m.type_id]] || '一般', power: m.power === '' || m.power == null ? null : Number(m.power), acc: m.accuracy === '' || m.accuracy == null ? null : Number(m.accuracy), cls: DMG_CLS[m.damage_class_id] || '变化' }; });
 
-// ---- 稀有度（传说/幻之）跨五世代 ----
-const LEGENDARY = new Set([144,145,146,150, 243,244,245,249,250, 377,378,379,380,381,382,383,384, 480,481,482,483,484,485,486,488, 640,641,642,643,644,645,646]);
-const MYTHICAL = new Set([151,251,385,386,489,490,491,492,493,494,647,648,649]);
+// ---- 稀有度（传说/幻之）跨七世代 ----
+const LEGENDARY = new Set([144,145,146,150, 243,244,245,249,250, 377,378,379,380,381,382,383,384, 480,481,482,483,484,485,486,488, 640,641,642,643,644,645,646, 716,717,718,785,786,787,788,789,790,791,792,800]);
+const MYTHICAL = new Set([151,251,385,386,489,490,491,492,493,494,647,648,649, 719,720,721,801,802,807,808,809]);
 function rarityOf(id) {
   if (LEGENDARY.has(id)) return '传说';
   if (MYTHICAL.has(id)) return '幻之';
@@ -93,8 +93,8 @@ speciesRows.forEach((r) => {
     chain: r.evolution_chain_id ? Number(r.evolution_chain_id) : 0
   };
 });
-const chainMembers = {}; // chainId -> [speciesId]（只保留 1-649）
-for (let i = 1; i <= 649; i++) {
+const chainMembers = {}; // chainId -> [speciesId]（只保留 1-809）
+for (let i = 1; i <= 809; i++) {
   const c = speciesInfo[i] && speciesInfo[i].chain;
   if (!c) continue;
   (chainMembers[c] = chainMembers[c] || []).push(i);
@@ -136,7 +136,7 @@ try {
     for (const c of (col.cards || [])) {
       const d = c.details || {};
       const dex = Number(d.pokedexCode);
-      if (!(dex >= 1 && dex <= 649)) continue;
+      if (!(dex >= 1 && dex <= 809)) continue;
       if (d.cardType !== '1') continue;  // 只要宝可梦卡
       if (!c.image) continue;
       const atk = (d.abilityItemList || []).map((a) => ({
@@ -161,35 +161,108 @@ try {
     }
   }
 } catch (e) { console.log('CHS 数据集缺失，跳过中文卡面'); }
-let chsCov = 0; for (let i = 1; i <= 649; i++) if (chsByDex[i] && chsByDex[i].length) chsCov++;
-console.log('中文卡面覆盖: ' + chsCov + '/649 | 商品系列 ' + Object.keys(chsSets).length);
+let chsCov = 0; for (let i = 1; i <= 809; i++) if (chsByDex[i] && chsByDex[i].length) chsCov++;
+console.log('中文卡面覆盖: ' + chsCov + '/809 | 商品系列 ' + Object.keys(chsSets).length);
 
 // 「代表卡」= 稀有度 + 技能信息量 综合最高
 function pickCnCard(list) {
   if (!list || !list.length) return null;
   return list.slice().sort((a, b) => b.score - a.score)[0];
 }
-// 「卡面版本」= 其他中文卡面，按商品去重、稀有度优先，最多 5 张
+
+// ---- 卡牌形态识别（用于 UI 形态标签与优先保留特殊版本）----
+// 返回标准化形态标签，普通卡返回空串
+function cardForm(name) {
+  const n = String(name || '').toLowerCase();
+  // VMAX/VSTAR/V 优先，避免被后面的 EX 捕获
+  if (/vmax|极巨化|gigantamax/.test(n)) return '极巨化';
+  if (/vstar|vstar/.test(n)) return 'V';
+  if (/\bv\b| v$| v /.test(n)) return 'V';
+  if (/gx/.test(n)) return 'GX';
+  // 中文「超级」、英文 M/Mega 开头含 EX、全角 Ｍ → MEGA
+  if (/^超级|^.?超级|M .+EX|Mega .+EX|Mega-.|Ｍ/.test(name)) return 'MEGA';
+  if (/m .+ex|mega .+ex|mega-/.test(n)) return 'MEGA';
+  if (/ex|ＥＸ/.test(name) && !/mex/.test(n)) return 'EX';
+  if (/lv\.x|lvx|ＬＶ\.Ｘ/.test(n)) return 'LV.X';
+  if (/δ/.test(name) || /delta/.test(n)) return 'δ';
+  if (/光辉|shining|radiant/.test(n)) return '光辉';
+  if (/dark /.test(n) || /^暗之/.test(name)) return '暗之';
+  return '';
+}
+const FORM_ORDER = { 'EX': 1, 'MEGA': 2, 'GX': 3, 'V': 4, '极巨化': 5, 'LV.X': 6, '光辉': 7, 'δ': 8, '暗之': 9 };
+function formWeight(name) {
+  const f = cardForm(name);
+  return FORM_ORDER[f] || 99;
+}
+
+// 「卡面版本」= 其他中文卡面，按 (商品, 卡号) 去重、稀有度优先，最多 10 张
+// 同一商品里的不同卡号（如 CSMPaC 004/023 的无标记 / 无标记★）都要保留
+// 优先保证 EX/MEGA/V/VMAX/光辉 等形态至少各出现一次
 function pickCnVers(list, main) {
   if (!list || !list.length) return [];
   const seen = {}; const out = [];
-  const sorted = list.slice().sort((a, b) => b.rw - a.rw);
+  const gotForms = new Set();
+  if (main && main.name) gotForms.add(cardForm(main.name));
+  // 有特殊形态（EX/MEGA/V/极巨化/光辉…）的宝可梦保留更多版本，普通宝可梦收敛以控体积
+  let hasForm = false;
+  for (const c of list) { if (cardForm(c.name)) { hasForm = true; break; } }
+  const MAX_CN = hasForm ? 10 : 6;
+  // 第一轮：优先保留未收录的形态，同形态内按稀有度降序
+  const sorted = list.slice().sort((a, b) => {
+    const fa = formWeight(a.name), fb = formWeight(b.name);
+    if (fa !== fb) return fa - fb;
+    return b.rw - a.rw;
+  });
   for (const c of sorted) {
     if (main && c.img === main.img) continue;
-    if (seen[c.col]) continue;
-    seen[c.col] = 1;
-    out.push([c.img, c.no, c.col, c.rar]);
-    if (out.length >= 6) break;
+    const key = c.col + '|' + c.no;
+    if (seen[key]) continue;
+    const f = cardForm(c.name);
+    if (f && gotForms.has(f)) continue; // 形态已有则第二轮再补
+    seen[key] = 1;
+    if (f) gotForms.add(f);
+    out.push([c.img, c.no, c.col, c.rar, f]);
+    if (out.length >= MAX_CN - 2) break;
+  }
+  // 第二轮：补满到 MAX_CN 张（按稀有度）
+  const byRarity = list.slice().sort((a, b) => b.rw - a.rw);
+  for (const c of byRarity) {
+    if (out.length >= MAX_CN) break;
+    if (main && c.img === main.img) continue;
+    const key = c.col + '|' + c.no;
+    if (seen[key]) continue;
+    seen[key] = 1;
+    out.push([c.img, c.no, c.col, c.rar, cardForm(c.name)]);
   }
   return out;
 }
 
-// ---- 英文 TCG 卡图兜底（少数没有简体中文卡的宝可梦）----
-const RARITY_RANK = { 'Rare Holo': 10, 'Rare Ultra': 11, 'Rare Secret': 12, 'Rare Holo EX': 13, 'Rare Holo GX': 14, 'Rare Holo V': 15, 'Rare Holo VMAX': 16, 'Rare': 7, 'Uncommon': 4, 'Common': 1, 'Promo': 5 };
-const tcgMap = {};
+// ---- 英文 TCG 卡图兜底 + 英文版本列表（补充中文数据集未收录的卡，如 M Venusaur-EX）----
+const RARITY_RANK = {
+  'Rare Holo': 10, 'Rare Ultra': 11, 'Rare Secret': 12,
+  'Rare Holo EX': 13, 'Rare Holo GX': 14, 'Rare Holo V': 15, 'Rare Holo VMAX': 16,
+  'Rare Holo VSTAR': 17, 'Rare Holo VUNION': 15,
+  'Rare Holo LV.X': 13, 'Rare Shining': 13, 'Rare Holo Star': 14,
+  'Rare Prism Star': 13, 'Rare ACE': 12, 'Amazing Rare': 16,
+  'Radiant Rare': 15, 'Trainer Gallery Rare Holo': 12,
+  'Double Rare': 15, 'Ultra Rare': 16, 'Illustration Rare': 17,
+  'Special Illustration Rare': 19, 'Hyper Rare': 20, 'Rare Rainbow': 18,
+  'ACE SPEC Rare': 16, 'Shiny Rare': 15, 'Shiny Ultra Rare': 18,
+  'Rare': 7, 'Uncommon': 4, 'Common': 1, 'Promo': 5
+};
+// 系列 code -> 英文名（缓存文件 tcg_<code>.json 里没有 set 字段，需外部映射）
+let tcgSetNames = {};
+try {
+  const tcgSets = JSON.parse(fs.readFileSync(path.join(CACHE, 'tcg_sets.json'), 'utf8'));
+  for (const s of tcgSets) tcgSetNames[s.id] = s.name;
+} catch (e) { /* ignore */ }
+
+const tcgMap = {}; // nid -> { best: {img,r}, list: [{img, no, set, rarity, r, name}] }
 for (const f of fs.readdirSync(CACHE)) {
   if (!f.startsWith('tcg_') || !f.endsWith('.json')) continue;
   if (f === 'tcg_sets.json' || f === 'tcg_mapping.json') continue;
+  const setCode = f.slice(4, -5); // tcg_<code>.json
+  const setName = tcgSetNames[setCode] || '';
   let arr; try { arr = JSON.parse(fs.readFileSync(path.join(CACHE, f), 'utf8')); } catch (e) { continue; }
   if (!Array.isArray(arr)) continue;
   for (const c of arr) {
@@ -198,14 +271,71 @@ for (const f of fs.readdirSync(CACHE)) {
     if (!img) continue;
     if (String(c.id).indexOf('?') >= 0) continue; // 卡号含 ? 的异形卡，图像地址无规律
     const r = RARITY_RANK[c.rarity] || 0;
+    const no = String(c.number || '');
+    const name = c.name || '';
+    const entry = { img, no, set: setName, rarity: c.rarity || '', r, name };
     for (const nid of c.nationalPokedexNumbers) {
-      if (nid < 1 || nid > 649) continue;
-      if (!tcgMap[nid] || r > (tcgMap[nid].r || 0)) tcgMap[nid] = { img, r };
+      if (nid < 1 || nid > 809) continue;
+      const m = tcgMap[nid] || (tcgMap[nid] = { best: null, list: [] });
+      m.list.push(entry);
+      if (!m.best || r > m.best.r) m.best = entry;
     }
   }
 }
-let tcgMapped = 0; for (let i = 1; i <= 649; i++) if (tcgMap[i]) tcgMapped++;
-console.log('英文 TCG 兜底卡图: ' + tcgMapped + '/649');
+for (const nid in tcgMap) {
+  // 优先保证形态多样性，再按稀有度
+  const list = tcgMap[nid].list;
+  const gotForms = new Set();
+  const prefer = []; const rest = [];
+  for (const e of list) {
+    const f = cardForm(e.name);
+    if (f && !gotForms.has(f)) { gotForms.add(f); prefer.push(e); }
+    else rest.push(e);
+  }
+  // 同形态内优先高稀有度
+  prefer.sort((a, b) => b.r - a.r);
+  rest.sort((a, b) => b.r - a.r);
+  const merged = prefer.concat(rest);
+  if (merged.length > 12) merged.length = 12;
+  tcgMap[nid].list = merged;
+}
+let tcgMapped = 0; for (let i = 1; i <= 809; i++) if (tcgMap[i] && tcgMap[i].best) tcgMapped++;
+console.log('英文 TCG 兜底卡图: ' + tcgMapped + '/809');
+
+// 英文版本列表，用于补充中文数据集未收录的卡面（如 M Venusaur-EX）
+// 输出紧凑数组 [img, no, set, rarity, form]
+// 第 5 项存「形态标记」而不是英文卡名：页面只展示 系列/卡号/稀有度，
+// 卡名唯一用途是识别形态 —— 存标记可比存卡名省约 90KB 主包体积。
+function pickEnVers(id, cnList) {
+  const m = tcgMap[id];
+  if (!m || !m.list.length) return [];
+  const cnImgs = new Set((cnList || []).map(c => c.img));
+  // 有特殊形态的宝可梦保留更多国际版卡面（形态覆盖优先），普通宝可梦只留最具代表性的
+  let hasForm = false;
+  for (const e of m.list) { if (cardForm(e.name)) { hasForm = true; break; } }
+  const MAX_EN = hasForm ? 12 : 5;
+  // 形态多样性优先：每个形态最多保留 2 张（如喷火龙 X / Y 两种 MEGA 异画都能进来）
+  const formCnt = {};
+  const prefer = []; const rest = [];
+  const CAP = hasForm ? 2 : 1;
+  for (const e of m.list) {
+    if (cnImgs.has(e.img)) continue;
+    const f = cardForm(e.name);
+    if (f && (formCnt[f] || 0) < CAP) { formCnt[f] = (formCnt[f] || 0) + 1; prefer.push(e); }
+    else rest.push(e);
+  }
+  prefer.sort((a, b) => b.r - a.r);
+  rest.sort((a, b) => b.r - a.r);
+  const out = [];
+  const seen = new Set();
+  for (const e of prefer.concat(rest)) {
+    if (out.length >= MAX_EN) break;
+    if (seen.has(e.img)) continue;
+    seen.add(e.img);
+    out.push([e.img, e.no, e.set, e.rarity, cardForm(e.name)]);
+  }
+  return out;
+}
 
 // ---- 组装系列 ----
 function makeFigure(id) {
@@ -234,11 +364,12 @@ function makeFigure(id) {
   } : null;
   // 进化关系：ef=进化前(直接)、et=进化后(直接)、ec=同族全链
   const info = speciesInfo[id] || { from: 0, chain: 0 };
-  const ef = info.from && info.from >= 1 && info.from <= 649 ? [info.from] : [];
+  const ef = info.from && info.from >= 1 && info.from <= 809 ? [info.from] : [];
   const et = [];
-  for (let k = 1; k <= 649; k++) { if (speciesInfo[k] && speciesInfo[k].from === id) et.push(k); }
+  for (let k = 1; k <= 809; k++) { if (speciesInfo[k] && speciesInfo[k].from === id) et.push(k); }
   const ec = orderChain(chainMembers[info.chain] || [id]);
   const tcg = tcgMap[id];
+  const enCvs = pickEnVers(id, cnList);
   return {
     id: 'pk-' + String(id).padStart(3, '0'),
     code: String(id).padStart(3, '0'),
@@ -250,7 +381,8 @@ function makeFigure(id) {
     art: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`,
     cn: cn,
     cvs: pickCnVers(cnList, cnMain),
-    enArt: (!cnMain && tcg) ? tcg.img : '',
+    enCvs: enCvs,
+    enArt: (!cnMain && tcg && tcg.best) ? tcg.best.img : '',
     ef: ef,
     et: et,
     ec: ec,
@@ -278,7 +410,9 @@ const series = [
   { id: 'johto', name: '城都地区 (Johto)', desc: '第二世代 152-251，金/银/水晶。', figures: rangeFigures(152, 251) },
   { id: 'hoenn', name: '丰缘地区 (Hoenn)', desc: '第三世代 252-386，红宝石/蓝宝石/绿宝石。', figures: rangeFigures(252, 386) },
   { id: 'sinnoh', name: '神奥地区 (Sinnoh)', desc: '第四世代 387-493，钻石/珍珠/白金。', figures: rangeFigures(387, 493) },
-  { id: 'unova', name: '合众地区 (Unova)', desc: '第五世代 494-649，黑/白/黑2/白2。', figures: rangeFigures(494, 649) }
+  { id: 'unova', name: '合众地区 (Unova)', desc: '第五世代 494-649，黑/白/黑2/白2。', figures: rangeFigures(494, 649) },
+  { id: 'kalos', name: '卡洛斯地区 (Kalos)', desc: '第六世代 650-721，X / Y。', figures: rangeFigures(650, 721) },
+  { id: 'alola', name: '阿罗拉地区 (Alola)', desc: '第七世代 722-809，太阳 / 月亮 / 究极日 / 月。', figures: rangeFigures(722, 809) }
 ];
 
 const out = {
@@ -306,7 +440,7 @@ const s6 = series[0].figures[5];
 console.log('sample pk-006 喷火龙: cn=' + s6.cn.n + ' ' + s6.cn.s + ' #' + s6.cn.no + ' ' + s6.cn.hp + 'HP ' + s6.cn.a + ' ' + s6.cn.r);
 console.log('  招式:', s6.cn.atk.map((a) => a.n + '(' + (a.p || '-') + ') ' + a.d).join(' | '));
 console.log('  特性:', s6.cn.ft.map((f) => f.n + ': ' + f.d).join(' | '));
-console.log('  版本(' + s6.cvs.length + '):', s6.cvs.map((v) => v[2] + '#' + v[1] + ' ' + v[3]).join(', '));
+console.log('  版本(' + s6.cvs.length + '):', s6.cvs.map((v) => v[2] + '#' + v[1] + ' ' + v[3] + ' ' + v[4]).join(' | '));
 console.log('  evo ec=' + s6.ec.map((x) => x).join('→'));
 const s494 = series[4].figures[0];
 console.log('sample pk-494:', s494.name, 'cn=' + (s494.cn ? s494.cn.n + ' ' + s494.cn.s : '无') + ' enArt=' + (s494.enArt ? '有' : '无'));
@@ -315,4 +449,4 @@ series.forEach((s) => s.figures.forEach((f) => {
   if (f.cn) { withCn++; versSum += f.cvs.length; atkSum += f.cn.atk.length; ftSum += f.cn.ft.length; }
   if (f.ef.length || f.et.length) eo++;
 }));
-console.log('统计：中文卡面 ' + withCn + '/649 | 版本均 ' + (versSum / 649).toFixed(1) + ' | 招式均 ' + (atkSum / 649).toFixed(2) + ' | 特性均 ' + (ftSum / 649).toFixed(2) + ' | 有进化关系 ' + eo + '/649');
+console.log('统计：中文卡面 ' + withCn + '/809 | 版本均 ' + (versSum / 809).toFixed(1) + ' | 招式均 ' + (atkSum / 809).toFixed(2) + ' | 特性均 ' + (ftSum / 809).toFixed(2) + ' | 有进化关系 ' + eo + '/809');

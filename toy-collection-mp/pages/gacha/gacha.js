@@ -3,6 +3,19 @@ const store = require('../../utils/store.js');
 
 // 抽卡权重：普通款常见，传说/幻之稀有；未拥有加权，帮助推进图鉴
 const RARITY_WEIGHT = { '普通': 10, '传说': 1.4, '幻之': 0.5 };
+// 特殊形态卡的权重（比基础卡稀有）
+// ⚠️ key 必须与 utils/source.js `cardForm()` 的返回值逐字一致 ——
+//    VMAX 卡的形态标签是「极巨化」（不是 "VMAX"），写错会让整类卡静默走默认权重、且拿不到闪光特效。
+const FORM_WEIGHT = {
+  'EX': 4, 'MEGA': 3, 'GX': 3, 'V': 3, '极巨化': 2, '光辉': 2,
+  'LV.X': 2.5, 'δ': 2, '暗之': 2
+};
+// 这些形态卡触发高级闪光（彩虹旋转边框 + 内部闪光）
+const PREMIUM_FORMS = { '极巨化': 1, 'MEGA': 1, '光辉': 1, 'GX': 1 };
+// 触发光边特效：传说、幻之、PREMIUM 形态、EX、V
+const GLOW_FORMS = { 'EX': 1, 'V': 1, '极巨化': 1, 'MEGA': 1, '光辉': 1, 'GX': 1, 'LV.X': 1 };
+const PACK_SIZE = 5;
+const CARD_BACK = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png';
 
 function todayStr() {
   const d = new Date();
@@ -14,9 +27,22 @@ function todayStr() {
 Page({
   data: {
     meta: {}, seriesList: [], active: 'all',
-    accent: '#3B7DDD', accent2: '#FFCB05',
-    results: [], flipping: false, pulling: false,
-    drawCount: 0, lastNew: 0, packSize: 5
+    accent: '#3B7DDD', accent2: '#FFCB05', packSize: PACK_SIZE,
+    // idle / tearing / opened / flying / done
+    state: 'idle',
+    packName: '全图鉴卡包',
+    packColor1: '#3B7DDD', packColor2: '#FFCB05',
+    // 撕卡包
+    tearProgress: 0,
+    packSealStyle: '',
+    packInnerStyle: '',
+    packGlow: 0,
+    // 抽到的卡
+    cards: [],
+    appear: [], flipped: [],
+    lastNew: 0,
+    hasPremium: false,
+    zoomCard: null
   },
 
   onShow: function () {
@@ -25,72 +51,99 @@ Page({
     wx.setNavigationBarColor({ frontColor: '#ffffff', backgroundColor: meta.accent });
     wx.setNavigationBarTitle({ title: '开包模拟' });
     this.setData({ meta: meta, seriesList: list, accent: meta.accent, accent2: meta.accent2 });
+    this.updatePackStyle();
+  },
+
+  onUnload: function () {
+    if (this._flyTimer) clearTimeout(this._flyTimer);
   },
 
   switchSeries: function (e) {
+    if (this.data.state !== 'idle') return;
     this.setData({ active: e.currentTarget.dataset.id });
+    this.updatePackStyle();
   },
 
+  updatePackStyle: function () {
+    const active = this.data.active;
+    const meta = this.data.meta;
+    let name = '全图鉴卡包';
+    if (active !== 'all' && meta.series) {
+      const s = meta.series.find(function (x) { return x.id === active; });
+      if (s) name = s.name.split(' ')[0] + '卡包';
+    }
+    this.setData({ packName: name });
+  },
+
+  // ===== 抽卡池：基础卡 + 特殊形态卡（EX/MEGA/V/VMAX/光辉 等）=====
   buildPool: function () {
     const src = source.getSource();
     const pool = [];
     src.series.forEach(function (ser) {
       if (this.data.active !== 'all' && ser.id !== this.data.active) return;
       ser.figures.forEach(function (f) {
-        pool.push({ seriesId: ser.id, seriesName: ser.name, figure: f });
-      });
+        const main = source.mainCard(f);
+        const baseImg = (main && main.img) || source.figureImage(f);
+        pool.push({ seriesId: ser.id, seriesName: ser.name, figure: f, form: null, img: baseImg, rarity: f.rarity });
+        source.cardVersions(f).forEach(function (v) {
+          if (v.form) pool.push({ seriesId: ser.id, seriesName: ser.name, figure: f, form: v.form, img: v.img, rarity: v.rarity || f.rarity });
+        });
+      }.bind(this));
     }.bind(this));
     return pool;
   },
 
-  // 加权随机抽 n 张（一包内尽量不重复）
+  // 加权随机抽 n 张（一包内尽量不重复），并保证至少 1 张特殊形态卡
   draw: function (n) {
-    const pool = this.buildPool();
-    if (!pool.length) return [];
+    const raw = this.buildPool();
+    if (!raw.length) return [];
     const ownedSet = {};
-    store.getCollection().forEach(function (c) {
-      if (c.own) ownedSet[c.seriesId + '/' + c.figureId] = true;
-    });
-    const weighted = pool.map(function (p) {
-      let w = RARITY_WEIGHT[p.figure.rarity] || 10;
-      if (!ownedSet[p.seriesId + '/' + p.figure.id]) w *= 4; // 未拥有加权，推进图鉴
-      return { p: p, w: w };
+    store.getCollection().forEach(function (c) { if (c.own) ownedSet[c.seriesId + '/' + c.figureId] = true; });
+    const items = raw.map(function (p) {
+      let w = p.form ? (FORM_WEIGHT[p.form] || 2.5) : (RARITY_WEIGHT[p.figure.rarity] || 10);
+      if (!ownedSet[p.seriesId + '/' + p.figure.id]) w *= 4; // 未拥有加权
+      const key = p.seriesId + '/' + p.figure.id + '/' + (p.form || 'base');
+      return Object.assign({}, p, { w: w, key: key });
     });
     const out = [];
     const used = {};
     let guard = 0;
-    while (out.length < n && guard < 400) {
+    while (out.length < n && guard < 600) {
       guard++;
       let total = 0;
-      weighted.forEach(function (x) {
-        const key = x.p.seriesId + '/' + x.p.figure.id;
-        if (!used[key]) total += x.w;
-      });
+      items.forEach(function (x) { if (!used[x.key]) total += x.w; });
       if (total <= 0) break;
       let r = Math.random() * total;
       let pick = null;
-      for (let i = 0; i < weighted.length; i++) {
-        const x = weighted[i];
-        const key = x.p.seriesId + '/' + x.p.figure.id;
-        if (used[key]) continue;
+      for (let i = 0; i < items.length; i++) {
+        const x = items[i];
+        if (used[x.key]) continue;
         r -= x.w;
-        if (r <= 0) { pick = x.p; break; }
+        if (r <= 0) { pick = x; break; }
       }
       if (!pick) break;
-      if (n > 1) used[pick.seriesId + '/' + pick.figure.id] = true;
+      used[pick.key] = true;
       out.push(pick);
+    }
+    // 保底：本包至少出现 1 张特殊形态卡（若池子里有）
+    if (!out.some(function (o) { return o.form; })) {
+      const forms = items.filter(function (it) { return it.form && !used[it.key]; });
+      if (forms.length) {
+        const rep = forms[Math.floor(Math.random() * forms.length)];
+        used[rep.key] = true;
+        out[out.length - 1] = rep;
+      }
     }
     return out;
   },
 
-  // 把抽到的 figure 转成展示结果并点亮收藏
-  lightUp: function (pick) {
-    const f = pick.figure;
-    const rm = source.rarityMeta(f.rarity);
-    const existing = store.findRecord(pick.seriesId, f.id);
+  lightUp: function (entry) {
+    const f = entry.figure;
+    const rm = source.rarityMeta(entry.rarity || f.rarity);
+    const existing = store.findRecord(entry.seriesId, f.id);
     const isNew = !(existing && existing.own);
     store.upsert({
-      seriesId: pick.seriesId, figureId: f.id,
+      seriesId: entry.seriesId, figureId: f.id,
       own: true, wish: existing ? existing.wish : false,
       rarity: f.rarity,
       buyPrice: existing ? existing.buyPrice : 0,
@@ -101,38 +154,125 @@ Page({
       photo: existing && existing.photo ? existing.photo : '',
       createdAt: existing && existing.createdAt ? existing.createdAt : new Date().toISOString()
     });
+    // 显式转布尔：直接写 `a || (b && MAP[k])` 会返回 1 / undefined 这类非布尔值，
+    // 虽能过 wx:if 的 truthy 判断，但会让 JSON 里出现 undefined、也难断言。
+    const premium = !!(entry.rarity === '传说' || entry.rarity === '幻之' || (entry.form && PREMIUM_FORMS[entry.form]));
+    const glow = !!(premium || (entry.form && GLOW_FORMS[entry.form]));
     return {
-      seriesId: pick.seriesId, seriesName: pick.seriesName, figureId: f.id,
+      seriesId: entry.seriesId, seriesName: entry.seriesName, figureId: f.id,
       name: f.name, code: f.code, sub: f.sub || '', color: f.color || '#EEE',
-      sprite: f.sprite, art: f.art, tcgArt: source.figureImage(f), img: source.figureImage(f),
-      rarity: f.rarity, rarityLabel: rm.label, rarityColor: rm.color, rarityBg: rm.bg,
-      isNew: isNew, owned: true
+      img: entry.img, sprite: f.sprite, art: f.art,
+      rarity: entry.rarity, rarityLabel: rm.label, rarityColor: rm.color, rarityBg: rm.bg,
+      form: entry.form || '', formImg: entry.form ? entry.img : '',
+      isNew: isNew, owned: true, premium: premium, glow: glow
     };
   },
 
-  doDraw: function () {
-    const self = this;
-    if (this.data.pulling) return;
-    const n = this.data.packSize;
-    this.setData({ pulling: true, flipping: true, results: [] });
-    const picks = this.draw(n);
-    const results = picks.map(function (p) { return self.lightUp(p); });
-    const newCount = results.filter(function (r) { return r.isNew; }).length;
-    setTimeout(function () {
-      self.setData({
-        results: results, flipping: false, pulling: false,
-        drawCount: self.data.drawCount + n, lastNew: newCount
-      });
-    }, 750);
+  // ===== 撕卡包手势：从左上往右下撕开 =====
+  packTouchStart: function (e) {
+    if (this.data.state !== 'idle') return;
+    const t = e.touches[0];
+    this._tearStart = { x: t.clientX, y: t.clientY };
+    this.setData({ tearProgress: 0, packSealStyle: '', packInnerStyle: '', packGlow: 0 });
+  },
+  packTouchMove: function (e) {
+    if (!this._tearStart || this.data.state !== 'idle') return;
+    const t = e.touches[0];
+    const dx = t.clientX - this._tearStart.x;
+    const dy = t.clientY - this._tearStart.y;
+    // 只有向右下方滑动才生效
+    if (dx < 0 || dy < 0) return;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    const max = 260; // 撕开阈值（rpx 基准，但这里用 px 估算）
+    const s = Math.min(1, dist / max);
+    const rot = s * 70; // 封条旋转角度
+    const tx = s * 260;
+    const ty = s * 160;
+    this.setData({
+      tearProgress: s,
+      packGlow: s,
+      packSealStyle: 'transform: translate(' + tx + 'rpx, ' + ty + 'rpx) rotate(' + rot + 'deg); opacity:' + (1 - s * 0.9) + ';',
+      packInnerStyle: 'transform: scale(' + (1 + s * 0.06) + '); opacity:' + (0.2 + s * 0.8) + ';'
+    });
+  },
+  packTouchEnd: function () {
+    if (!this._tearStart) return;
+    const s = this.data.tearProgress;
+    this._tearStart = null;
+    if (s > 0.55) this.openPack();
+    else this.setData({ tearProgress: 0, packSealStyle: '', packInnerStyle: '', packGlow: 0 });
   },
 
-  addWish: function (e) {
-    const idx = e.currentTarget.dataset.idx;
-    const r = this.data.results[idx];
-    const existing = store.findRecord(r.seriesId, r.figureId);
+  // 点击卡包也作为兜底开包方式
+  openPack: function () {
+    if (this.data.state !== 'idle') return;
+    const self = this;
+    const picks = this.draw(PACK_SIZE);
+    const cards = picks.map(function (p) { return self.lightUp(p); });
+    const newCount = cards.filter(function (c) { return c.isNew; }).length;
+    const hasPremium = cards.some(function (c) { return c.premium || c.glow; });
+    this.setData({
+      state: 'tearing',
+      cards: cards,
+      appear: cards.map(function () { return false; }),
+      flipped: cards.map(function () { return false; }),
+      lastNew: newCount,
+      hasPremium: hasPremium,
+      tearProgress: 1,
+      packGlow: 1,
+      packSealStyle: 'transform: translate(420rpx, 280rpx) rotate(110deg); opacity:0;',
+      packInnerStyle: 'transform: scale(1.12); opacity:1;'
+    });
+    setTimeout(function () { self.setData({ state: 'opened' }); self.startFlying(); }, 520);
+  },
+
+  // 竖排、一张张飞入并翻开（使用 opacity 切换，避免小程序 3D 翻转兼容问题）
+  startFlying: function () {
+    if (this.data.state === 'done') return;
+    this.setData({ state: 'flying' });
+    const self = this;
+    const n = this.data.cards.length;
+    let i = 0;
+    function step() {
+      if (i >= n) { setTimeout(function () { self.setData({ state: 'done' }); }, 720); return; }
+      const appear = self.data.appear.slice();
+      appear[i] = true;
+      self.setData({ appear: appear });
+      setTimeout(function () {
+        const flipped = self.data.flipped.slice();
+        flipped[i] = true;
+        self.setData({ flipped: flipped });
+      }, 340);
+      i++;
+      self._flyTimer = setTimeout(step, 520);
+    }
+    step();
+  },
+
+  onCardTap: function (e) {
+    const idx = e.currentTarget.dataset.i;
+    const cards = this.data.cards;
+    if (!cards[idx]) return;
+    this.setData({ zoomCard: cards[idx] });
+  },
+
+  closeZoom: function () { this.setData({ zoomCard: null }); },
+  noop: function () {},
+
+  goDetailFromZoom: function () {
+    const z = this.data.zoomCard;
+    if (!z) return;
+    this.setData({ zoomCard: null });
+    wx.navigateTo({ url: '/pages/detail/detail?seriesId=' + z.seriesId + '&figureId=' + z.figureId });
+  },
+
+  addWishFromZoom: function () {
+    const z = this.data.zoomCard;
+    if (!z) return;
+    const existing = store.findRecord(z.seriesId, z.figureId);
     store.upsert({
-      seriesId: r.seriesId, figureId: r.figureId,
-      own: existing ? existing.own : false, wish: true, rarity: r.rarity,
+      seriesId: z.seriesId, figureId: z.figureId,
+      own: existing ? existing.own : false, wish: true, rarity: z.rarity,
       buyPrice: existing ? existing.buyPrice : 0, curValue: existing ? existing.curValue : 0,
       acquiredAt: existing && existing.acquiredAt ? existing.acquiredAt : todayStr(),
       condition: existing && existing.condition ? existing.condition : '全新',
@@ -143,16 +283,19 @@ Page({
     wx.showToast({ title: '已加入心愿 ♡', icon: 'success' });
   },
 
-  goDetail: function (e) {
-    const idx = e.currentTarget.dataset.idx;
-    const r = this.data.results[idx];
-    wx.navigateTo({ url: '/pages/detail/detail?seriesId=' + r.seriesId + '&figureId=' + r.figureId });
+  openAnother: function () {
+    if (this._flyTimer) clearTimeout(this._flyTimer);
+    this.setData({
+      state: 'idle', cards: [], appear: [], flipped: [],
+      tearProgress: 0, packSealStyle: '', packInnerStyle: '', packGlow: 0,
+      hasPremium: false, zoomCard: null
+    });
   },
 
   onImgErr: function (e) {
     const i = e.currentTarget.dataset.i;
-    const key = 'results[' + i + '].img';
-    const r = this.data.results[i];
-    this.setData({ [key]: r.sprite || r.art });
+    const key = 'cards[' + i + '].img';
+    const c = this.data.cards[i];
+    if (c) this.setData({ [key]: c.sprite || c.art });
   }
 });

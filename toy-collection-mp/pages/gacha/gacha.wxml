@@ -1,37 +1,88 @@
-<view class="page" style="--accent:{{accent}};--accent2:{{accent2}}">
-  <view class="hero gacha-hero">
-    <view class="brand">{{meta.brand}} · 开包模拟</view>
-    <view class="sub">每包 {{packSize}} 张 · 已拆 {{drawCount}} 张</view>
-  </view>
+<view class="page" style="--accent:{{accent}};--accent2:{{accent2}};--c1:{{packColor1}};--c2:{{packColor2}}">
 
+  <!-- 系列选择 -->
   <scroll-view scroll-x class="series-bar" enhanced show-scrollbar="{{false}}">
-    <view class="series-tab {{active === item.id ? 'on' : ''}}" wx:for="{{seriesList}}" wx:key="id" bindtap="switchSeries" data-id="{{item.id}}">{{item.name}}</view>
+    <view class="series-tab {{active === item.id ? 'on' : ''}} {{state !== 'idle' ? 'disabled' : ''}}" wx:for="{{seriesList}}" wx:key="id" bindtap="switchSeries" data-id="{{item.id}}">{{item.name}}</view>
   </scroll-view>
 
-  <view class="pack" bindtap="doDraw">
-    <view class="pack-art">🎴</view>
-    <view class="pack-txt">点击拆包</view>
-    <view class="pack-sub">传说 / 幻之 概率掉落</view>
-  </view>
-
-  <view wx:if="{{lastNew > 0 && !flipping && results.length}}" class="new-tip">本次新获得 {{lastNew}} 张！</view>
-
-  <view wx:if="{{results.length}}" class="results">
-    <view wx:for="{{results}}" wx:key="figureId" class="rcard {{flipping ? 'back' : 'front'}}">
-      <block wx:if="{{flipping}}">
-        <view class="rcard-back">？</view>
-      </block>
-      <block wx:else>
-        <view class="r-img"><image src="{{item.img}}" mode="aspectFit" binderror="onImgErr" data-i="{{index}}"></image></view>
-        <view class="r-name">{{item.name}}</view>
-        <view class="r-code">No.{{item.code}}</view>
-        <view class="tag" style="color:{{item.rarityColor}};background:{{item.rarityBg}}">{{item.rarityLabel}}</view>
-        <view wx:if="{{item.isNew}}" class="newflag">NEW</view>
-        <view class="r-acts">
-          <view class="r-btn" catchtap="goDetail" data-idx="{{index}}">详情</view>
-          <view class="r-btn ghost" catchtap="addWish" data-idx="{{index}}">心愿</view>
+  <!-- 空闲态 / 撕开态：卡包 -->
+  <view wx:if="{{state === 'idle' || state === 'tearing'}}" class="stage idle-stage">
+    <view class="pack-wrap" bindtouchstart="packTouchStart" bindtouchmove="packTouchMove" bindtouchend="packTouchEnd" bindtap="openPack">
+      <view class="pack-body {{hasPremium ? 'premium' : ''}}">
+        <view class="pack-inner" style="{{packInnerStyle}}"></view>
+        <view class="pack-face">
+          <view class="pack-logo">{{meta.brand}}</view>
+          <view class="pack-name">{{packName}}</view>
+          <view class="pack-count">{{packSize}} 张 / 包</view>
         </view>
-      </block>
+        <!-- 撕开时会发光 -->
+        <view class="pack-glow" style="opacity:{{packGlow}}"></view>
+        <!-- 顶部封条：从左上往右下撕 -->
+        <view class="pack-seal" style="{{packSealStyle}}">
+          <view class="seal-text">撕开</view>
+          <view class="seal-notch"></view>
+        </view>
+      </view>
+      <view class="pack-hint">{{tearProgress > 0.12 ? '继续撕开…' : '↘ 按住封条从左上撕到右下'}}</view>
     </view>
   </view>
+
+  <!-- 已撕开：竖排卡牌 -->
+  <view wx:if="{{state === 'opened' || state === 'flying' || state === 'done'}}" class="stage fly-stage">
+    <scroll-view scroll-y class="fly-scroll" enhanced show-scrollbar="{{false}}">
+      <view class="fly-list">
+        <view wx:for="{{cards}}" wx:key="*this"
+              class="fly-card {{appear[index] ? 'in' : ''}} {{flipped[index] ? 'flipped' : ''}} {{item.glow ? 'glow' : ''}} {{item.premium ? 'premium' : ''}}"
+              bindtap="onCardTap" data-i="{{index}}">
+          <!-- 卡背：飞入前显示 -->
+          <view class="fly-back" style="opacity:{{flipped[index] ? 0 : 1}}; transform:scale({{flipped[index] ? 0.85 : 1}});">
+            <view class="back-pattern"></view>
+            <image src="{{CARD_BACK}}" mode="aspectFit" class="back-ball"></image>
+          </view>
+          <!-- 正面：翻开时显示 -->
+          <view class="fly-front {{item.glow ? 'glow' : ''}} {{item.premium ? 'premium' : ''}}" style="opacity:{{flipped[index] ? 1 : 0}}; transform:scale({{flipped[index] ? 1 : 0.85}}) translateY({{flipped[index] ? 0 : '20rpx'}});">
+            <view class="front-gleam"></view>
+            <view class="fly-img"><image src="{{item.img}}" mode="aspectFit" binderror="onImgErr" data-i="{{index}}"></image></view>
+            <view class="fly-info">
+              <view class="fly-row">
+                <view class="fly-name">{{item.name}}</view>
+                <view wx:if="{{item.form}}" class="fly-form" style="background:{{item.color}}">{{item.form}}</view>
+              </view>
+              <view class="fly-row2">
+                <text class="tag" style="color:{{item.rarityColor}};background:{{item.rarityBg}}">{{item.rarityLabel}}</text>
+                <text class="fly-code">No.{{item.code}}</text>
+                <view wx:if="{{item.isNew}}" class="fly-new">NEW</view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </scroll-view>
+
+    <view wx:if="{{state === 'done'}}" class="fly-foot">
+      <view wx:if="{{lastNew > 0}}" class="new-tip">本次新获得 {{lastNew}} 张！</view>
+      <view class="btn primary" bindtap="openAnother">再开一包</view>
+    </view>
+  </view>
+
+  <!-- 全屏放大 -->
+  <view wx:if="{{zoomCard}}" class="zoom-mask" bindtap="closeZoom">
+    <view class="zoom-card {{zoomCard.glow ? 'glow' : ''}} {{zoomCard.premium ? 'premium' : ''}}" catchtap="noop">
+      <view class="zoom-img"><image src="{{zoomCard.img}}" mode="aspectFit"></image></view>
+      <view class="zoom-info">
+        <view class="zoom-name">
+          {{zoomCard.name}}
+          <text wx:if="{{zoomCard.form}}" class="zoom-form" style="background:{{zoomCard.color}}">{{zoomCard.form}}</text>
+        </view>
+        <view class="zoom-code">No.{{zoomCard.code}}</view>
+        <text class="tag" style="color:{{zoomCard.rarityColor}};background:{{zoomCard.rarityBg}}">{{zoomCard.rarityLabel}}</text>
+      </view>
+      <view class="zoom-acts">
+        <view class="btn" bindtap="goDetailFromZoom">查看详情</view>
+        <view class="btn ghost" bindtap="addWishFromZoom">加入心愿</view>
+        <view class="btn ghost" bindtap="closeZoom">关闭</view>
+      </view>
+    </view>
+  </view>
+
 </view>

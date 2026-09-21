@@ -14,18 +14,86 @@
 
   <view class="bar">
     <view class="section-title" style="margin:0">全图鉴</view>
-    <view class="chip {{showMissing ? 'on' : ''}}" bindtap="toggleMissing">只看未收集</view>
+    <view class="bar-right">
+      <view class="chip {{showMissing ? 'on' : ''}}" bindtap="toggleMissing">只看未收集</view>
+      <view class="chip set-open {{setFilterCnt ? 'on' : ''}}" bindtap="openSetPanel">系列筛选{{setFilterCnt ? ' · ' + setFilterCnt : ''}}</view>
+    </view>
+  </view>
+
+  <!-- ===== 已选系列筛选条 ===== -->
+  <view wx:if="{{setNames.length}}" class="fbar">
+    <view class="fbar-head">
+      <text class="fbar-t">已选卡包 · {{setNames.length}}</text>
+      <text class="fbar-clear" bindtap="clearSets">清空</text>
+    </view>
+    <scroll-view scroll-x class="fbar-scroll" enhanced show-scrollbar="{{false}}">
+      <view class="fbar-row">
+        <view class="fbar-chip" wx:for="{{setNames}}" wx:key="key" data-key="{{item.key}}" bindtap="removeSet">{{item.name}} ✕</view>
+      </view>
+    </scroll-view>
   </view>
 
   <view class="grid">
     <view wx:for="{{figures}}" wx:key="figureId" wx:if="{{!showMissing || !item.owned}}" class="cell">
-      <view class="pk-card {{item.owned ? '' : 'missing'}}" bindtap="goFigure"
-            data-series="{{item.seriesId}}" data-figure="{{item.figureId}}" data-owned="{{item.owned}}">
+      <view class="pk-card {{item.owned ? '' : 'missing'}}" bindtap="goFigure" bindlongpress="previewCard"
+            data-series="{{item.seriesId}}" data-figure="{{item.figureId}}" data-owned="{{item.owned}}" data-img="{{item.img}}">
         <view class="img"><image src="{{item.img}}" mode="aspectFit" binderror="onImgErr" data-i="{{index}}"></image></view>
         <view class="name">{{item.name}}</view>
         <view class="code">No.{{item.code}}</view>
         <view wx:if="{{item.owned}}" class="badge">✓</view>
         <view wx:else class="plus">+</view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{!figures.length}}" class="empty-set">
+    <text class="empty-set-t">当前地区没有命中该卡包的宝可梦</text>
+    <text class="empty-set-s">换个系列，或点「清空」恢复全部</text>
+  </view>
+
+  <!-- ===== 系列 / 卡包筛选面板 ===== -->
+  <view wx:if="{{setPanelOpen}}" class="mask" bindtap="closeSetPanel">
+    <view class="sheet" catchtap="noop">
+      <view class="sheet-head">
+        <text class="sheet-title">系列 / 卡包筛选</text>
+        <text class="sheet-close" bindtap="closeSetPanel">✕</text>
+      </view>
+
+      <view class="sheet-search">
+        <text class="sheet-search-ic">🔍</text>
+        <input class="sheet-input" value="{{setKw}}" placeholder="搜索卡包 / 系列名" placeholder-class="sheet-ph"
+               confirm-type="search" bindinput="onSetKw" />
+        <text wx:if="{{setKw}}" class="sheet-input-clr" bindtap="clearSetKw">✕</text>
+      </view>
+
+      <scroll-view scroll-y class="sheet-body">
+        <view wx:if="{{setCn.length}}" class="sheet-grp">
+          <view class="sheet-grp-t">简体中文版卡包<text class="sheet-grp-n">{{setCn.length}}</text></view>
+          <view class="sheet-tags">
+            <view class="set-tag {{item.on ? 'on' : ''}}" wx:for="{{setCn}}" wx:key="key" data-key="{{item.key}}" bindtap="toggleSet">
+              <text class="set-tag-n">{{item.name}}</text>
+              <text class="set-tag-c">{{item.count}}</text>
+            </view>
+          </view>
+        </view>
+
+        <view wx:if="{{setEn.length}}" class="sheet-grp">
+          <view class="sheet-grp-t">国际版卡面<text class="sheet-grp-n">{{setEn.length}}</text></view>
+          <view class="sheet-tags">
+            <view class="set-tag en {{item.on ? 'on' : ''}}" wx:for="{{setEn}}" wx:key="key" data-key="{{item.key}}" bindtap="toggleSet">
+              <text class="set-tag-n">{{item.name}}</text>
+              <text class="set-tag-c">{{item.count}}</text>
+            </view>
+          </view>
+        </view>
+
+        <view wx:if="{{!setCn.length && !setEn.length}}" class="sheet-empty">没有匹配的卡包</view>
+        <view class="sheet-pad"></view>
+      </scroll-view>
+
+      <view class="sheet-foot">
+        <view class="sheet-btn ghost" bindtap="clearSets">清除</view>
+        <view class="sheet-btn primary" bindtap="confirmSets">确定{{setFilterCnt ? '（' + setFilterCnt + '）' : ''}}</view>
       </view>
     </view>
   </view>

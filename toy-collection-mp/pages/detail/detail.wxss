@@ -2,21 +2,67 @@
 .page { padding: 24rpx 24rpx 160rpx; }
 
 /* ===== 官方 TCG 卡图 ===== */
+.card-hero { position: relative; }
 .tcg-wrap {
+  position: relative;
   background: #F4F7FB; border-radius: 22rpx; padding: 16rpx;
   display: flex; align-items: center; justify-content: center;
   box-shadow: 0 14rpx 34rpx rgba(30, 60, 120, 0.18);
 }
 .tcg-img { width: 100%; height: 940rpx; }
 .tcg-fallback { height: 420rpx; display: flex; align-items: center; justify-content: center; color: #8A93A3; font-size: 26rpx; }
+.set-badge {
+  position: absolute; left: 16rpx; top: 16rpx; z-index: 2;
+  background: rgba(255,255,255,0.95); color: #1F2733;
+  font-size: 20rpx; font-weight: 700; padding: 8rpx 18rpx;
+  border-radius: 999rpx; box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.08);
+  max-width: 70%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.form-badge {
+  position: absolute; right: 16rpx; top: 16rpx; z-index: 2;
+  font-size: 22rpx; font-weight: 800; padding: 8rpx 20rpx;
+  border-radius: 999rpx; box-shadow: 0 4rpx 14rpx rgba(0,0,0,0.18);
+}
+.preview-hint {
+  position: absolute; right: 20rpx; bottom: 20rpx;
+  background: rgba(31,39,51,0.55); color: #fff;
+  font-size: 18rpx; padding: 6rpx 14rpx; border-radius: 999rpx;
+}
 
-/* ===== 名称 / 属性 ===== */
+/* ===== 名称 / 属性 / 稀有度 / 卡号 ===== */
 .head-row { display: flex; align-items: center; justify-content: space-between; margin-top: 20rpx; }
 .h-name { font-size: 40rpx; font-weight: 800; color: #1F2733; }
 .sub { font-size: 24rpx; color: #8A93A3; margin-top: 6rpx; }
 .types { margin-top: 12rpx; }
 .tag { display: inline-block; padding: 6rpx 18rpx; border-radius: 999rpx; font-size: 22rpx; font-weight: 700; }
 .tc-type { font-weight: 700; }
+
+.card-meta-row {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 12rpx;
+  margin-top: 14rpx; padding: 12rpx 16rpx;
+  background: #fff; border-radius: 16rpx;
+  box-shadow: 0 4rpx 12rpx rgba(30, 60, 120, 0.06);
+}
+.rarity-icon { font-size: 28rpx; color: #B7791F; letter-spacing: 2rpx; }
+.rarity-txt { font-size: 22rpx; font-weight: 700; color: #8A6A2F; }
+.card-no { font-size: 22rpx; font-weight: 700; color: #5B6472; background: #F4F7FB; padding: 4rpx 12rpx; border-radius: 8rpx; }
+.card-hp { font-size: 22rpx; font-weight: 700; color: #fff; background: #16A34A; padding: 4rpx 12rpx; border-radius: 8rpx; }
+.card-attr { font-size: 22rpx; font-weight: 700; color: #fff; background: var(--type, #3B7DDD); padding: 4rpx 12rpx; border-radius: 8rpx; }
+
+/* ===== 特殊形态快捷入口 ===== */
+.forms-card { border-left: 8rpx solid var(--type, #3B7DDD); }
+.form-scroll { width: 100%; }
+.form-row { display: flex; padding: 4rpx 0; }
+.form-chip {
+  flex-shrink: 0;
+  display: flex; align-items: center;
+  margin-right: 16rpx; padding: 6rpx 18rpx 6rpx 6rpx;
+  border-radius: 999rpx;
+  border: 2rpx solid;
+  background: rgba(59,125,221,0.08);
+}
+.form-chip-img { width: 52rpx; height: 52rpx; border-radius: 50%; background: #EDF1F7; margin-right: 10rpx; }
+.form-chip-txt { font-size: 24rpx; font-weight: 800; }
 
 /* ===== 图鉴信息 ===== */
 .card { background: #fff; border-radius: 20rpx; padding: 20rpx 22rpx; margin-top: 18rpx; box-shadow: 0 8rpx 20rpx rgba(30, 60, 120, .08); }
@@ -31,6 +77,7 @@
 /* ===== 中文图鉴描述 ===== */
 .desc-card { border-left: 8rpx solid var(--type, #3B7DDD); }
 .desc-text { font-size: 28rpx; line-height: 1.7; color: #3C4656; }
+.desc-empty { font-size: 24rpx; line-height: 1.6; color: #9AA0AC; }
 
 /* ===== 弱点 / 抵抗 ===== */
 .wr-row { display: flex; flex-direction: column; margin-top: 16rpx; }
@@ -77,45 +124,38 @@
 .acts .btn { margin-bottom: 16rpx; }
 .btn.danger { background: #fff; color: #EF4444; border: 2rpx solid #EF4444; }
 
-/* ===== 卡面所属系列 ===== */
-.tcg-cap { text-align: center; font-size: 22rpx; color: #8A93A3; margin-top: 14rpx; }
-
 /* ===== 卡面版本（横向滚动） ===== */
 .sec-sub { font-size: 20rpx; font-weight: 500; color: #9AA0AC; margin-left: 12rpx; }
 .ver-scroll { width: 100%; }
 .ver-row { display: flex; padding: 6rpx 0 4rpx; }
 .ver-item { flex-shrink: 0; width: 152rpx; margin-right: 14rpx; border-radius: 14rpx; padding: 6rpx; border: 3rpx solid transparent; box-sizing: border-box; }
 .ver-item.on { border-color: var(--type, #3B7DDD); background: #F4F8FF; }
-.ver-img { width: 100%; height: 208rpx; border-radius: 10rpx; overflow: hidden; background: #F1F5FB; }
+.ver-img { position: relative; width: 100%; height: 208rpx; border-radius: 10rpx; overflow: hidden; background: #F1F5FB; }
 .ver-img image { width: 100%; height: 100%; display: block; }
+.ver-form-tag {
+  position: absolute; left: 6rpx; top: 6rpx;
+  color: #fff; font-size: 18rpx; font-weight: 700;
+  padding: 2rpx 10rpx; border-radius: 999rpx;
+}
 .ver-set { font-size: 20rpx; font-weight: 700; color: #1F2733; margin-top: 8rpx; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ver-no { font-size: 18rpx; color: #8A93A3; white-space: nowrap; }
 .ver-rar { margin-left: 8rpx; color: #B7791F; font-weight: 700; }
 
-/* ===== 进化关系 ===== */
-.evo-row { display: flex; align-items: flex-start; margin-bottom: 14rpx; }
-.evo-k { width: 84rpx; flex-shrink: 0; font-size: 24rpx; font-weight: 700; color: #8A93A3; line-height: 40rpx; }
-.evo-list { flex: 1; display: flex; flex-wrap: wrap; }
-.evo-item { width: 124rpx; margin: 0 14rpx 10rpx 0; }
-.evo-img { width: 100%; height: 168rpx; border-radius: 12rpx; overflow: hidden; background: #F1F5FB; border: 2rpx solid #EDF1F7; }
-.evo-img image { width: 100%; height: 100%; display: block; }
-.evo-name { font-size: 22rpx; font-weight: 700; color: #1F2733; margin-top: 6rpx; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.evo-code { font-size: 18rpx; color: #9AA0AC; text-align: center; }
-
-.evo-chain-wrap { margin-top: 6rpx; padding-top: 14rpx; border-top: 1rpx solid #F0F2F6; }
-.evo-chain-k { font-size: 22rpx; color: #8A93A3; font-weight: 600; }
-.evo-chain { width: 100%; margin-top: 10rpx; }
-.evo-chain-row { display: flex; align-items: center; padding: 2rpx 0 6rpx; }
-.evo-sep { flex-shrink: 0; color: #C2CAD6; font-size: 26rpx; margin: 0 8rpx; }
-.evo-chip {
+/* ===== 进化关系（时间线） ===== */
+.evo-timeline-scroll { width: 100%; }
+.evo-timeline { display: flex; align-items: center; padding: 6rpx 0 8rpx; }
+.evo-node {
   flex-shrink: 0; display: flex; flex-direction: column; align-items: center;
-  width: 96rpx; padding: 8rpx 4rpx; border-radius: 12rpx; background: #F6F8FC;
+  width: 130rpx; padding: 12rpx 8rpx; border-radius: 16rpx; background: #F6F8FC;
+  border: 2rpx solid transparent;
 }
-.evo-chip.cur { background: #F4F8FF; box-shadow: inset 0 0 0 3rpx var(--type, #3B7DDD); }
-.evo-chip-img { width: 60rpx; height: 60rpx; border-radius: 50%; overflow: hidden; background: #EDF1F7; }
-.evo-chip-img image { width: 100%; height: 100%; display: block; }
-.evo-chip-name { font-size: 18rpx; color: #5B6472; margin-top: 4rpx; max-width: 88rpx; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.evo-chip.cur .evo-chip-name { color: #1F2733; font-weight: 800; }
+.evo-node.cur { background: #F4F8FF; border-color: var(--type, #3B7DDD); box-shadow: 0 0 0 2rpx var(--type, #3B7DDD); }
+.evo-node-img { width: 88rpx; height: 88rpx; border-radius: 50%; overflow: hidden; background: #EDF1F7; }
+.evo-node-img image { width: 100%; height: 100%; display: block; }
+.evo-node-name { font-size: 24rpx; font-weight: 700; color: #1F2733; margin-top: 8rpx; max-width: 120rpx; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.evo-node.cur .evo-node-name { color: var(--type, #3B7DDD); }
+.evo-node-code { font-size: 18rpx; color: #9AA0AC; margin-top: 2rpx; }
+.evo-arrow { flex-shrink: 0; color: #C2CAD6; font-size: 36rpx; margin: 0 10rpx; font-weight: 700; }
 
 /* ===== 卡面技能（该卡的招式 / 特性） ===== */
 .ft-item {

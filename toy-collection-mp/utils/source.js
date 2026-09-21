@@ -51,6 +51,23 @@ function rarityMeta(rarity) {
   }
 }
 
+/** 卡牌稀有度代码 → 图标（参考 PTCG 标记） */
+var RARITY_ICON = {
+  'C': '●', 'U': '◆', 'R': '★', 'RR': '★★', 'RRR': '★★★',
+  'AR': '✦', 'SR': '✧✧', 'SAR': '✧✧✧', 'UR': '✦✦✦', 'CHR': '♛',
+  'PR': 'P', 'K': 'K', 'A': 'A', 'S': 'S',
+  '◆': '◆', '●': '●', '★': '★', '无标记': ''
+};
+function rarityIcon(r) {
+  if (!r || r === '无标记') return '';
+  if (RARITY_ICON[r]) return RARITY_ICON[r];
+  var base = r.replace(/★/g, '').replace(/无标记/g, '');
+  var stars = (r.match(/★/g) || []).length;
+  var icon = RARITY_ICON[base] || '';
+  if (stars) icon += '★'.repeat(stars);
+  return icon;
+}
+
 /**
  * 计算每个系列的拥有进度
  * @param collection 本地收藏数组（含 own/wish 标记）
@@ -148,6 +165,29 @@ function figureImage(figure) {
   return cnImg(figure.cn && figure.cn.img) || figure.enArt || figure.art || figure.sprite || '';
 }
 
+// ============================================================
+//  卡牌形态识别（EX / MEGA / V / VMAX=极巨化 / LV.X / δ / 光辉）
+// ============================================================
+var FORM_ORDER = { 'EX': 1, 'MEGA': 2, 'GX': 3, 'V': 4, '极巨化': 5, 'LV.X': 6, '光辉': 7, 'δ': 8, '暗之': 9 };
+var FORM_COLOR = { 'EX': '#E53935', 'MEGA': '#FB8C00', 'GX': '#00838F', 'V': '#3949AB', '极巨化': '#8E24AA', 'LV.X': '#00897B', '光辉': '#FDD835', 'δ': '#00ACC1', '暗之': '#5D4037' };
+function cardForm(name) {
+  var n = String(name || '').toLowerCase();
+  if (/vmax|极巨化|gigantamax/.test(n)) return '极巨化';
+  if (/vstar/.test(n)) return 'V';
+  if (/\bv\b| v$| v /.test(n)) return 'V';
+  if (/gx/.test(n)) return 'GX';
+  if (/^超级|^.?超级|M .+EX|Mega .+EX|Mega-.|Ｍ/.test(name)) return 'MEGA';
+  if (/m .+ex|mega .+ex|mega-/.test(n)) return 'MEGA';
+  if (/ex|ＥＸ/.test(n) && !/mex/.test(n)) return 'EX';
+  if (/lv\.x|lvx|ＬＶ\.Ｘ/.test(n)) return 'LV.X';
+  if (/δ|delta/.test(n)) return 'δ';
+  if (/光辉|shining|radiant/.test(n)) return '光辉';
+  if (/dark /.test(n) || /^暗之/.test(n)) return '暗之';
+  return '';
+}
+function formColor(f) { return FORM_COLOR[f] || '#7B83A3'; }
+function formWeight(f) { return FORM_ORDER[f] || 99; }
+
 /** 详情页「主卡」：中文卡名 · 招式（中文名 + 中文说明 + 能量 + 伤害）· 特性 */
 function mainCard(figure) {
   var c = figure.cn;
@@ -155,12 +195,12 @@ function mainCard(figure) {
     if (!figure.enArt) return null;
     return {
       img: figure.enArt, name: figure.name, no: '', setCode: '', setName: '国际版卡面',
-      hp: 0, attr: '', rarity: '', atk: [], ft: [], intl: true
+      hp: 0, attr: '', rarity: '', atk: [], ft: [], intl: true, form: ''
     };
   }
   return {
     img: cnImg(c.img), name: c.n, no: c.no, setCode: c.s, setName: cnSetName(c.s),
-    hp: c.hp, attr: c.a, rarity: c.r, intl: false,
+    hp: c.hp, attr: c.a, rarity: c.r, intl: false, form: cardForm(c.n),
     atk: (c.atk || []).map(function (a) {
       return { name: a.n, text: a.d, dmg: a.p, cost: energyCost(a.c) };
     }),
@@ -168,18 +208,95 @@ function mainCard(figure) {
   };
 }
 
-/** 全部卡面版本（主卡 + 其他中文卡面，同一只宝可梦的不同系列 / 不同样子） */
+/** 全部卡面版本（主卡 + 其他中文卡面 + 英文 TCG 版本，同一只宝可梦的不同系列 / 不同样子） */
+// cvs 元素: [img, no, col, rar, name]        —— name 用于识别形态
+// enCvs 元素: [img, no, set, rarity, form]   —— 已预算好的形态标记（省体积）
+// 最后一个参数统一接收「形态标记」；兼容传入原始卡名（会自动识别）
 function cardVersions(figure) {
   var out = [];
+  var seen = {};
+  function push(img, no, setId, setName, rarity, main, intl, formOrName) {
+    if (!img || seen[img]) return;
+    seen[img] = 1;
+    var form = formOrName && FORM_ORDER[formOrName] !== undefined ? formOrName : cardForm(formOrName);
+    out.push({ img: img, no: no || '', setId: setId || '', setName: setName || '', rarity: rarity || '', main: !!main, intl: !!intl, form: form });
+  }
   var c = figure.cn;
-  if (c) out.push({ img: cnImg(c.img), no: c.no, setId: c.s, setName: cnSetName(c.s), rarity: c.r, main: true });
+  if (c) push(cnImg(c.img), c.no, c.s, cnSetName(c.s), c.r, true, false, c.n);
   (figure.cvs || []).forEach(function (v) {
-    out.push({ img: cnImg(v[0]), no: v[1], setId: v[2], setName: cnSetName(v[2]), rarity: v[3], main: false });
+    push(cnImg(v[0]), v[1], v[2], cnSetName(v[2]), v[3], false, false, v[4]);
+  });
+  (figure.enCvs || []).forEach(function (v) {
+    push(v[0], v[1], '', v[2] || '国际版卡面', v[3], false, true, v[4]);
   });
   if (!out.length && figure.enArt) {
-    out.push({ img: figure.enArt, no: '', setId: '', setName: '国际版卡面', rarity: '', main: true });
+    push(figure.enArt, '', '', '国际版卡面', '', true, true, '');
   }
   return out;
+}
+
+// ============================================================
+//  系列 / 卡包（按商品系列筛选卡册）
+//  中文：以商品代号为 key（如 CSM1DC「起始卡组 横空出世GX」）
+//  国际版：以英文系列名为 key（如 Generations）
+// ============================================================
+var _setIndex = null;
+/** 全站出现过的系列清单（带卡片数），中文在前、按数量降序 */
+function listSets() {
+  if (_setIndex) return _setIndex;
+  var map = {};
+  function bump(key, name, lang) {
+    if (!key) return;
+    var k = lang + ':' + key;
+    if (!map[k]) map[k] = { key: k, code: key, name: name || key, lang: lang, count: 0 };
+    map[k].count++;
+  }
+  pokemon.series.forEach(function (ser) {
+    ser.figures.forEach(function (f) {
+      var seen = {};
+      cardVersions(f).forEach(function (v) {
+        if (v.intl) {
+          var en = v.setName || '';
+          if (en && !seen['e' + en]) { seen['e' + en] = 1; bump(en, en, 'en'); }
+        } else if (v.setId) {
+          if (!seen['c' + v.setId]) { seen['c' + v.setId] = 1; bump(v.setId, cnSetName(v.setId), 'cn'); }
+        }
+      });
+    });
+  });
+  var arr = Object.keys(map).map(function (k) { return map[k]; });
+  arr.sort(function (a, b) {
+    if (a.lang !== b.lang) return a.lang === 'cn' ? -1 : 1;
+    return b.count - a.count;
+  });
+  _setIndex = arr;
+  return arr;
+}
+
+/** 某只宝可梦命中的系列 key 集合（用于筛选，结果缓存在 WeakMap） */
+var _setsCache = typeof WeakMap !== 'undefined' ? new WeakMap() : null;
+function setsOf(figure) {
+  if (_setsCache && _setsCache.has(figure)) return _setsCache.get(figure);
+  var out = {};
+  cardVersions(figure).forEach(function (v) {
+    if (v.intl) { if (v.setName) out['en:' + v.setName] = 1; }
+    else if (v.setId) out['cn:' + v.setId] = 1;
+  });
+  if (_setsCache) _setsCache.set(figure, out);
+  return out;
+}
+
+/** 某只宝可梦检测到的「特殊形态」列表（去重，按形态优先级排序） */
+function figureForms(figure) {
+  var forms = {};
+  var all = cardVersions(figure);
+  all.forEach(function (v) {
+    if (!v.form) return;
+    if (!forms[v.form] || (v.main && !forms[v.form].main)) {
+      forms[v.form] = { form: v.form, img: v.img, main: v.main, color: formColor(v.form) };
+    }
+  });
+  return Object.values(forms).sort(function (a, b) { return formWeight(a.form) - formWeight(b.form); });
 }
 
 // 全国图鉴号 → 图鉴项（懒建索引）
@@ -237,6 +354,7 @@ module.exports = {
   getMeta: getMeta,
   findFigure: findFigure,
   rarityMeta: rarityMeta,
+  rarityIcon: rarityIcon,
   progressFor: progressFor,
   totalFigures: totalFigures,
   enrich: enrich,
@@ -244,6 +362,11 @@ module.exports = {
   figureImage: figureImage,
   mainCard: mainCard,
   cardVersions: cardVersions,
+  figureForms: figureForms,
+  listSets: listSets,
+  setsOf: setsOf,
+  cardForm: cardForm,
+  formColor: formColor,
   cnSetName: cnSetName,
   figureByDex: figureByDex,
   evolutionOf: evolutionOf

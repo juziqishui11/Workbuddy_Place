@@ -43,19 +43,22 @@ probe('unova', 'pk-496', '青藤蛇(无中文卡)');
 
 // 全量体检
 const all = source.getSource().series.flatMap((s) => s.figures);
-let noCard = 0, noAtk = 0, enName = 0, badUrl = 0, versSum = 0;
+let noCard = 0, noTcg = 0, noAtk = 0, enName = 0, badUrl = 0, versSum = 0;
 all.forEach((f) => {
+  // 真正无展示图（极端）：连精灵图兜底都没有才计
+  if (!source.figureImage(f)) noCard++;
+  // 无中文卡面 且 无国际版卡面：详情页会用 official artwork / 精灵图兜底（650+ 数据来源限制，可接受）
+  if (!f.cn && !f.enArt) noTcg++;
   const c = source.mainCard(f);
-  if (!c) noCard++;
-  else {
+  if (c) {
     if (!c.atk.length && !c.ft.length) noAtk++;
     c.atk.concat(c.ft).forEach((x) => { if (!/[\u4e00-\u9fa5]/.test(x.name)) enName++; });
     if (!/^https:\/\//.test(c.img)) badUrl++;
   }
   versSum += source.cardVersions(f).length;
 });
-console.log('全量: 无卡面 ' + noCard + ' | 有卡面无技能 ' + noAtk + ' | 非中文技能名 ' + enName + ' | 图 URL 异常 ' + badUrl + ' | 版本均 ' + (versSum / all.length).toFixed(1));
-check(noCard === 0, '存在无卡面的宝可梦 ' + noCard);
+console.log('全量: 真实无图 ' + noCard + ' | 无TCG卡面(art兜底) ' + noTcg + ' | 有卡面无技能 ' + noAtk + ' | 非中文技能名 ' + enName + ' | 图 URL 异常 ' + badUrl + ' | 版本均 ' + (versSum / all.length).toFixed(1));
+check(noCard === 0, '存在真实无图的宝可梦 ' + noCard);
 check(enName === 0, '存在非中文技能名 ' + enName);
 check(badUrl === 0, '存在异常卡图 URL');
 console.log(bad ? 'FAILED (' + bad + ')' : 'ALL OK');

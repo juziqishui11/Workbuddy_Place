@@ -40,3 +40,76 @@
   width: 36rpx; height: 36rpx; border-radius: 50%;
   background: #CBD5E6; color: #fff; font-size: 28rpx; line-height: 36rpx; text-align: center;
 }
+
+/* ===== 顶部工具行（只看未收集 / 系列筛选） ===== */
+.bar-right { display: flex; align-items: center; }
+.bar-right .chip { margin-left: 12rpx; }
+
+/* ===== 已选卡包筛选条 ===== */
+.fbar { background: #fff; border-radius: 18rpx; padding: 16rpx 18rpx 10rpx; margin-bottom: 16rpx; box-shadow: 0 6rpx 16rpx rgba(30,60,120,.07); }
+.fbar-head { display: flex; align-items: center; justify-content: space-between; }
+.fbar-t { font-size: 22rpx; font-weight: 700; color: #5B6472; }
+.fbar-clear { font-size: 22rpx; font-weight: 700; color: var(--accent, #3B7DDD); }
+.fbar-scroll { width: 100%; margin-top: 10rpx; }
+.fbar-row { display: flex; padding-bottom: 4rpx; }
+.fbar-chip {
+  flex-shrink: 0; font-size: 22rpx; font-weight: 700; color: #fff;
+  background: var(--accent, #3B7DDD); border-radius: 999rpx;
+  padding: 8rpx 20rpx; margin-right: 12rpx; white-space: nowrap;
+}
+
+/* ===== 命中为空 ===== */
+.empty-set { padding: 90rpx 40rpx; text-align: center; }
+.empty-set-t { display: block; font-size: 27rpx; font-weight: 700; color: #5B6472; }
+.empty-set-s { display: block; font-size: 23rpx; color: #9AA0AC; margin-top: 12rpx; }
+
+/* ===== 系列筛选面板（底部抽屉） ===== */
+.mask {
+  position: fixed; left: 0; right: 0; top: 0; bottom: 0; z-index: 90;
+  background: rgba(15, 25, 45, .48);
+  display: flex; align-items: flex-end;
+}
+.sheet {
+  width: 100%; max-height: 84vh; box-sizing: border-box;
+  background: #fff; border-radius: 26rpx 26rpx 0 0;
+  padding: 26rpx 24rpx 0;
+  display: flex; flex-direction: column;
+}
+.sheet-head { display: flex; align-items: center; justify-content: space-between; }
+.sheet-title { font-size: 32rpx; font-weight: 800; color: #1F2733; }
+.sheet-close { font-size: 30rpx; color: #9AA0AC; padding: 4rpx 12rpx; }
+
+.sheet-search {
+  display: flex; align-items: center;
+  background: #F1F5FB; border-radius: 999rpx;
+  padding: 12rpx 22rpx; margin: 18rpx 0 8rpx;
+}
+.sheet-search-ic { font-size: 24rpx; margin-right: 10rpx; }
+.sheet-input { flex: 1; font-size: 26rpx; color: #1F2733; }
+.sheet-ph { color: #9AA0AC; }
+.sheet-input-clr { font-size: 24rpx; color: #9AA0AC; padding: 0 6rpx; }
+
+.sheet-body { flex: 1; min-height: 300rpx; }
+.sheet-grp { padding: 18rpx 0 6rpx; }
+.sheet-grp-t { font-size: 25rpx; font-weight: 800; color: #1F2733; margin-bottom: 14rpx; }
+.sheet-grp-n { font-size: 20rpx; font-weight: 600; color: #9AA0AC; margin-left: 10rpx; }
+.sheet-tags { display: flex; flex-wrap: wrap; }
+.set-tag {
+  display: flex; align-items: center;
+  background: #F1F5FB; border: 2rpx solid transparent; border-radius: 999rpx;
+  padding: 10rpx 20rpx; margin: 0 14rpx 14rpx 0;
+}
+.set-tag.on { background: rgba(59,125,221,.12); border-color: var(--accent, #3B7DDD); }
+.set-tag-n { font-size: 23rpx; font-weight: 600; color: #3C4656; }
+.set-tag.on .set-tag-n { color: var(--accent, #3B7DDD); font-weight: 800; }
+.set-tag-c { font-size: 19rpx; color: #9AA0AC; margin-left: 8rpx; }
+.sheet-empty { padding: 70rpx 0; text-align: center; font-size: 24rpx; color: #9AA0AC; }
+.sheet-pad { height: 20rpx; }
+
+.sheet-foot { display: flex; padding: 16rpx 0 28rpx; }
+.sheet-btn {
+  flex: 1; text-align: center; font-size: 29rpx; font-weight: 700;
+  border-radius: 999rpx; padding: 22rpx 0;
+}
+.sheet-btn.ghost { background: #F1F5FB; color: #5B6472; margin-right: 18rpx; }
+.sheet-btn.primary { background: var(--accent, #3B7DDD); color: #fff; }

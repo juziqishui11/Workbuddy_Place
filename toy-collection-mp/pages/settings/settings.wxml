@@ -1,7 +1,7 @@
 <view class="page" style="--accent:{{accent}};--accent2:{{accent2}}">
   <view class="hero">
     <view class="brand">{{meta.brand}} · 口袋卡牌助手</view>
-    <view class="sub">全国图鉴 1-649 收藏与开包（关都 / 城都 / 丰缘 / 神奥 / 合众）</view>
+    <view class="sub">全国图鉴 {{total}} 只 · 七世代收藏与开包</view>
   </view>
 
   <view class="card stats-card">
@@ -13,14 +13,13 @@
   <view class="section-title">数据</view>
   <view class="card">
     <view class="row-btn" bindtap="clearData">🗑️ 清空全部收藏与心愿</view>
-    <view class="row-btn" bindtap="copyRepo">🔗 复制项目仓库地址</view>
   </view>
 
   <view class="section-title">关于</view>
   <view class="card" style="color:#9AA0AC;font-size:22rpx;line-height:1.7;">
     口袋卡牌助手 · 宝可梦卡牌收藏与开包模拟小程序（微信原生）。<br/>
     收藏数据仅保存在本机微信存储，不上传服务器。<br/>
-    图鉴收录全国图鉴前五代共 649 只宝可梦，卡面取自宝可梦集换式卡牌（TCG），开包可获得传说 / 幻之稀有卡。
+    图鉴收录全国图鉴七世代共 {{total}} 只宝可梦，卡面取自宝可梦集换式卡牌（TCG）。
   </view>
 
   <view class="card disclaimer">

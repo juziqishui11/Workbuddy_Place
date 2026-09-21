@@ -14,8 +14,9 @@ Page({
   data: {
     meta: {}, seriesId: '', figureId: '', figure: {},
     hasRec: false, rec: null, accent: '#3B7DDD', accent2: '#FFCB05',
-    card: null, img: '', versions: [], verUrls: [],
-    evo: { from: [], to: [], chain: [], has: false, branch: false }
+    card: null, img: '', versions: [], verUrls: [], forms: [],
+    evo: { from: [], to: [], chain: [], has: false, branch: false },
+    currentVerIdx: 0, tab: 'card', rarityIcon: ''
   },
 
   onLoad: function (q) {
@@ -26,9 +27,6 @@ Page({
 
   onShow: function () {
     if (!this.q) return;
-    // onLoad 里已经完整 load() 过一次（含 setData + 导航栏 API）。
-    // 首屏的 onShow 直接跳过，避免重复请求（原来同一次打开会调两遍 load）；
-    // 只有从「录入 / 编辑」页返回时才需要重新加载。
     if (this._firstShow) { this._firstShow = false; return; }
     this.load();
   },
@@ -47,8 +45,6 @@ Page({
 
     const b = found.figure.base || {};
     const baseTotal = (b.hp || 0) + (b.atk || 0) + (b.def || 0) + (b.spa || 0) + (b.spd || 0) + (b.spe || 0);
-    // 种族值条：宽度在这里算成字符串（如 "65%"）。
-    // ⚠️ 不要改成 WXML 内联样式 `width:{{x}}%` —— 插值后紧跟 % 会让开发者工具 CSS 校验误报。
     const baseBars = [['hp', 'HP'], ['atk', '攻击'], ['def', '防御'], ['spa', '特攻'], ['spd', '特防'], ['spe', '速度']]
       .map(function (d) {
         const v = b[d[0]] || 0;
@@ -68,26 +64,64 @@ Page({
     const card = source.mainCard(found.figure);
     const versions = source.cardVersions(found.figure);
     const verUrls = versions.map(function (v) { return v.img; });
-    const img = (card && card.img) || found.figure.art || found.figure.sprite;
+    const img = (card && card.img) || found.figure.enArt || found.figure.art || found.figure.sprite;
 
     // 进化关系（进化前 / 进化后 / 同族全链）
     const evo = source.evolutionOf(found.figure);
+
+    // 特殊形态（EX / MEGA / V / 极巨化 / 光辉 等）
+    const forms = source.figureForms(found.figure);
 
     this.setData({
       meta: meta, seriesId: q.seriesId, figureId: q.figureId,
       figure: fig, hasRec: !!rec, rec: rec,
       accent: meta.accent, accent2: meta.accent2,
       baseBars: baseBars,
-      card: card, img: img, versions: versions, verUrls: verUrls, evo: evo
+      card: card, img: img, versions: versions, verUrls: verUrls, forms: forms, evo: evo,
+      currentVerIdx: 0, tab: 'card', rarityIcon: source.rarityIcon(card && card.rarity)
     });
   },
 
-  // 点击卡面版本 → 全屏放大浏览（可左右滑动看其他版本）
+  // 切换当前展示的主卡面版本（点击版本缩略图）
+  switchVersion: function (e) {
+    const i = Number(e.currentTarget.dataset.i);
+    const v = this.data.versions[i];
+    if (!v || !v.img) return;
+    const baseCard = this.data.card || {};
+    const newCard = Object.assign({}, baseCard, {
+      img: v.img, no: v.no, setCode: v.setId,
+      setName: source.cnSetName(v.setId), rarity: v.rarity, main: v.main, form: v.form
+    });
+    this.setData({
+      currentVerIdx: i, img: v.img, card: newCard,
+      rarityIcon: source.rarityIcon(v.rarity)
+    });
+  },
+
+  // 点击特殊形态标签 → 切换到该形态的第一张卡
+  switchForm: function (e) {
+    const form = e.currentTarget.dataset.form;
+    const idx = this.data.versions.findIndex(function (v) { return v.form === form; });
+    if (idx >= 0) this.switchVersion({ currentTarget: { dataset: { i: idx } } });
+  },
+
+  // 点击大卡面 → 全屏预览当前卡面（及所有版本）
+  previewCurrent: function () {
+    const urls = this.data.verUrls;
+    if (!urls.length) return;
+    wx.previewImage({ urls: urls, current: this.data.img });
+  },
+
+  // 点击卡面版本 → 放大浏览（保留原交互，长按/点击放大图标用）
   previewVer: function (e) {
     const i = Number(e.currentTarget.dataset.i) || 0;
     const urls = this.data.verUrls;
     if (!urls.length) return;
     wx.previewImage({ urls: urls, current: urls[i] });
+  },
+
+  switchTab: function (e) {
+    this.setData({ tab: e.currentTarget.dataset.tab });
   },
 
   // 跳到关联宝可梦（进化前 / 进化后 / 同族）
@@ -100,7 +134,8 @@ Page({
 
   onImgErr: function () {
     const f = this.data.figure;
-    if (f.art && this.data.img !== f.art) { this.setData({ img: f.art }); }
+    if (f.enArt && this.data.img !== f.enArt) { this.setData({ img: f.enArt }); }
+    else if (f.art && this.data.img !== f.art) { this.setData({ img: f.art }); }
     else if (f.sprite) { this.setData({ img: f.sprite }); }
   },
 
