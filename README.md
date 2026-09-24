@@ -7,7 +7,14 @@
 | 目录 | 工程 | 说明 |
 |---|---|---|
 | `2048/` | 2048 小游戏 | 静态页 + 边缘函数 + KV 排行榜，部署见 `2048/DEPLOY_EDGEONE.md` |
+| `Personal_Website/` | 个人主页 | 多页静态站：首页 / 关于 / 博客 / 项目 / 联系 |
+| `WB_Point_Play/` | 重庆大富翁旅行记 | 单文件旅行规划小游戏：掷骰开局，攻略 / 预算 / 语言判断 / 成就结局 |
+| `Workbench/` | 个人工作任务台 | 单文件 Web 应用：多项目任务管理 + 9 大功能区，数据存浏览器本地 |
+| `fde-90day-plan/` | 90 天 FDE 学习计划 | Python 练习 + 进度追踪单页（HTML），含笔记与数据脚本 |
 | `mbti-assessment/` | MBTI 人格测评 | 纯静态单页：44 题测评 + 16 型报告 + 16 卡通寓意头像，双击 `index.html` 即可用 |
+| `toy-collection-mp/` | 口袋卡牌助手 | 微信小程序：宝可梦 TCG 卡牌收藏 / 图鉴 / 开包模拟 |
+
+> 注：`toy-collection-mp/` 为微信小程序、`fde-90day-plan/` 含 Python 练习，二者非 EdgeOne Pages 工程；`tools/` 为公共工具目录（资源 / Token 看板），不参与 Pages 部署。
 
 ## 新增一个工程（示例 `snake/`）
 
