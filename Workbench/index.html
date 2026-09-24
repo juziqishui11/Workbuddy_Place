@@ -1864,7 +1864,8 @@ var WB_DEPLOY_LINKS = {
   mbti: 'https://mbti-assessment-14386.app.workbuddy.host/',
   game2048: 'https://2048-game.app.workbuddy.host/',
   fde: 'https://ef4190335f2349b79e01b26a5c33c69b.app.workbuddy.link/',
-  toycol: ''
+  toycol: '',
+  monopoly: ''
 };
 
 /* 我的作品 / 案例（真实数据，不打 demo 标记）。
@@ -1888,6 +1889,7 @@ function seedWorks() {
     { id: uid(), name: 'MBTI 人格测评站', type: 'WB案例', cat: '案例', status: '已上线', url: 'https://github.com/juziqishui11/Workbuddy_Place', github: R + '/mbti-assessment', online: W.mbti, desc: '44 题 / 16 型 / 4 维度，单文件 index.html 交付。', tags: ['MBTI', '单文件'], createdAt: iso, updatedAt: iso },
     { id: uid(), name: '口袋卡牌助手小程序', type: '小程序', cat: '案例', status: '已上线', url: 'https://github.com/juziqishui11/Workbuddy_Place', github: R + '/toy-collection-mp', online: W.toycol, desc: '微信原生小程序：宝可梦卡牌收藏与开包模拟，全国图鉴前五代 649 只（关都/城都/丰缘/神奥/合众），卡面采用官方 TCG 卡图，本地存储、持有进度/估值/心愿单；开包可限定系列，抽到的卡自动点亮收藏册（传说/幻之稀有掉落）。', tags: ['小程序', '宝可梦', '卡牌', 'TCG', '开包'], createdAt: iso, updatedAt: iso },
     { id: uid(), name: '2048 小游戏', type: 'WB案例', cat: '案例', status: '已上线', url: 'https://github.com/juziqishui11/Workbuddy_Place', github: R + '/2048', online: W.game2048, desc: '纯前端小游戏，含动画与最高分记录。', tags: ['游戏'], createdAt: iso, updatedAt: iso },
+    { id: uid(), name: '重庆大富翁旅行记', type: 'WB案例', cat: '案例', status: '进行中', url: 'https://github.com/juziqishui11/Workbuddy_Place', github: R + '/WB_Point_Play', online: W.monopoly, desc: '大富翁主题旅行攻略生成器：填 4 项出完整行程（酒店含电话/地址/地铁路线、交通、门票、吃食排行榜）+ 语言判断真实意图 + 四种旅行结局，单文件 index.html。', tags: ['大富翁', '旅行', '单文件'], createdAt: iso, updatedAt: iso },
     { id: uid(), name: 'FDE 90天学习网站', type: 'WB案例', cat: '案例', status: '进行中', url: '', github: '', online: W.fde, desc: '12 周 / 90 天 / 45 练习 / 54 词条 单文件站（本站内置模块）。', tags: ['学习', 'FDE'], createdAt: iso, updatedAt: iso },
     { id: uid(), name: 'WB案例库', type: 'WB案例', cat: '案例', status: '已上线', url: '', github: '', online: '', desc: '站点内置 WB 案例快照模块：团队 / 个人案例沉淀与复用。', tags: ['案例库', 'WB'], createdAt: iso, updatedAt: iso },
     { id: uid(), name: '豆包下载无水印图片插件', type: '插件', cat: '案例', status: '已上线', url: '', github: '', online: '', desc: '豆包（Doubao）浏览器插件：一键下载无水印原图。', tags: ['豆包', '插件', '图片'], createdAt: iso, updatedAt: iso },
