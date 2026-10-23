@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>1024 码上好运 · 一个程序员的 1024 一日游</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="1024 码上好运：反向告警大盘、程序员电子证书、程序员设工牌、代码时光机、愿望封存。纯前端，数据不上传。">
+<meta name="theme-color" content="#F7F6FC">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/scenes.css">
+<script>
+// 全局错误捕获：任何一处崩掉都要能看见，而不是白屏
+window.__errs = [];
+window.onerror = function (m, s, l, c, e) {
+  window.__errs.push(m + ' @' + l + ':' + c + (e && e.stack ? ' ' + e.stack.split('\n')[1] : ''));
+  var box = document.getElementById('errBox');
+  if (box) { box.hidden = false; document.getElementById('errMsg').textContent = m + ' @' + l + ':' + c; }
+  return false;
+};
+</script>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand__num">1024</span>
+    <span class="brand__txt">码上好运</span>
+    <span class="brand__tag">A PROGRAMMER'S DAY OFF</span>
+  </div>
+  <div class="topbar__spacer"></div>
+  <span class="chip" id="chipNo">工号 <b>----</b></span>
+  <span class="chip" id="chipDate">--</span>
+  <span class="chip chip--local" title="数据只存在这台设备的浏览器里"><i class="dot"></i>本机模式</span>
+  <button class="chip" id="btnAbout" style="cursor:pointer">玩法 &amp; 声明</button>
+</header>
+
+<main class="dash" id="dash">
+
+  <section class="panel" id="panel-profile" data-scene="profile" tabindex="0" role="button" aria-label="展开我的程序员设">
+    <div class="panel__head">
+      <span class="panel__idx">01</span>
+      <h2 class="panel__t">我的程序员设</h2>
+      <span class="panel__hint">先答 10 题领工号</span>
+      <span class="panel__nav"></span>
+      <span class="panel__go">进入 →</span>
+      <button class="panel__close" type="button">✕ 收起</button>
+    </div>
+    <div class="panel__body" id="body-profile"></div>
+  </section>
+
+  <section class="panel" id="panel-board" data-scene="board" tabindex="0" role="button" aria-label="展开今日好事看板">
+    <div class="panel__head">
+      <span class="panel__idx">02</span>
+      <h2 class="panel__t">今日好事看板</h2>
+      <span class="panel__hint">反向告警大盘</span>
+      <span class="panel__nav"></span>
+      <span class="panel__go">进入 →</span>
+      <button class="panel__close" type="button">✕ 收起</button>
+    </div>
+    <div class="panel__body" id="body-board"></div>
+  </section>
+
+  <section class="panel" id="panel-cert" data-scene="cert" tabindex="0" role="button" aria-label="展开持证上岗">
+    <div class="panel__head">
+      <span class="panel__idx">03</span>
+      <h2 class="panel__t">持证上岗</h2>
+      <span class="panel__hint">4 种证书</span>
+      <span class="panel__nav"></span>
+      <span class="panel__go">进入 →</span>
+      <button class="panel__close" type="button">✕ 收起</button>
+    </div>
+    <div class="panel__body" id="body-cert"></div>
+  </section>
+
+  <section class="panel" id="panel-time" data-scene="time" tabindex="0" role="button" aria-label="展开代码时光机">
+    <div class="panel__head">
+      <span class="panel__idx">04</span>
+      <h2 class="panel__t">代码时光机</h2>
+      <span class="panel__hint">多年代示例对照</span>
+      <span class="panel__nav"></span>
+      <span class="panel__go">进入 →</span>
+      <button class="panel__close" type="button">✕ 收起</button>
+    </div>
+    <div class="panel__body" id="body-time"></div>
+  </section>
+
+  <section class="panel" id="panel-wish" data-scene="wish" tabindex="0" role="button" aria-label="展开许愿机">
+    <div class="panel__head">
+      <span class="panel__idx">05</span>
+      <h2 class="panel__t">许愿机</h2>
+      <span class="panel__hint">摇一条 · 封存一句话</span>
+      <span class="panel__nav"></span>
+      <span class="panel__go">进入 →</span>
+      <button class="panel__close" type="button">✕ 收起</button>
+    </div>
+    <div class="panel__body" id="body-wish"></div>
+  </section>
+
+  <section class="panel" id="panel-translate" data-scene="translate" tabindex="0" role="button" aria-label="展开需求翻译机">
+    <div class="panel__head">
+      <span class="panel__idx">06</span>
+      <h2 class="panel__t">需求翻译机</h2>
+      <span class="panel__hint">产品黑话 → 人话</span>
+      <span class="panel__nav"></span>
+      <span class="panel__go">进入 →</span>
+      <button class="panel__close" type="button">✕ 收起</button>
+    </div>
+    <div class="panel__body" id="body-translate"></div>
+  </section>
+
+</main>
+
+<div id="cardModal" hidden>
+  <div style="text-align:center">
+    <div id="cardModalImg"></div>
+    <div class="row">
+      <span class="note" id="cardModalTip"></span>
+      <button class="btn btn--sm" id="cardModalClose">关闭</button>
+    </div>
+  </div>
+</div>
+
+<div id="aboutModal" class="modal" hidden>
+  <div class="modal__box modal__box--guide">
+    <div class="guide__eyebrow">A PROGRAMMER'S DAY OFF</div>
+    <h2 class="guide__t">1024 码上好运</h2>
+    <p class="guide__sub">六块面板共用同一个工号。<b>先领工号</b>，其余随便点哪一块都能玩。</p>
+
+    <figure class="guide">
+      <svg viewBox="0 0 640 124" role="img" aria-label="四步玩法：答十题领工号、拿工号玩其余五块、导出长图与证书、同号的人互相可见">
+        <!-- ① 答题领工号 -->
+        <rect x="0.5" y="0.5" width="141" height="87" rx="12" style="fill:var(--surface-2);stroke:var(--line)"/>
+        <rect x="16" y="22" width="52" height="17" rx="8.5" style="fill:var(--violet-soft)"/>
+        <rect x="22" y="29" width="27" height="3" rx="1.5" style="fill:var(--violet)"/>
+        <rect x="16" y="44" width="52" height="17" rx="8.5" style="fill:var(--surface);stroke:var(--line-neon)"/>
+        <rect x="22" y="51" width="19" height="3" rx="1.5" style="fill:var(--tx-4)"/>
+        <path d="M72 41 h10 M79 37.5 l4 3.5 -4 3.5" style="stroke:var(--violet);fill:none;stroke-width:1.4" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="0" />
+        <rect x="88" y="28" width="38" height="25" rx="7" style="fill:var(--lemon);stroke:var(--ink);stroke-width:1.2"/>
+        <text x="107" y="45" font-size="10" font-weight="700" text-anchor="middle" style="fill:var(--lemon-ink);font-family:ui-monospace,monospace">0740</text>
+        <text x="71" y="108" font-size="11" text-anchor="middle" style="fill:var(--tx)">① 答 10 题领工号</text>
+
+        <!-- ② 玩其余五块 -->
+        <rect x="166.5" y="0.5" width="141" height="87" rx="12" style="fill:var(--surface-2);stroke:var(--line)"/>
+        <rect x="207" y="20" width="26" height="26" rx="6" style="fill:var(--violet-soft)"/>
+        <rect x="241" y="20" width="26" height="26" rx="6" style="fill:var(--cyan-soft)"/>
+        <rect x="207" y="50" width="26" height="26" rx="6" style="fill:var(--lemon-soft)"/>
+        <rect x="241" y="50" width="26" height="26" rx="6" style="fill:none;stroke:var(--line-neon);stroke-dasharray:3 3"/>
+        <path d="M144 44 h12 M152 41 l3 3 -3 3 M310 44 h12 M318 41 l3 3 -3 3" style="stroke:var(--violet);fill:none;stroke-width:1.4;stroke-dasharray:3 3" stroke-linecap="round"/>
+        <text x="237" y="108" font-size="11" text-anchor="middle" style="fill:var(--tx)">② 拿工号玩其余五块</text>
+
+        <!-- ③ 导出长图与证书 -->
+        <rect x="332.5" y="0.5" width="141" height="87" rx="12" style="fill:var(--surface-2);stroke:var(--line)"/>
+        <rect x="354" y="22" width="74" height="46" rx="6" style="fill:var(--surface);stroke:var(--line)"/>
+        <rect x="362" y="32" width="44" height="3" rx="1.5" style="fill:var(--tx-3)"/>
+        <rect x="362" y="42" width="56" height="3" rx="1.5" style="fill:var(--surface-3)"/>
+        <rect x="362" y="52" width="34" height="3" rx="1.5" style="fill:var(--surface-3)"/>
+        <circle cx="446" cy="45" r="12" style="fill:var(--violet-soft);stroke:var(--violet)"/>
+        <path d="M446 39 v10 M441 45 l5 5 5 -5" style="stroke:var(--violet);fill:none;stroke-width:1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M476 44 h10 M484 41 l3 3 -3 3" style="stroke:var(--violet);fill:none;stroke-width:1.4;stroke-dasharray:3 3" stroke-linecap="round"/>
+        <text x="403" y="108" font-size="11" text-anchor="middle" style="fill:var(--tx)">③ 导出长图与证书</text>
+
+        <!-- ④ 同号的人互相可见 -->
+        <rect x="498.5" y="0.5" width="141" height="87" rx="12" style="fill:var(--surface-2);stroke:var(--line)"/>
+        <circle cx="532" cy="44" r="11" style="fill:var(--cyan-soft);stroke:var(--cyan)"/>
+        <circle cx="532" cy="40" r="3.5" style="fill:var(--cyan)"/>
+        <rect x="527" y="45" width="10" height="6" rx="3" style="fill:var(--cyan)"/>
+        <circle cx="606" cy="44" r="11" style="fill:var(--magenta-soft);stroke:var(--magenta)"/>
+        <circle cx="606" cy="40" r="3.5" style="fill:var(--magenta)"/>
+        <rect x="601" y="45" width="10" height="6" rx="3" style="fill:var(--magenta)"/>
+        <rect x="562" y="35" width="15" height="18" rx="3" style="fill:var(--lemon);stroke:var(--ink);stroke-width:1"/>
+        <path d="M547 44 h13 M579 44 h13" style="stroke:var(--tx-4);stroke-width:1.2;stroke-dasharray:3 3;fill:none"/>
+        <text x="569" y="108" font-size="11" text-anchor="middle" style="fill:var(--tx)">④ 同号的人互相可见</text>
+      </svg>
+    </figure>
+
+    <div class="row guide__btns">
+      <button class="btn btn--main" id="aboutClose">开始 · 先领工号</button>
+      <button class="btn btn--ghost" id="aboutMore">更多说明</button>
+    </div>
+    <p class="guide__fine">数据只存本机 · 娱乐向自测，不预测任何结果</p>
+  </div>
+</div>
+
+<div id="moreModal" class="modal" hidden>
+  <div class="modal__box">
+    <h2 style="font-family:var(--f-title);font-size:20px">更多说明</h2>
+    <p class="note" style="margin:0 0 14px">规则、算法、多人玩法都在这里。不感兴趣可以直接关掉。</p>
+
+    <div class="sect__h">多个人一起玩</div>
+    <div class="note">
+      本作品不依赖服务器，数据存在你自己的浏览器里。想让同事的好事也出现在同一块大盘上：<br>
+      点看板里的「我的票」复制一段票码 → 发给同事 → 同事粘到「并入」框里，你们的好事就在同一块大盘上了。
+      票码里只有工号和好事编号，不含任何个人信息。
+    </div>
+
+    <div class="sect__h">编号算法</div>
+    <div class="note">
+      10 道二选一 → 10 位二进制 → 十进制编号。前 8 位两两一组构成 4 个维度，后 2 位是装备彩蛋。
+      某维两题和为 1 时由该维定调题裁定，所以每维在固定极性下恰好 2 种组合：每型 2⁴ × 2² = 64 个编号，
+      16 × 64 = 1024，一位不差。
+    </div>
+
+    <div class="sect__h">封神原型</div>
+    <div class="note">
+      每个类型配一位封神神话人物作「原型」，只用名字、法宝这类公有领域的意象，用来做行为风格的参照。
+      形象是按这些意象原创设计的手办风造型，没有参考任何影视、动画、游戏的造型与配色。
+      原型不代表任何预测或论断，只是给「你是哪一型」多一个记忆点。
+    </div>
+
+    <div class="sect__h">合规声明</div>
+    <div class="note">
+      本作品是<b>娱乐向的行为偏好自测与记录工具</b>，不提供任何预测、评价或建议，不涉及任何命理内容。
+      「码上好运」中的「好运」是祝福用语。bug 体质与掉发指数均为公开公式的娱乐性估算，不具任何医学意义。
+      所有数据仅存于本机浏览器，不上传、不收集。
+    </div>
+
+    <div class="row" style="margin-top:16px">
+      <button class="btn btn--main" id="moreClose">知道了</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" role="status" aria-live="polite" hidden></div>
+
+<div id="errBox" class="errbar" hidden>
+  页面有一处脚本出错：<span id="errMsg"></span>
+  <button onclick="location.reload()">重新加载</button>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/theme.js"></script>
+<script src="js/core.js"></script>
+<script src="js/assets.js"></script>
+<script src="js/export.js"></script>
+<script src="js/scene-profile.js"></script>
+<script src="js/scene-board.js"></script>
+<script src="js/scene-cert.js"></script>
+<script src="js/scene-time.js"></script>
+<script src="js/scene-wish.js"></script>
+<script src="js/scene-translate.js"></script>
+<script>
+(function () {
+  var U = APP.util;
+  var isDemo = /(?:^|[?&])demo=1(?:&|$)/.test(location.search);
+  var hasState = false;
+  try { hasState = !!localStorage.getItem('p1024.v2.state'); } catch (e) { hasState = !!U.store.get('p1024.v2.state'); }
+
+  // ?demo=1 灌一份演示数据（只写内存，绝不落盘），用于预览与投稿截图。
+  // 只在本地本来没有存档时生效，避免覆盖真实用户记录。
+  if (isDemo && !hasState && APP.state.num == null) {
+    APP.demo = true;
+    APP.state.answers = [1, 0, 1, 1, 1, 0, 0, 1, 0, 0];
+    var dc = U.compute();
+    APP.state.num = dc.num;
+    APP.state.cert.num = U.pad(dc.num, 4);
+    APP.state.cert.name = '林工';
+    var td = U.today();
+    // 演示数据要摊开在上班时间里，曲线才看得出「一件一件攒起来」
+    var dayStart = new Date(); dayStart.setHours(7, 0, 0, 0);
+    var demoEnd = Date.now() - 300e3;
+    // 不早于早上 7 点，否则会出现在凌晨 4 点 CR 通过的怪记录
+    var demoStart = Math.max(dayStart.getTime(), demoEnd - 6 * 3600e3);
+    var at = function (p) { return Math.round(demoStart + (demoEnd - demoStart) * p); };
+    APP.state.board.days[td] = [
+      { id: 'cr', ts: at(0.08) },
+      { id: 'freeze', ts: at(0.36) },
+      { id: 'nomeet', ts: at(0.63) },
+      { id: 'green', ts: at(0.88) }
+    ];
+    APP.state.board.streak = 4;
+    APP.state.board.lastDay = td;
+    APP.state.wishes = [{ text: '希望明年的今天，我还在写代码，但不用再改别人的 dataNewFinal。', blessing: APP.util.blessFor(dc.num, 'x'), num: dc.num, ts: Date.now() }];
+    APP.state.saved = [
+      { year: '2019', title: 'jQuery 时代的一版列表页', code: '$.ajax({ success: function(d){ ... } })', hits: 9 },
+      { year: '2022', title: '第一次写 async/await', code: 'const res = await fetch(url)', hits: 3 }
+    ];
+    // 演示数据一律不落盘：把 save 换成 no-op（APP.save 与 U.save 引用同一函数）
+    APP.util.save = function () {};
+    APP.save = APP.util.save;
+    U.setStage('result');
+    document.documentElement.setAttribute('data-demo', '1');
+    var brand = document.querySelector('.brand__tag');
+    if (brand) brand.textContent = '演示数据 · 不会保存';
+  }
+
+  // 顶栏信息
+  function chrome() {
+    var n = APP.state.num;
+    var chipNo = document.getElementById('chipNo');
+    if (chipNo) chipNo.innerHTML = '工号 <b>' + (n != null ? U.pad(n, 4) : '----') + '</b>';
+    var d = document.getElementById('chipDate');
+    if (d) d.textContent = U.today();
+  }
+
+  // 面板点击展开：整块任意位置都能点，不需要找按钮
+  APP.util.$$('.panel').forEach(function (p) {
+    function openIt(e) {
+      if (p.classList.contains('is-open')) return;
+      if (e.target.closest('.panel__close')) return;
+      APP.open(p.dataset.scene);
+    }
+    p.addEventListener('click', openIt);
+    p.addEventListener('keydown', function (e) {
+      if ((e.key === 'Enter' || e.key === ' ') && !p.classList.contains('is-open')) {
+        e.preventDefault(); APP.open(p.dataset.scene);
+      }
+    });
+  });
+
+  // 展开态顶部的小圆点：直接切到另一块，不必先收起
+  var ORDER = ['profile', 'board', 'cert', 'time', 'wish', 'translate'];
+  APP.util.$$('.panel__nav').forEach(function (nav) {
+    nav.innerHTML = ORDER.map(function (s) {
+      var t = document.querySelector('#panel-' + s + ' .panel__t');
+      var name = t ? t.textContent : s;
+      return '<button type="button" data-go="' + s + '" title="' + name + '" aria-label="切到' + name + '"></button>';
+    }).join('');
+  });
+  // 捕获阶段拦下，避免同时触发外层的「点面板展开」
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-go]');
+    if (!b) return;
+    e.stopPropagation();
+    APP.open(b.dataset.go);
+  }, true);
+
+  // 收起态里的内容不接收点击（避免误触，展开后可交互）
+  var st = document.createElement('style');
+  st.textContent = '.panel:not(.is-open) .panel__body{pointer-events:none}';
+  document.head.appendChild(st);
+
+  // 收起态内容比面板高时，底部做渐隐，别让预览被一刀切
+  var fitTimer = 0;
+  function fitCheck() {
+    APP.util.$$('.panel').forEach(function (p) {
+      var b = p.querySelector('.panel__body');
+      if (!b) return;
+      p.classList.toggle('is-clip', b.scrollHeight - b.clientHeight > 4);
+    });
+  }
+  function fitSoon() { clearTimeout(fitTimer); fitTimer = setTimeout(fitCheck, 140); }
+  fitCheck();
+  window.addEventListener('resize', fitSoon);
+  if (window.MutationObserver) {
+    APP.util.$$('.panel__body').forEach(function (b) {
+      new MutationObserver(fitSoon).observe(b, { childList: true, subtree: true });
+    });
+  }
+
+  // 弹层
+  var cm = document.getElementById('cardModal');
+  document.getElementById('cardModalClose').addEventListener('click', function () { cm.hidden = true; });
+  cm.addEventListener('click', function (e) { if (e.target === cm) cm.hidden = true; });
+
+  var ab = document.getElementById('aboutModal');
+  var mb = document.getElementById('moreModal');
+  document.getElementById('btnAbout').addEventListener('click', function () { ab.hidden = false; });
+  document.getElementById('aboutMore').addEventListener('click', function () { ab.hidden = true; mb.hidden = false; });
+  document.getElementById('moreClose').addEventListener('click', function () { mb.hidden = true; });
+  document.getElementById('aboutClose').addEventListener('click', function () {
+    ab.hidden = true;
+    // 说明里的第一步就是领工号，那这个按钮就得真的把人送到那一步
+    if (APP.state.num == null) APP.open('profile');
+  });
+  ab.addEventListener('click', function (e) { if (e.target === ab) ab.hidden = true; });
+  mb.addEventListener('click', function (e) { if (e.target === mb) mb.hidden = true; });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') { ab.hidden = true; mb.hidden = true; if (cm) cm.hidden = true; }
+  });
+
+  // 首次访问自动打开玩法说明（?nointro=1 可跳过，用于截图与演示）
+  var noIntro = location.search.indexOf('nointro') !== -1;
+  if (!noIntro && !APP.state.num && !APP.util.store.get('p1024.v2.seen')) {
+    ab.hidden = false;
+    APP.util.store.set('p1024.v2.seen', '1');
+  }
+
+  // 渲染所有面板（收起态即为活预览）
+  APP.scenes.profile.render();
+  APP.scenes.board.render();
+  APP.scenes.cert.render();
+  APP.scenes.time.render();
+  APP.scenes.wish.render();
+  APP.scenes.translate.render();
+
+  APP.boot();
+  chrome();
+  APP.chrome = chrome;
+
+  // 调试：?dbg=1 时把视口宽度写进标题，便于无头环境核对布局
+  if (location.search.indexOf('dbg') !== -1) {
+    setTimeout(function () {
+      var de = document.documentElement;
+      document.title = 'W=' + de.clientWidth + ' SW=' + de.scrollWidth + ' BODY=' + document.body.scrollWidth;
+    }, 800);
+  }
+
+  // 工号变化时同步顶栏
+  var _open = APP.open;
+  APP.open = function (s) {
+    _open(s);
+    chrome();
+    if (APP.scenes[s] && APP.scenes[s].refresh) APP.scenes[s].refresh();
+    APP.util.$$('.panel__nav button').forEach(function (b) {
+      b.classList.toggle('is-on', b.dataset.go === s);
+    });
+  };
+})();
+</script>
+</body>
+</html>
