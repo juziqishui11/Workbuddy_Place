@@ -112,10 +112,14 @@ hairLoss = clamp(round(bugIndex × 0.45 + crit × 22 + 咖啡依赖 × 25 + 8), 
 ├─ assets/avatar/        16 张封神形象（512×640 webp）
 ├─ prep_img.py           形象图后处理（去生成水印 → 裁切 → webp）
 ├─ serve.js              本地静态服务
-├─ check.js              静态自检
-├─ smoke.js              无头冒烟测试
+├─ check.js              静态自检（51 项）
+├─ smoke.js              无头冒烟测试（70 项）
+├─ tools/gh_push.js      推送整个目录到 GitHub 指定子目录
+├─ tools/gh_put.js       推送单个文件（改根 README 这类小改动）
+├─ 投稿信息.md            投稿表单可直接复制粘贴的各字段版本
 ├─ 社媒文案.md            三个平台各一版 + 发布检查清单
-└─ shot-*.png            截图
+├─ entry-*.png           投稿用截图（1600×1000，截自线上版本）
+└─ shot-*.png            各面板展开态截图
 ```
 
 ### 本地运行
@@ -127,6 +131,30 @@ python -m http.server 8125
 ```
 
 打开 `http://127.0.0.1:8125/`。**必须走 http 服务**，不要双击 index.html —— `file://` 下部分浏览器会限制本地资源与 Canvas 导出。
+
+### 部署
+
+**GitHub（本仓库）**
+
+- 代码：https://github.com/juziqishui11/Workbuddy_Place/tree/main/WB_Point_Play/1024
+- 推送脚本：`node tools/gh_push.js`（走 Git Data API，不依赖 git 直连；`--dry` 先看清单）
+
+**EdgeOne Pages**
+
+本仓库的约定是「一个子目录 = 一个独立 Pages 项目」，所以：
+
+| 配置项 | 值 |
+|---|---|
+| 仓库 | `juziqishui11/Workbuddy_Place` |
+| 分支 | `main` |
+| 根目录 | `WB_Point_Play/1024` |
+| 输出目录 | `.` |
+
+纯静态，**不需要边缘函数、不需要构建命令**。改完在 EdgeOne 点「重新部署」即可。
+
+**WorkBuddy 应用发布**（备用，用于快速拿分享链接）
+
+当前线上预览：https://1024-lucky-code.app.workbuddy.host/?sharecode=7CH6YJGHLT
 
 **预览参数**
 
@@ -143,7 +171,7 @@ node check.js      # 静态校验：数据完整性 / 编号穷举 / 禁用词 /
 node smoke.js      # 无头冒烟：真实跑一遍六块面板的交互（需 jsdom）
 ```
 
-`check.js` 46 项：数据完整性、编号空间穷举（16×64=1024）、平票自洽、场景与样例规模（6 块面板 / 5 段代码 / 36 条愿望 / 24 条黑话）、禁用词扫描、CSS 括号平衡、DOM 引用比对、规则库命中与耗时、封神原型与形象资源、文件规模、状态机与存档约束。
+`check.js` 51 项：数据完整性、编号空间穷举（16×64=1024）、平票自洽、场景与样例规模（6 块面板 / 5 段代码 / 36 条愿望 / 24 条黑话）、禁用词扫描、CSS 括号平衡、DOM 引用比对、规则库命中与耗时、封神原型与形象资源、文件规模、状态机与存档约束。
 
 `smoke.js` 70 项：领工号、编号同步、工牌渲染、**形象图路径**、雷达与仪表盘、1024 格阵与图例、**已领工号 → 查看工牌**、打卡、票码往返、证书改名、时光机对照与行级 diff、摇愿望、翻译命中与兜底、路由收起、无未捕获错误。
 
