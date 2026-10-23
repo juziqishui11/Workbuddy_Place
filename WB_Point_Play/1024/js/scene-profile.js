@@ -13,7 +13,7 @@
       const cls = 'bit'
         + (b == null ? ' is-empty' : ' is-set')
         + (i === APP.state.idx && !done ? ' is-cur' : '')
-        + (i === 1 || i === 3 || i === 5 ? ' bit--dim' : '')
+        + (i === 1 || i === 3 || i === 5 || i === 7 ? ' bit--dim' : '')
         + (i === 8 ? ' bit--gacha' : '');
       bits += '<span class="' + cls + '" data-i="' + i + '" style="--c:' + col + '"'
         + ' title="第 ' + (i + 1) + ' 题 · 位权 ' + (1 << (9 - i)) + '">'
