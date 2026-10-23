@@ -134,14 +134,22 @@ python -m http.server 8125
 
 ### 部署
 
-**GitHub（本仓库）**
+**线上地址（GitHub Pages）**：https://juziqishui11.github.io/Workbuddy_Place/1024/
 
-- 代码：https://github.com/juziqishui11/Workbuddy_Place/tree/main/WB_Point_Play/1024
-- 推送脚本：`node tools/gh_push.js`（走 Git Data API，不依赖 git 直连；`--dry` 先看清单）
+**代码仓库**：https://github.com/juziqishui11/Workbuddy_Place/tree/main/WB_Point_Play/1024
 
-**EdgeOne Pages**
+推送脚本（都走 Git Data API，不依赖 git 直连，`--dry` 先看清单）：
 
-本仓库的约定是「一个子目录 = 一个独立 Pages 项目」，所以：
+| 脚本 | 目标 | 用途 |
+|---|---|---|
+| `node tools/gh_push.js` | `main` 分支 `WB_Point_Play/1024/` | 更新源码（含 README、自检脚本） |
+| `node tools/gh_pages.js` | `gh-pages` 分支 `1024/` | 发布上线（只推 `index.html` + `css/` + `js/` + `assets/`） |
+
+**GitHub Pages 的机制**：本仓库 Pages 源是 **`gh-pages` 分支根目录**（不是 `main`，也不是 `/docs`），站点根为 `https://juziqishui11.github.io/Workbuddy_Place/`。仓库约定「一个子目录 = 一个独立应用」，所以本作品放在 `1024/`，与 `HowToLiveBetter/` 同级。改完执行 `node tools/gh_pages.js`，Pages 会自动重建（约 30–90 秒），**不需要在网页上点任何按钮**。
+
+**EdgeOne Pages**（可选，国内访问更快）
+
+本仓库同一套约定在这里也成立：
 
 | 配置项 | 值 |
 |---|---|
@@ -150,11 +158,11 @@ python -m http.server 8125
 | 根目录 | `WB_Point_Play/1024` |
 | 输出目录 | `.` |
 
-纯静态，**不需要边缘函数、不需要构建命令**。改完在 EdgeOne 点「重新部署」即可。
+纯静态，**不需要边缘函数、不需要构建命令**。
 
 **WorkBuddy 应用发布**（备用，用于快速拿分享链接）
 
-当前线上预览：https://1024-lucky-code.app.workbuddy.host/?sharecode=7CH6YJGHLT
+预览：https://1024-lucky-code.app.workbuddy.host/?sharecode=7CH6YJGHLT
 
 **预览参数**
 
