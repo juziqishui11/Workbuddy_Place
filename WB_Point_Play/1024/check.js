@@ -255,6 +255,9 @@ ok(openAt !== -1, '人设面板有 onOpen 钩子');
 ok(openBody.indexOf('U.compute()') === -1,
   'onOpen 不再用 compute() 判定是否跳结果页（改按已答数决定 intro/quiz）');
 ok(openBody.indexOf('U.setStage(') !== -1, 'onOpen 会显式设置阶段');
+// 位格分组：4 个维度两两一组，组间分隔必须齐全（曾经漏了 i=7，第 3、4 维粘在一起）
+ok(/(i === 1).*(i === 3).*(i === 5).*(i === 7)/.test(profSrc),
+  '工号位格四维度组间间隔齐全（i=1/3/5/7）');
 
 console.log('\n' + (fails ? '✗ ' + fails + ' 项失败' : '✓ 全部通过') + (warns ? ' · ' + warns + ' 项警告' : ''));
 process.exit(fails ? 1 : 0);
